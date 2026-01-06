@@ -1,13 +1,15 @@
 # Welcome to Melodic Software
 
-### We build software that sings. 🎵
-**Engineering-led. Quality-focused. Future-ready.**
+<div align="center">
+  <h3>We build software that sings. 🎵</h3>
+  <p>Engineering-led. Quality-focused. Future-ready.</p>
+</div>
 
 ---
 
 ## About Melodic
 
-Melodic Software is a project dedicated to crafting high-performance, maintainable systems. The goal is simple: ensure that every part of the software serves a purpose, timing is everything, and the result is greater than the sum of its parts.
+Melodic Software is an organization dedicated to crafting high-performance, maintainable systems. The goal is simple: ensure that every part of the software serves a purpose, timing is everything, and the result is greater than the sum of its parts.
 
 We specialize in **Modular Monolith** architectures, leveraging the full power of the **.NET ecosystem** to build robust solutions without the premature complexity of microservices.
 
