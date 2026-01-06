@@ -2,6 +2,7 @@ name: Bug Report
 description: Report a bug or unexpected behavior
 title: "[Bug]: "
 labels: ["type:bug", "status:needs-triage"]
+# projects: ["melodic-software/1"] # Auto-add to Organization Project 1
 body:
   - type: markdown
     attributes:
@@ -12,15 +13,16 @@ body:
     id: description
     attributes:
       label: Description
-      description: A clear and concise description of the bug
+      description: A clear and concise description of the bug.
     validations:
       required: true
+      min_length: 20  # Prevent "it's broken" reports
 
   - type: textarea
     id: steps
     attributes:
       label: Steps to Reproduce
-      description: Detailed steps to reproduce the behavior
+      description: Detailed steps to reproduce the behavior.
       placeholder: |
         1. Navigate to '...'
         2. Click on '...'
@@ -32,7 +34,7 @@ body:
     id: expected
     attributes:
       label: Expected Behavior
-      description: What you expected to happen
+      description: What you expected to happen.
     validations:
       required: true
 
@@ -40,7 +42,7 @@ body:
     id: actual
     attributes:
       label: Actual Behavior
-      description: What actually happened (include error messages if applicable)
+      description: What actually happened (include error messages if applicable).
     validations:
       required: true
 
@@ -62,7 +64,6 @@ body:
     id: dotnet-version
     attributes:
       label: .NET Version (If Applicable)
-      description: Which .NET version are you using?
       options:
         - .NET 10
         - .NET 9
@@ -84,7 +85,7 @@ body:
     id: logs
     attributes:
       label: Relevant Logs
-      description: Paste any relevant log output or stack traces
+      description: Paste any relevant log output or stack traces.
       render: shell
 
   - type: checkboxes

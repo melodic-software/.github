@@ -1,1 +1,12 @@
+# GitHub Funding Configuration
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+
 github: [melodic-software]
+
+# Advanced Options (Uncomment to use):
+# patreon: melodicsoftware
+# open_collective: melodic-software
+# ko_fi: melodicsoftware
+# liberapay: melodicsoftware
+# issuehunt: melodic-software
+# custom: ["https://melodicsoftware.com/donate"]

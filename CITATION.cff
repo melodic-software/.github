@@ -1,8 +1,25 @@
 cff-version: 1.2.0
+title: "Melodic Software Ecosystem"
 message: "If you use this software, please cite it as below."
+type: software
 authors:
   - family-names: "Sexton"
     given-names: "Kyle"
-title: "Melodic Software Ecosystem"
-url: "https://github.com/melodic-software"
+    email: "info@melodicsoftware.com"
+    affiliation: "Melodic Software"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
+
+contact:
+  - name: "Melodic Software Security Team"
+    email: "security@melodicsoftware.com"
+    affiliation: "Melodic Software"
+
+repository-code: "https://github.com/melodic-software"
+url: "https://melodicsoftware.com"
 license: "Proprietary"
+
+keywords:
+  - "csharp"
+  - "dotnet"
+  - "modular-monolith"
+  - "architecture"
