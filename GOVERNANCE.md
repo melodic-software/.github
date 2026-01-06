@@ -1,6 +1,6 @@
 # Governance
 
-Melodic Software projects are maintained by the internal engineering team at Melodic Software.
+Melodic Software projects are maintained by the project maintainers.
 
 ## Decision Making
 

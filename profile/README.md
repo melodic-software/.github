@@ -7,24 +7,24 @@
 
 ---
 
-## About Us
+## About Melodic
 
-Melodic Software is a forward-thinking software organization dedicated to crafting high-performance, maintainable systems. We believe that great software is like a great symphony: every part serves a purpose, timing is everything, and the result is greater than the sum of its parts.
+Melodic Software is a project dedicated to crafting high-performance, maintainable systems. The goal is simple: ensure that every part of the software serves a purpose, timing is everything, and the result is greater than the sum of its parts.
 
 We specialize in **Modular Monolith** architectures, leveraging the full power of the **.NET ecosystem** to build robust solutions without the premature complexity of microservices.
 
-## Our Tech Stack
+## Tech Stack
 
-We stay on the bleeding edge of the Microsoft ecosystem.
+We build on the bleeding edge of the Microsoft ecosystem.
 
 | **Core** | **Frontend** | **Cloud Native** | **Security** |
 | :---: | :---: | :---: | :---: |
 | ![.NET](https://img.shields.io/badge/.NET%2010-512BD4?style=flat-square&logo=dotnet&logoColor=white) | ![Blazor](https://img.shields.io/badge/Blazor-512BD4?style=flat-square&logo=blazor&logoColor=white) | ![Aspire](https://img.shields.io/badge/Aspire-512BD4?style=flat-square&logo=dotnet&logoColor=white) | ![Duende](https://img.shields.io/badge/Duende_IdentityServer-F47421?style=flat-square) |
 | **C# 14** | **Interactive Auto** | **YARP & OpenTelemetry** | **BFF Pattern** |
 
-## Engineering Culture
+## Engineering Philosophy
 
-We hold ourselves to high standards to ensure our codebase remains clean and adaptive.
+We hold ourselves to high standards to ensure the codebase remains clean and adaptive.
 
 *   **🏗️ Modular Monoliths**: We build vertically sliced features within a unified deployable unit, scaling to distributed systems only when necessary.
 *   **🛡️ Compile-Time Guardrails**: We write [Custom Roslyn Analyzers](https://github.com/melodic-software/medley/tree/main/src/SharedKernel/SharedKernel.Analyzers) to enforce architectural rules *while* we code.
