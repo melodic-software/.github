@@ -1,9 +1,7 @@
 # Welcome to Melodic Software
 
-<div align="center">
-  <h3>We build software that sings. 🎵</h3>
-  <p>Engineering-led. Quality-focused. Future-ready.</p>
-</div>
+### We build software that sings. 🎵
+**Engineering-led. Quality-focused. Future-ready.**
 
 ---
 
