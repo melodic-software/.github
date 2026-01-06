@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Sexton"
+    given-names: "Kyle"
+title: "Melodic Software Ecosystem"
+url: "https://github.com/melodic-software"
+license: "Proprietary"

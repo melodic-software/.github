@@ -1,0 +1,25 @@
+# Standard Labels for Melodic Software
+
+- name: "type:bug"
+  color: "d73a4a"
+  description: "Something isn't working"
+
+- name: "type:enhancement"
+  color: "a2eeef"
+  description: "New feature or request"
+
+- name: "type:docs"
+  color: "0075ca"
+  description: "Improvements or additions to documentation"
+
+- name: "type:chore"
+  color: "d4c5f9"
+  description: "Routine maintenance tasks"
+
+- name: "status:needs-triage"
+  color: "f9d0c4"
+  description: "New issue awaiting review"
+
+- name: "status:blocked"
+  color: "cfd3d7"
+  description: "Blocked by other work"

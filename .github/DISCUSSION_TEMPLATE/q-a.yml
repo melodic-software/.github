@@ -1,0 +1,15 @@
+title: "Q&A: "
+labels: ["type:question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask a question about the project. For bugs, please open an Issue.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What would you like to know?
+    validations:
+      required: true

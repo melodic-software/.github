@@ -1,0 +1,15 @@
+title: "Idea: "
+labels: ["type:idea"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share an idea or proposal for the project.
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: The Idea
+      description: Describe your idea in detail.
+    validations:
+      required: true

@@ -1,0 +1,11 @@
+name: Melodic .NET CI
+description: Standard CI pipeline for Melodic Software .NET projects (Build, Test, Analyze).
+iconName: dotnet
+categories:
+  - C#
+  - .NET
+  - CI
+filePatterns:
+  - "**/*.sln"
+  - "**/*.slnx"
+  - "**/*.csproj"
