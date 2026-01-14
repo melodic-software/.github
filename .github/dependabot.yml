@@ -25,29 +25,3 @@ updates:
       github-actions:
         patterns:
           - "*"
-
-  # NuGet packages (for any .NET projects in this repo)
-  - package-ecosystem: "nuget"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "America/New_York"
-    labels:
-      - "type:chore"
-      - "dependencies"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
-    open-pull-requests-limit: 10
-    groups:
-      # Group minor and patch updates
-      nuget-minor:
-        update-types:
-          - "minor"
-          - "patch"
-    ignore:
-      # Ignore preview/rc versions by default (versions with prerelease suffix like -preview, -rc, -beta)
-      - dependency-name: "*"
-        versions: ["*-*"]
