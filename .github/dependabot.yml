@@ -48,6 +48,6 @@ updates:
           - "minor"
           - "patch"
     ignore:
-      # Ignore preview/rc versions by default
+      # Ignore preview/rc versions by default (versions with prerelease suffix like -preview, -rc, -beta)
       - dependency-name: "*"
-        update-types: ["version-update:semver-prerelease"]
+        versions: ["*-*"]
