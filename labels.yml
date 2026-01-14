@@ -1,3 +1,4 @@
+# Last reviewed: 2026-01-14
 # Standard Labels for Melodic Software
 # Format: GitHub Label Sync (name, color as hex without #, description)
 # Sync with: https://github.com/marketplace/actions/label-sync-action
@@ -213,3 +214,15 @@
 - name: "breaking-change"
   color: "b60205"
   description: "Introduces breaking changes"
+
+- name: "stale"
+  color: "ededed"
+  description: "No recent activity"
+
+- name: "needs-reproduction"
+  color: "d876e3"
+  description: "Bug needs a reproduction case"
+
+- name: "awaiting-response"
+  color: "fef2c0"
+  description: "Waiting for author response"

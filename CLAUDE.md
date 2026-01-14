@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+<!-- Last reviewed: 2026-01-14 -->
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Repository Purpose
@@ -14,7 +16,9 @@ This is the **organization-level `.github` repository** for Melodic Software. It
 │   ├── ISSUE_TEMPLATE/           # Issue forms (bug-report, feature-request, documentation, chore, config)
 │   ├── DISCUSSION_TEMPLATE/      # Discussion forms (general, ideas, q-a, announcements, show-and-tell)
 │   ├── workflows/                # Reusable workflows (release, codeql, dotnet-build, label-sync)
-│   └── PULL_REQUEST_TEMPLATE.md  # PR description template
+│   ├── PULL_REQUEST_TEMPLATE.md  # PR description template
+│   ├── dependabot.yml            # Automated dependency updates
+│   └── release.yml               # Auto-generated release notes configuration
 ├── workflow-templates/           # Starter workflows for org repos (dotnet-ci, dotnet-release)
 ├── profile/README.md             # Organization profile displayed on GitHub
 ├── labels.yml                    # Standard label definitions for GitHub Label Sync
@@ -23,6 +27,12 @@ This is the **organization-level `.github` repository** for Melodic Software. It
 ```
 
 ## Key Conventions
+
+### Review Dates
+
+All files should include a review date comment at the top:
+- Markdown files: `<!-- Last reviewed: YYYY-MM-DD -->`
+- YAML files: `# Last reviewed: YYYY-MM-DD`
 
 ### Commit Messages
 
@@ -52,6 +62,8 @@ Labels in `labels.yml` follow a namespaced convention:
 | `effort:*` | Size estimation | trivial, small, medium, large, epic |
 | `scope:*` | Semver impact | breaking, minor, patch |
 
+Special labels: `good first issue`, `help wanted`, `dependencies`, `breaking-change`, `stale`, `needs-reproduction`, `awaiting-response`
+
 ## Tech Context
 
 This organization primarily builds .NET applications:
@@ -68,6 +80,7 @@ When editing YAML-based GitHub templates (issue forms, discussion forms):
 Use GitHub's form schema with `type`, `id`, `attributes`, and `validations` fields:
 
 ```yaml
+# Last reviewed: YYYY-MM-DD
 - type: textarea | dropdown | input | checkboxes | markdown
   id: unique-id
   attributes:
@@ -102,6 +115,20 @@ Require a corresponding `.properties.json` file with metadata:
 }
 ```
 
+## Automation Files
+
+### dependabot.yml
+
+Configures automated dependency updates:
+- GitHub Actions: Weekly updates (Mondays)
+- NuGet packages: Weekly updates with grouping
+
+### release.yml
+
+Configures auto-generated release notes:
+- Categories based on labels (Breaking Changes, Features, Bug Fixes, etc.)
+- Excludes dependabot PRs and invalid/duplicate issues
+
 ## Reusable Workflows
 
 Available reusable workflows in `.github/workflows/`:
@@ -122,3 +149,17 @@ jobs:
     with:
       input-name: value
 ```
+
+## Review Schedule
+
+- **Quarterly**: Community health files (CODE_OF_CONDUCT, CONTRIBUTING, SECURITY, etc.)
+- **Monthly**: GitHub Actions version check for security updates
+- **Annually**: Label taxonomy review
+- **As-needed**: When GitHub introduces new features
+
+## Standards Reference
+
+- [Contributor Covenant v3.0](https://www.contributor-covenant.org/version/3/0/) - Code of Conduct
+- [CFF v1.2.0](https://citation-file-format.github.io/) - Citation format
+- [Conventional Commits](https://www.conventionalcommits.org/) - Commit messages
+- [Semantic Versioning](https://semver.org/) - Version numbering

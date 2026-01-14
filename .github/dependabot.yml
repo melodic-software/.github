@@ -1,0 +1,53 @@
+# Last reviewed: 2026-01-14
+# Dependabot configuration for automated dependency updates
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # GitHub Actions - Check weekly for updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    labels:
+      - "type:chore"
+      - "area:ci-cd"
+      - "dependencies"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    open-pull-requests-limit: 5
+    groups:
+      # Group all GitHub Actions updates together
+      github-actions:
+        patterns:
+          - "*"
+
+  # NuGet packages (for any .NET projects in this repo)
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    labels:
+      - "type:chore"
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    open-pull-requests-limit: 10
+    groups:
+      # Group minor and patch updates
+      nuget-minor:
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      # Ignore preview/rc versions by default
+      - dependency-name: "*"
+        update-types: ["version-update:semver-prerelease"]

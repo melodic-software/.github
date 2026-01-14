@@ -1,3 +1,5 @@
+<!-- Last reviewed: 2026-01-14 -->
+
 ## Summary
 
 <!-- Brief description of changes (1-3 sentences) -->

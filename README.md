@@ -1,3 +1,5 @@
+<!-- Last reviewed: 2026-01-14 -->
+
 # Melodic Software - GitHub Community Defaults
 
 This repository contains default community health files for the [Melodic Software](https://github.com/melodic-software) organization.
@@ -28,7 +30,9 @@ Files located here are automatically displayed to contributors in any repository
 │   │   ├── reusable-codeql.yml   # CodeQL security analysis
 │   │   ├── reusable-dotnet-build.yml  # .NET build pipeline
 │   │   └── label-sync.yml        # Label synchronization
-│   └── PULL_REQUEST_TEMPLATE.md  # PR description template
+│   ├── PULL_REQUEST_TEMPLATE.md  # PR description template
+│   ├── dependabot.yml            # Automated dependency updates
+│   └── release.yml               # Auto-generated release notes config
 ├── workflow-templates/           # Starter workflows for org repos
 │   ├── dotnet-ci.yml             # .NET CI pipeline
 │   ├── dotnet-ci.properties.json
@@ -46,7 +50,7 @@ Files located here are automatically displayed to contributors in any repository
 
 | File | Description |
 |------|-------------|
-| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Contributor Covenant v2.1 - community behavior standards |
+| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Contributor Covenant v3.0 - community behavior standards |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution guidelines, workflow, and commit standards |
 | [SECURITY.md](SECURITY.md) | Security policy and vulnerability reporting |
 | [SUPPORT.md](SUPPORT.md) | Support channels and how to get help |
@@ -55,6 +59,13 @@ Files located here are automatically displayed to contributors in any repository
 | [CITATION.cff](CITATION.cff) | Citation metadata for academic references |
 | [CODEOWNERS](CODEOWNERS) | Default code ownership rules |
 | [LICENSE](LICENSE) | Proprietary license |
+
+### Automation Files
+
+| File | Description |
+|------|-------------|
+| [dependabot.yml](.github/dependabot.yml) | Automated dependency updates for GitHub Actions and NuGet |
+| [release.yml](.github/release.yml) | Configuration for auto-generated release notes |
 
 ### Issue Templates
 
@@ -100,6 +111,16 @@ Labels are defined in [`labels.yml`](labels.yml) and organized by category:
 | `effort:*` | Size estimation | trivial, small, medium, large |
 | `scope:*` | Semver impact | breaking, minor, patch |
 
+### Special Labels
+
+- `good first issue` - Good for newcomers
+- `help wanted` - Extra attention needed
+- `dependencies` - Dependency updates
+- `breaking-change` - Breaking changes
+- `stale` - No recent activity
+- `needs-reproduction` - Bug needs reproduction case
+- `awaiting-response` - Waiting for author response
+
 ## Usage
 
 ### For Organization Repositories
@@ -123,6 +144,13 @@ jobs:
 2. Click **New workflow**
 3. Find "Melodic .NET CI" or "Melodic .NET Release" under organization templates
 4. Click **Configure** to add the workflow
+
+## Review Schedule
+
+- **Quarterly**: Community health files review
+- **Monthly**: GitHub Actions version check for security updates
+- **Annually**: Label taxonomy review
+- **As-needed**: When GitHub introduces new features
 
 ## Contributing
 

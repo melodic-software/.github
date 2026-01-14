@@ -1,0 +1,51 @@
+# Last reviewed: 2026-01-14
+# GitHub auto-generated release notes configuration
+# https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes
+
+changelog:
+  exclude:
+    labels:
+      - "status:duplicate"
+      - "status:invalid"
+      - "status:wontfix"
+    authors:
+      - "dependabot"
+      - "dependabot[bot]"
+
+  categories:
+    - title: "Breaking Changes"
+      labels:
+        - "scope:breaking"
+        - "breaking-change"
+
+    - title: "New Features"
+      labels:
+        - "type:feature"
+        - "scope:minor"
+
+    - title: "Enhancements"
+      labels:
+        - "type:enhancement"
+        - "type:perf"
+
+    - title: "Bug Fixes"
+      labels:
+        - "type:bug"
+        - "scope:patch"
+
+    - title: "Security"
+      labels:
+        - "type:security"
+
+    - title: "Documentation"
+      labels:
+        - "type:docs"
+
+    - title: "Dependencies"
+      labels:
+        - "dependencies"
+        - "type:chore"
+
+    - title: "Other Changes"
+      labels:
+        - "*"
