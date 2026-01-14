@@ -1,0 +1,7 @@
+{
+  "name": "Melodic .NET Release",
+  "description": "Release workflow for .NET projects with NuGet packaging and GitHub releases.",
+  "iconName": "rocket",
+  "categories": ["C#", ".NET", "CD", "Release", "Continuous Deployment"],
+  "filePatterns": [".*\\.sln$", ".*\\.slnx$", ".*\\.csproj$"]
+}

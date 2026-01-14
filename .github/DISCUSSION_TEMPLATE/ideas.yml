@@ -1,15 +1,57 @@
-title: "Idea: "
+title: "[Idea] "
 labels: ["type:idea"]
 body:
   - type: markdown
     attributes:
       value: |
-        Share an idea or proposal for the project.
+        Share your ideas for improving Melodic Software projects. Great ideas often start here before becoming feature requests!
+
+        **Voting**: Use 👍 reactions to show support for ideas you like.
 
   - type: textarea
-    id: idea
+    id: problem
     attributes:
-      label: The Idea
-      description: Describe your idea in detail.
+      label: Problem to Solve
+      description: What problem or opportunity does this idea address?
     validations:
       required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Idea
+      description: What's your suggested approach or solution?
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Expected Impact
+      description: What would improve if this is implemented? Who benefits?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      description: How big is this idea?
+      options:
+        - Small improvement
+        - Medium feature
+        - Large initiative
+        - Architectural change
+      default: 0
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Have you considered other approaches?
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Links, examples, or inspiration from other projects

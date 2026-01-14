@@ -1,0 +1,115 @@
+name: Reusable .NET Build
+
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        description: '.NET SDK version'
+        required: false
+        type: string
+        default: '10.0.x'
+      configuration:
+        description: 'Build configuration'
+        required: false
+        type: string
+        default: 'Release'
+      solution-path:
+        description: 'Path to solution file (leave empty for auto-detect)'
+        required: false
+        type: string
+        default: ''
+      run-tests:
+        description: 'Run tests after build'
+        required: false
+        type: boolean
+        default: true
+      upload-artifacts:
+        description: 'Upload build artifacts'
+        required: false
+        type: boolean
+        default: false
+      artifact-path:
+        description: 'Path to artifacts to upload'
+        required: false
+        type: string
+        default: '**/bin/Release/**'
+      artifact-name:
+        description: 'Name for uploaded artifact'
+        required: false
+        type: string
+        default: 'build-artifacts'
+    outputs:
+      build-result:
+        description: 'Build result (success/failure)'
+        value: ${{ jobs.build.outputs.result }}
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.build.outcome }}
+
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      NUGET_XMLDOC_MODE: skip
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ inputs.solution-path }}
+
+      - name: Build
+        id: build
+        run: dotnet build ${{ inputs.solution-path }} --no-restore --configuration ${{ inputs.configuration }}
+
+      - name: Test
+        if: inputs.run-tests
+        run: |
+          dotnet test ${{ inputs.solution-path }} \
+            --no-build \
+            --configuration ${{ inputs.configuration }} \
+            --verbosity normal \
+            --logger "trx;LogFileName=test-results.trx" \
+            --collect:"XPlat Code Coverage"
+
+      - name: Upload test results
+        if: inputs.run-tests && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/test-results.trx'
+          retention-days: 7
+
+      - name: Upload code coverage
+        if: inputs.run-tests && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: '**/coverage.cobertura.xml'
+          retention-days: 7
+
+      - name: Upload build artifacts
+        if: inputs.upload-artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ${{ inputs.artifact-path }}
+          retention-days: 30

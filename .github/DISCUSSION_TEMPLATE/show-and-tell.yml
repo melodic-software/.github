@@ -1,0 +1,66 @@
+title: "[Show & Tell] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share what you've built with Melodic Software projects! We love seeing how the community uses our tools.
+
+  - type: textarea
+    id: project
+    attributes:
+      label: What Did You Build?
+      description: Tell us about your project or implementation
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: What are you sharing?
+      options:
+        - Project / Application
+        - Integration / Plugin
+        - Tutorial / Guide
+        - Code snippet / Pattern
+        - Tool / Utility
+        - Other
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: highlights
+    attributes:
+      label: Highlights
+      description: What's interesting or unique about your implementation?
+
+  - type: textarea
+    id: challenges
+    attributes:
+      label: Challenges & Solutions
+      description: Any challenges you faced and how you solved them?
+
+  - type: textarea
+    id: links
+    attributes:
+      label: Links
+      description: Links to your project, demo, or code (if public)
+      placeholder: |
+        - Repository:
+        - Demo:
+        - Blog post:
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / Demo
+      description: Share screenshots or GIFs of your project (drag and drop images)
+
+  - type: checkboxes
+    id: feedback
+    attributes:
+      label: Feedback Welcome?
+      options:
+        - label: I'm open to feedback and suggestions

@@ -1,0 +1,41 @@
+name: Sync Labels
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'labels.yml'
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Dry run (no changes)'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync:
+    name: Sync Labels to .github Repository
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync labels
+        uses: EndBug/label-sync@v2
+        with:
+          config-file: labels.yml
+          dry-run: ${{ inputs.dry-run || false }}
+          delete-other-labels: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Note: To sync labels across all org repos, you would need:
+  # 1. A PAT with repo scope for all target repos
+  # 2. A matrix strategy to iterate over repos
+  # This workflow syncs to the .github repo only by default.

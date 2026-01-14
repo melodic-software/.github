@@ -1,3 +1,5 @@
+<!-- Last reviewed: 2026-01-14 -->
+
 # Contributor Covenant Code of Conduct
 
 ## Our Pledge

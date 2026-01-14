@@ -1,0 +1,61 @@
+title: "[Announcement] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Note:** This category is for maintainer announcements. Community members should use other discussion categories.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Announcement Type
+      description: What type of announcement is this?
+      options:
+        - Release
+        - Breaking change
+        - Deprecation notice
+        - New feature
+        - Security advisory
+        - Community update
+        - Event
+        - Other
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Brief summary of the announcement
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Full details of the announcement
+
+  - type: textarea
+    id: action
+    attributes:
+      label: Action Required
+      description: What action (if any) do users need to take?
+      placeholder: |
+        - [ ] Update to version X.Y.Z
+        - [ ] Review migration guide
+        - [ ] No action required
+
+  - type: textarea
+    id: timeline
+    attributes:
+      label: Timeline
+      description: Important dates or deadlines related to this announcement
+
+  - type: textarea
+    id: links
+    attributes:
+      label: Related Links
+      description: Links to release notes, documentation, or other resources

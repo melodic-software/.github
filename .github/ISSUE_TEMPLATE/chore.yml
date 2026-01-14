@@ -1,0 +1,91 @@
+name: Chore / Maintenance
+description: Request maintenance work, dependency updates, or housekeeping tasks
+title: "[Chore]: "
+labels: ["type:chore", "status:needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for maintenance tasks, dependency updates, or housekeeping work.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Chore Type
+      description: What kind of maintenance is needed?
+      options:
+        - Dependency update
+        - Configuration change
+        - Code cleanup / refactoring
+        - CI/CD improvement
+        - Performance optimization
+        - Technical debt
+        - Tooling update
+        - Other maintenance
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What maintenance work needs to be done?
+      placeholder: "Describe the task in detail..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: justification
+    attributes:
+      label: Justification
+      description: Why is this maintenance needed? What problem does it solve?
+      placeholder: |
+        - Security vulnerability
+        - Performance issue
+        - Technical debt accumulation
+        - Outdated dependencies
+    validations:
+      required: true
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgency
+      description: How urgent is this maintenance task?
+      options:
+        - Low - Can be done when convenient
+        - Medium - Should be addressed in next sprint
+        - High - Blocking other work or security concern
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected-areas
+    attributes:
+      label: Affected Areas
+      description: Which parts of the codebase are affected?
+      placeholder: |
+        - List affected modules
+        - List affected services
+        - List affected configurations
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How will we know when this maintenance is complete?
+      placeholder: |
+        - [ ] Dependencies are updated to latest stable versions
+        - [ ] All tests pass
+        - [ ] No new security vulnerabilities
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I would be willing to help with this maintenance task

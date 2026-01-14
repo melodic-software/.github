@@ -1,0 +1,30 @@
+# CODEOWNERS - Default code ownership for Melodic Software
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# These owners will be requested for review when someone opens a pull request
+# that modifies code that they own. Order matters - later patterns take precedence.
+#
+# Note: This file provides organization-wide defaults. Individual repositories
+# can override by creating their own CODEOWNERS file.
+
+# Default owners for everything (fallback)
+* @melodic-software/maintainers
+
+# Community health files
+CODE_OF_CONDUCT.md @melodic-software/maintainers
+CONTRIBUTING.md @melodic-software/maintainers
+GOVERNANCE.md @melodic-software/maintainers
+SECURITY.md @melodic-software/maintainers
+SUPPORT.md @melodic-software/maintainers
+
+# GitHub configuration
+.github/ @melodic-software/maintainers
+
+# Workflow templates
+workflow-templates/ @melodic-software/maintainers
+
+# Organization profile
+profile/ @melodic-software/maintainers
+
+# Labels configuration
+labels.yml @melodic-software/maintainers

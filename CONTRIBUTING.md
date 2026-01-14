@@ -1,4 +1,4 @@
-<!-- Last reviewed: 2026-01-05 -->
+<!-- Last reviewed: 2026-01-14 -->
 
 # Contributing to Melodic Software Projects
 
@@ -81,6 +81,20 @@ chore: update NuGet packages to latest versions
 - All tests must pass
 - No new analyzer warnings (treated as errors)
 - Architecture tests must pass (if present)
+
+## Labels
+
+We use a standardized label system across all repositories. When creating issues or PRs, apply appropriate labels:
+
+| Category | Purpose | Examples |
+|----------|---------|----------|
+| `type:*` | What kind of change | `type:bug`, `type:feature`, `type:docs` |
+| `status:*` | Current state | `status:needs-triage`, `status:in-progress` |
+| `priority:*` | Urgency | `priority:high`, `priority:low` |
+| `area:*` | Affected component | `area:frontend`, `area:api` |
+| `effort:*` | Size estimate | `effort:small`, `effort:large` |
+
+See [`labels.yml`](labels.yml) for the complete label definitions.
 
 ## Security
 

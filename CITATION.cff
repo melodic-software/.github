@@ -2,6 +2,8 @@ cff-version: 1.2.0
 title: "Melodic Software Ecosystem"
 message: "If you use this software, please cite it as below."
 type: software
+version: "1.0.0"
+date-released: "2026-01-14"
 authors:
   - family-names: "Sexton"
     given-names: "Kyle"
@@ -23,3 +25,5 @@ keywords:
   - "dotnet"
   - "modular-monolith"
   - "architecture"
+  - "clean-architecture"
+  - "domain-driven-design"

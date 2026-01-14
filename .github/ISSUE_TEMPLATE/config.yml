@@ -1,11 +1,11 @@
-blank_issues_enabled: false  # Force users to use templates
+blank_issues_enabled: false
 contact_links:
-  - name: Security Vulnerability
+  - name: Security vulnerabilities
     url: https://github.com/melodic-software/.github/blob/main/SECURITY.md
-    about: Please report security vulnerabilities via our private channel.
-  - name: Discussion & Ideas
+    about: Please review the security policy for reporting instructions.
+  - name: Discussions and ideas
     url: https://github.com/orgs/melodic-software/discussions
-    about: Have a question or idea? Start a discussion instead of an issue.
-  - name: Melodic Support
-    url: mailto:info@melodicsoftware.com
-    about: Contact us for general or business inquiries.
+    about: Start a discussion for questions or ideas.
+  - name: Support
+    url: https://github.com/melodic-software/.github/blob/main/SUPPORT.md
+    about: General questions and support.

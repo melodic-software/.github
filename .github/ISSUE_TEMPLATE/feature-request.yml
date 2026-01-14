@@ -1,7 +1,7 @@
 name: Feature Request
 description: Suggest a new feature or enhancement
 title: "[Feature]: "
-labels: ["type:enhancement"]
+labels: ["type:feature", "status:needs-triage"]
 body:
   - type: markdown
     attributes:
@@ -24,6 +24,16 @@ body:
       description: How should this feature work? Be as specific as possible.
     validations:
       required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How will we know when this feature is complete?
+      placeholder: |
+        - [ ] Users can...
+        - [ ] System should...
+        - [ ] Documentation updated for...
 
   - type: textarea
     id: alternatives
@@ -55,6 +65,8 @@ body:
         - Infrastructure
         - Documentation
         - CI/CD
+        - Security
+        - Performance
         - Other
 
   - type: textarea

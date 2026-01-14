@@ -4,7 +4,30 @@ body:
   - type: markdown
     attributes:
       value: |
-        Ask a question about the project. For bugs, please open an Issue.
+        Ask a question about Melodic Software projects.
+
+        **Before asking:**
+        - 🔍 Search existing discussions and issues
+        - 📖 Check the documentation and README
+        - 🐛 For bugs, please [open an issue](https://github.com/melodic-software/.github/issues/new/choose) instead
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic Area
+      description: What area does your question relate to?
+      options:
+        - Getting started / Setup
+        - Configuration
+        - Architecture / Design
+        - API usage
+        - Performance
+        - Deployment
+        - Testing
+        - Other
+      default: 0
+    validations:
+      required: true
 
   - type: textarea
     id: question
@@ -13,3 +36,23 @@ body:
       description: What would you like to know?
     validations:
       required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: What I've Tried
+      description: What have you already tried or researched?
+      placeholder: |
+        - Checked the README
+        - Searched existing issues
+        - Tried X approach but got Y result
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment (if relevant)
+      description: Your setup details if the question is environment-specific
+      placeholder: |
+        - .NET version:
+        - OS:
+        - IDE:

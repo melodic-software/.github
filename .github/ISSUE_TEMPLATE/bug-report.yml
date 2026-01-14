@@ -2,7 +2,6 @@ name: Bug Report
 description: Report a bug or unexpected behavior
 title: "[Bug]: "
 labels: ["type:bug", "status:needs-triage"]
-# projects: ["melodic-software/1"] # Auto-add to Organization Project 1
 body:
   - type: markdown
     attributes:
@@ -16,7 +15,6 @@ body:
       description: A clear and concise description of the bug.
     validations:
       required: true
-      min_length: 20  # Prevent "it's broken" reports
 
   - type: textarea
     id: steps
@@ -87,6 +85,12 @@ body:
       label: Relevant Logs
       description: Paste any relevant log output or stack traces.
       render: shell
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain the problem. Drag and drop images here.
 
   - type: checkboxes
     id: checklist

@@ -1,0 +1,51 @@
+title: "[General] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Start a general discussion with the community. For bugs, please [open an issue](https://github.com/melodic-software/.github/issues/new/choose) instead.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What type of discussion is this?
+      options:
+        - General question
+        - Architecture discussion
+        - Best practices
+        - Project feedback
+        - Community
+        - Other
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: topic
+    attributes:
+      label: Topic
+      description: What would you like to discuss?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Background, links, or examples that help explain your topic.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: response
+    attributes:
+      label: Expected Response
+      description: What kind of response are you looking for?
+      options:
+        - Open discussion / opinions
+        - Specific guidance
+        - Decision from maintainers
+        - Just sharing / no response needed
+      default: 0

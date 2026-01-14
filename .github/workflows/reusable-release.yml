@@ -1,14 +1,49 @@
 name: Reusable Release
+
 on:
   workflow_call:
     inputs:
       version:
+        description: 'Release version (e.g., v1.0.0)'
         required: true
         type: string
-      dry_run:
+      dry-run:
+        description: 'Dry run (skip actual release creation)'
         required: false
         type: boolean
         default: false
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        type: boolean
+        default: false
+      draft:
+        description: 'Create as draft release'
+        required: false
+        type: boolean
+        default: false
+      generate-notes:
+        description: 'Auto-generate release notes'
+        required: false
+        type: boolean
+        default: true
+      artifact-path:
+        description: 'Path to artifacts to attach (glob pattern)'
+        required: false
+        type: string
+        default: ''
+      body:
+        description: 'Custom release body (markdown)'
+        required: false
+        type: string
+        default: ''
+    outputs:
+      release-url:
+        description: 'URL of the created release'
+        value: ${{ jobs.release.outputs.url }}
+      release-id:
+        description: 'ID of the created release'
+        value: ${{ jobs.release.outputs.id }}
 
 permissions:
   contents: write
@@ -17,15 +52,51 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.create-release.outputs.url }}
+      id: ${{ steps.create-release.outputs.id }}
+
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate version format
+        run: |
+          if [[ ! "${{ inputs.version }}" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
+            echo "::error::Invalid version format. Expected: v1.0.0 or v1.0.0-preview.1"
+            exit 1
+          fi
+
+      - name: Download artifacts
+        if: inputs.artifact-path != '' && !inputs.dry-run
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+
       - name: Create Release
-        if: ${{ !inputs.dry_run }}
+        id: create-release
+        if: ${{ !inputs.dry-run }}
         uses: softprops/action-gh-release@v2
         with:
           name: Release ${{ inputs.version }}
           tag_name: ${{ inputs.version }}
-          generate_release_notes: true
-          draft: false
-          prerelease: false
+          body: ${{ inputs.body }}
+          generate_release_notes: ${{ inputs.generate-notes }}
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+          files: |
+            ${{ inputs.artifact-path != '' && 'release-artifacts/**' || '' }}
+
+      - name: Dry Run Summary
+        if: inputs.dry-run
+        run: |
+          echo "## Dry Run Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Would create release:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${{ inputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Pre-release**: ${{ inputs.prerelease }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Draft**: ${{ inputs.draft }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Generate notes**: ${{ inputs.generate-notes }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Artifacts**: ${{ inputs.artifact-path || 'None' }}" >> $GITHUB_STEP_SUMMARY
