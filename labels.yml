@@ -10,6 +10,7 @@
 - name: "type:bug"
   color: "d73a4a"
   description: "Something isn't working"
+  aliases: ["bug"]
 
 - name: "type:feature"
   color: "0e8a16"
@@ -18,10 +19,12 @@
 - name: "type:enhancement"
   color: "a2eeef"
   description: "Improvement to existing feature"
+  aliases: ["enhancement"]
 
 - name: "type:docs"
   color: "0075ca"
   description: "Documentation only"
+  aliases: ["documentation"]
 
 - name: "type:chore"
   color: "fef2c0"
@@ -42,6 +45,7 @@
 - name: "type:question"
   color: "d876e3"
   description: "Questions or clarification needed"
+  aliases: ["question"]
 
 - name: "type:test"
   color: "bfd4f2"
@@ -78,14 +82,17 @@
 - name: "status:duplicate"
   color: "ededed"
   description: "Duplicate of another issue"
+  aliases: ["duplicate"]
 
 - name: "status:invalid"
   color: "ededed"
   description: "Not a valid issue or out of scope"
+  aliases: ["invalid"]
 
 - name: "status:wontfix"
   color: "ededed"
   description: "Will not be worked on"
+  aliases: ["wontfix"]
 
 - name: "status:on-hold"
   color: "c2e0c6"
