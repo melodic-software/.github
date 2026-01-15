@@ -23,7 +23,7 @@ Create a new workflow `cross-repo-label-sync.yml` that:
 
 1. Uses a matrix strategy to iterate over a configurable list of target repositories
 2. Leverages EndBug/label-sync to apply labels from `labels.yml` to each repository
-3. Requires a PAT with `repo` scope (stored as `ORG_PAT` org secret) for cross-repo access
+3. Requires a PAT with `repo` scope (stored as `LABEL_SYNC_PAT` org secret) for cross-repo access
 4. Triggers on push to `labels.yml` and supports manual trigger with dry-run option
 5. Uses `continue-on-error` to prevent one repo failure from stopping the entire sync
 6. Generates a job summary showing success/failure status for each repository
@@ -53,7 +53,7 @@ Create a new workflow `cross-repo-label-sync.yml` that:
    - Consider schedule trigger for periodic sync (optional)
 
 3. **Set up permissions and secrets**
-   - Document requirement for `ORG_PAT` org secret with `repo` scope
+   - Document requirement for `LABEL_SYNC_PAT` org secret with `repo` scope
    - Use minimal workflow permissions (`contents: read`)
    - PAT provides cross-repo write access for labels
 
@@ -70,7 +70,7 @@ Create a new workflow `cross-repo-label-sync.yml` that:
      - `config-file: ./labels.yml`
      - `dry-run: ${{ inputs.dry-run || false }}`
      - `delete-other-labels: false` (preserve repo-specific labels)
-     - `token: ${{ secrets.ORG_PAT }}`
+     - `token: ${{ secrets.LABEL_SYNC_PAT }}`
    - Target repository via `repository` input (if supported) or environment variable
 
 6. **Handle EndBug/label-sync repository targeting**
@@ -94,7 +94,7 @@ Create a new workflow `cross-repo-label-sync.yml` that:
 
 9. **Update documentation**
    - Add workflow to CLAUDE.md reusable workflows table
-   - Document ORG_PAT secret requirement
+   - Document LABEL_SYNC_PAT secret requirement
    - Document how to add new repositories to the sync list
 
 ## Step by Step Tasks
@@ -163,7 +163,7 @@ Create a new workflow `cross-repo-label-sync.yml` that:
 - [ ] Job summary displays table with each repo's sync status
 - [ ] Summary shows ✅ for success, ❌ for failure with error details
 - [ ] Summary shows total counts (succeeded, failed, skipped)
-- [ ] Workflow uses `ORG_PAT` secret for cross-repo authentication
+- [ ] Workflow uses `LABEL_SYNC_PAT` secret for cross-repo authentication
 - [ ] `delete-other-labels` is set to `false` to preserve repo-specific labels
 - [ ] Workflow completes within reasonable time (< 10 minutes for ~5 repos)
 - [ ] CLAUDE.md is updated with new workflow documentation
@@ -245,7 +245,7 @@ Research indicates EndBug/label-sync v2 syncs to the repo specified by `$GITHUB_
 
 ### Security Considerations
 
-- `ORG_PAT` must have `repo` scope for private repos or `public_repo` for public only
+- `LABEL_SYNC_PAT` must have `repo` scope for private repos or `public_repo` for public only
 - PAT should be scoped to organization (not user account)
 - Consider using GitHub App instead of PAT for better auditability
 - Never log the PAT value; use secret masking
@@ -264,7 +264,54 @@ repos:
 
 ### Dependencies
 
-- EndBug/label-sync@v2.3.3 (or latest)
+- srealmoreno/label-sync-action@v2 (natively supports multi-repo sync)
 - GitHub CLI (gh) - pre-installed on ubuntu-latest
-- `ORG_PAT` organization secret with `repo` scope
+- `LABEL_SYNC_PAT` organization secret with Issues: Read and write permission
 - GitHub Actions runners (ubuntu-latest)
+
+### PAT Creation Steps (Fine-grained Token)
+
+To create or regenerate the `LABEL_SYNC_PAT` token:
+
+1. **Navigate to PAT creation page**
+   - Go to: https://github.com/settings/personal-access-tokens/new
+
+2. **Configure token basics**
+   - **Token name**: `Cross-Repo Label Sync`
+   - **Description**: `PAT for syncing labels from .github repo to all organization repositories`
+   - **Resource owner**: Select `melodic-software` (organization)
+   - **Expiration**: `366 days` (maximum allowed by org policy)
+
+3. **Configure repository access**
+   - Select: **All repositories**
+   - This applies to all current and future repositories in the organization
+
+4. **Add permissions**
+   - Click **+ Add permissions**
+   - Search for `Issues`
+   - Check **Issues** checkbox
+   - Change access level from "Read-only" to **Read and write**
+   - Note: **Metadata (Required)** will be auto-added as Read-only
+
+5. **Generate and save token**
+   - Click **Generate token**
+   - **Copy the token immediately** (you won't see it again!)
+
+6. **Add as repository secret**
+   - Go to: https://github.com/melodic-software/.github/settings/secrets/actions
+   - Click **New repository secret**
+   - **Name**: `LABEL_SYNC_PAT`
+   - **Value**: Paste the token
+   - Click **Add secret**
+
+7. **Test the workflow**
+   - Go to: https://github.com/melodic-software/.github/actions/workflows/cross-repo-label-sync.yml
+   - Click **Run workflow** → **Run workflow**
+   - Verify all target repositories sync successfully
+
+### Token Renewal Reminder
+
+The token expires after 366 days. Set a calendar reminder for ~350 days to regenerate before expiration. When renewing:
+1. Create new token following steps above
+2. Update the `LABEL_SYNC_PAT` organization secret with new value
+3. Delete the old token from https://github.com/settings/tokens

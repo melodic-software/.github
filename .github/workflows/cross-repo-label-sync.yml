@@ -5,6 +5,9 @@ name: Cross-Repo Label Sync
 # Uses srealmoreno/label-sync-action which natively supports multi-repo sync
 # Note: This action does not support dry-run mode. Test changes on a single
 # repo first by temporarily modifying the repositories list.
+#
+# REQUIRED: LABEL_SYNC_PAT repository secret with 'Issues: Read and write' permission
+# See: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
 
 on:
   push:
@@ -30,6 +33,27 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Validate LABEL_SYNC_PAT secret exists
+        env:
+          LABEL_SYNC_PAT: ${{ secrets.LABEL_SYNC_PAT }}
+        run: |
+          if [ -z "$LABEL_SYNC_PAT" ]; then
+            echo "::error::LABEL_SYNC_PAT secret is not configured!"
+            echo ""
+            echo "This workflow requires a LABEL_SYNC_PAT secret with 'Issues: Read and write' permission."
+            echo ""
+            echo "To fix this:"
+            echo "1. Create a Fine-grained PAT at: https://github.com/settings/personal-access-tokens/new"
+            echo "   - Resource owner: melodic-software"
+            echo "   - Repository access: All repositories"
+            echo "   - Permissions: Issues (Read and write)"
+            echo "2. Add it as a repository secret named 'LABEL_SYNC_PAT' at:"
+            echo "   https://github.com/melodic-software/.github/settings/secrets/actions"
+            echo ""
+            exit 1
+          fi
+          echo "LABEL_SYNC_PAT secret is configured"
+
       - name: Checkout labels configuration
         uses: actions/checkout@v4
         with:
@@ -40,7 +64,7 @@ jobs:
       - name: Sync labels to organization repositories
         uses: srealmoreno/label-sync-action@v2
         with:
-          token: ${{ secrets.ORG_PAT }}
+          token: ${{ secrets.LABEL_SYNC_PAT }}
 
           # Target repositories (owner/repo format)
           # Add new repositories here as they are created
