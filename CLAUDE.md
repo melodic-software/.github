@@ -138,7 +138,8 @@ Available reusable workflows in `.github/workflows/`:
 | `reusable-release.yml` | Create GitHub releases with artifacts |
 | `reusable-codeql.yml` | Security analysis with CodeQL |
 | `reusable-dotnet-build.yml` | .NET build with caching and test results |
-| `label-sync.yml` | Synchronize labels from labels.yml |
+| `label-sync.yml` | Synchronize labels from labels.yml to .github repo |
+| `cross-repo-label-sync.yml` | Sync labels to all org repos (requires `ORG_PAT` secret) |
 
 Call reusable workflows with:
 

@@ -1,0 +1,125 @@
+# Last reviewed: 2026-01-14
+name: Stale Issues
+
+on:
+  schedule:
+    # Run daily at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      debug-only:
+        description: 'Dry run - only log actions without making changes'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    name: Mark Stale Issues and PRs
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Mark stale issues and PRs
+        uses: actions/stale@v9
+        with:
+          # Label configuration - use lowercase to match labels.yml
+          stale-issue-label: stale
+          stale-pr-label: stale
+
+          # Issue timing: 60 days to stale, 14 days to close
+          days-before-issue-stale: 60
+          days-before-issue-close: 14
+
+          # PR timing: 30 days to stale, 7 days to close (PRs are more time-sensitive)
+          days-before-pr-stale: 30
+          days-before-pr-close: 7
+
+          # Friendly stale message for issues
+          stale-issue-message: >
+            This issue has been automatically marked as stale because it has not had
+            any activity in the last 60 days. It will be closed in 14 days if no
+            further activity occurs.
+
+
+            If this issue is still relevant:
+
+            - Add a comment with an update or additional context
+
+            - Remove the `stale` label
+
+
+            If this issue is no longer needed, no action is required and it will be
+            closed automatically.
+
+
+            Thank you for your contributions!
+
+          # Friendly close message for issues
+          close-issue-message: >
+            This issue has been automatically closed due to inactivity. If this issue
+            is still relevant, feel free to reopen it or create a new issue with
+            updated context.
+
+
+            Thank you for your understanding!
+
+          # Friendly stale message for PRs
+          stale-pr-message: >
+            This pull request has been automatically marked as stale because it has
+            not had any activity in the last 30 days. It will be closed in 7 days if
+            no further activity occurs.
+
+
+            If this PR is still in progress:
+
+            - Add a comment with a status update
+
+            - Push new commits to the branch
+
+            - Remove the `stale` label
+
+
+            If this PR is no longer needed, no action is required and it will be
+            closed automatically.
+
+
+            Thank you for your contributions!
+
+          # Friendly close message for PRs
+          close-pr-message: >
+            This pull request has been automatically closed due to inactivity. If you
+            would like to continue this work, feel free to reopen this PR or create a
+            new one with the updated changes.
+
+
+            Thank you for your understanding!
+
+          # Close reason for issues
+          close-issue-reason: not_planned
+
+          # Exempt labels - high priority and blocked items should not auto-close
+          exempt-issue-labels: 'priority:critical,priority:high,status:blocked,status:on-hold'
+          exempt-pr-labels: 'priority:critical,priority:high,status:blocked,status:on-hold'
+
+          # Exempt draft PRs - work in progress should not be marked stale
+          exempt-draft-pr: true
+
+          # Exempt items with milestones - these are actively planned
+          exempt-all-milestones: true
+
+          # Remove stale label when item receives activity
+          remove-stale-when-updated: true
+
+          # Rate limiting - process up to 30 items per run to avoid API limits
+          operations-per-run: 30
+
+          # Enable debug/dry-run mode when triggered manually with debug flag
+          debug-only: ${{ inputs.debug-only || false }}
+
+          # Log statistics for monitoring
+          enable-statistics: true

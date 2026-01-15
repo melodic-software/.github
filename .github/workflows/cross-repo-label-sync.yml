@@ -1,0 +1,80 @@
+# Last reviewed: 2026-01-14
+name: Cross-Repo Label Sync
+
+# Syncs labels from labels.yml to all organization repositories
+# Uses srealmoreno/label-sync-action which natively supports multi-repo sync
+# Note: This action does not support dry-run mode. Test changes on a single
+# repo first by temporarily modifying the repositories list.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'labels.yml'
+  workflow_dispatch:
+    inputs:
+      clean-labels:
+        description: 'Remove labels not in config (dangerous - use with caution!)'
+        required: false
+        type: boolean
+        default: false
+
+# Minimal permissions - PAT provides cross-repo access
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    name: Sync Labels to Organization Repos
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout labels configuration
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            labels.yml
+          sparse-checkout-cone-mode: false
+
+      - name: Sync labels to organization repositories
+        uses: srealmoreno/label-sync-action@v2
+        with:
+          token: ${{ secrets.ORG_PAT }}
+
+          # Target repositories (owner/repo format)
+          # Add new repositories here as they are created
+          repositories: |
+            melodic-software/medley
+            melodic-software/citadel
+            melodic-software/identity-server
+            melodic-software/membrain
+
+          # Source configuration file
+          config-file: labels.yml
+
+          # Preserve repository-specific labels (don't delete unlisted labels)
+          # Set to true only if you want to enforce strict label conformity
+          clean-labels: ${{ inputs.clean-labels || false }}
+
+      - name: Generate job summary
+        if: always()
+        run: |
+          echo "# Cross-Repository Label Sync" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Target Repositories" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- melodic-software/medley" >> $GITHUB_STEP_SUMMARY
+          echo "- melodic-software/citadel" >> $GITHUB_STEP_SUMMARY
+          echo "- melodic-software/identity-server" >> $GITHUB_STEP_SUMMARY
+          echo "- melodic-software/membrain" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Source**: \`labels.yml\` in \`.github\` repository" >> $GITHUB_STEP_SUMMARY
+          echo "- **Clean Labels**: ${{ inputs.clean-labels || false }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Action**: [srealmoreno/label-sync-action@v2](https://github.com/srealmoreno/label-sync-action)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "_Check action logs above for detailed sync results per repository._" >> $GITHUB_STEP_SUMMARY

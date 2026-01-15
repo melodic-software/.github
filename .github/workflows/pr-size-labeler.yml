@@ -1,0 +1,49 @@
+# Last reviewed: 2026-01-14
+# Automatically labels PRs based on lines changed using effort labels
+# Docs: https://github.com/CodelyTV/pr-size-labeler
+name: PR Size Labeler
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
+  issues: write
+
+jobs:
+  label-size:
+    name: Label PR Size
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Apply size label
+        uses: codelytv/pr-size-labeler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Map size categories to existing effort labels
+          xs_label: "effort:trivial"
+          xs_max_size: "10"
+          s_label: "effort:small"
+          s_max_size: "100"
+          m_label: "effort:medium"
+          m_max_size: "500"
+          l_label: "effort:large"
+          l_max_size: "1000"
+          xl_label: "effort:epic"
+          # Exclude auto-generated and lock files from line count
+          # Note: Known issue with files_to_ignore - may not work for all patterns
+          # See: https://github.com/CodelyTV/pr-size-labeler/issues
+          files_to_ignore: "package-lock.json yarn.lock pnpm-lock.yaml *.lock *.Designer.cs *.g.cs *.generated.cs *.min.js *.min.css"
+          # Informative message for oversized PRs (does not block merge)
+          message_if_xl: |
+            ⚠️ **Large PR Warning**
+
+            This PR exceeds 1000 lines of code changes. Consider breaking it into smaller, more focused PRs to:
+            - Make code review more effective
+            - Reduce risk of introducing bugs
+            - Enable faster iteration
+
+            If this PR cannot be reasonably split, please ensure the description clearly explains the scope of changes.
