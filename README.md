@@ -1,4 +1,4 @@
-<!-- Last reviewed: 2026-01-14 -->
+<!-- Last reviewed: 2026-01-15 -->
 
 # Melodic Software - GitHub Community Defaults
 
@@ -6,42 +6,28 @@ This repository contains default community health files for the [Melodic Softwar
 
 ## Purpose
 
-Files located here are automatically displayed to contributors in any repository within the organization that does not have its own version of these files. This ensures a consistent contributor experience across all our projects.
+Files located here are automatically inherited by all repositories in the organization that don't have their own versions. This ensures a consistent contributor experience across all projects.
 
 ## Repository Structure
 
 ```
 .github/
 ├── .github/
-│   ├── ISSUE_TEMPLATE/           # Issue forms
-│   │   ├── bug-report.yml        # Bug report template
-│   │   ├── feature-request.yml   # Feature request template
-│   │   ├── documentation.yml     # Documentation issue template
-│   │   ├── chore.yml             # Maintenance task template
-│   │   └── config.yml            # Issue chooser configuration
-│   ├── DISCUSSION_TEMPLATE/      # Discussion forms
-│   │   ├── general.yml           # General discussions
-│   │   ├── ideas.yml             # Ideas and brainstorming
-│   │   ├── q-a.yml               # Questions and answers
-│   │   ├── announcements.yml     # Organization announcements
-│   │   └── show-and-tell.yml     # Community showcases
-│   ├── workflows/                # Reusable workflows
-│   │   ├── reusable-release.yml  # Release automation
-│   │   ├── reusable-codeql.yml   # CodeQL security analysis
-│   │   ├── reusable-dotnet-build.yml  # .NET build pipeline
-│   │   └── label-sync.yml        # Label synchronization
+│   ├── ISSUE_TEMPLATE/           # Issue forms (bug, feature, docs, chore)
+│   ├── DISCUSSION_TEMPLATE/      # Discussion forms (general, ideas, Q&A)
+│   ├── workflows/                # Reusable and automation workflows
 │   ├── PULL_REQUEST_TEMPLATE.md  # PR description template
 │   ├── dependabot.yml            # Automated dependency updates
 │   └── release.yml               # Auto-generated release notes config
 ├── workflow-templates/           # Starter workflows for org repos
-│   ├── dotnet-ci.yml             # .NET CI pipeline
-│   ├── dotnet-ci.properties.json
-│   ├── dotnet-release.yml        # .NET release pipeline
-│   └── dotnet-release.properties.json
+├── docs/adr/                     # Architecture decision records
+├── specs/                        # Feature specifications
+├── .claude/commands/             # Claude Code custom commands
 ├── profile/README.md             # Organization profile
 ├── labels.yml                    # Standard label definitions
 ├── CODEOWNERS                    # Default code ownership
-└── [Community Health Files]
+├── CITATION.cff                  # Citation metadata
+└── [Community Health Files]      # CODE_OF_CONDUCT, CONTRIBUTING, etc.
 ```
 
 ## Included Defaults
@@ -55,41 +41,49 @@ Files located here are automatically displayed to contributors in any repository
 | [SECURITY.md](SECURITY.md) | Security policy and vulnerability reporting |
 | [SUPPORT.md](SUPPORT.md) | Support channels and how to get help |
 | [GOVERNANCE.md](GOVERNANCE.md) | Project governance and decision-making |
+| [ROADMAP.md](ROADMAP.md) | Project roadmap and planned features |
 | [FUNDING.yml](FUNDING.yml) | Sponsor button configuration |
 | [CITATION.cff](CITATION.cff) | Citation metadata for academic references |
 | [CODEOWNERS](CODEOWNERS) | Default code ownership rules |
 | [LICENSE](LICENSE) | Proprietary license |
 
-### Automation Files
-
-| File | Description |
-|------|-------------|
-| [dependabot.yml](.github/dependabot.yml) | Automated dependency updates for GitHub Actions and NuGet |
-| [release.yml](.github/release.yml) | Configuration for auto-generated release notes |
-
 ### Issue Templates
 
-- **Bug Report** - Report bugs with severity, environment, and reproduction steps
-- **Feature Request** - Propose new features with acceptance criteria
-- **Documentation** - Report docs issues or request improvements
-- **Chore/Maintenance** - Request maintenance work or dependency updates
+| Template | Description |
+|----------|-------------|
+| `bug-report.yml` | Report bugs with severity, environment, and steps |
+| `feature-request.yml` | Propose features with acceptance criteria |
+| `documentation.yml` | Report docs issues or request improvements |
+| `chore.yml` | Request maintenance work or dependency updates |
 
 ### Discussion Templates
 
-- **General** - Open discussions with category selection
-- **Ideas** - Feature ideas with voting support
-- **Q&A** - Questions with topic categorization
-- **Announcements** - Maintainer announcements
-- **Show & Tell** - Community project showcases
+| Template | Description |
+|----------|-------------|
+| `general.yml` | Open discussions with category selection |
+| `ideas.yml` | Feature ideas with voting support |
+| `q-a.yml` | Questions with topic categorization |
+| `announcements.yml` | Maintainer announcements |
+| `show-and-tell.yml` | Community project showcases |
 
-### Reusable Workflows
+### Workflows
+
+#### Reusable Workflows
 
 | Workflow | Description |
 |----------|-------------|
 | `reusable-release.yml` | GitHub release creation with artifacts |
 | `reusable-codeql.yml` | CodeQL security analysis |
 | `reusable-dotnet-build.yml` | .NET build with caching and test results |
-| `label-sync.yml` | Synchronize labels from `labels.yml` |
+
+#### Automation Workflows
+
+| Workflow | Description |
+|----------|-------------|
+| `label-sync.yml` | Sync labels from `labels.yml` to this repo |
+| `cross-repo-label-sync.yml` | Sync labels to all organization repositories |
+| `pr-size-labeler.yml` | Label PRs by size using effort labels |
+| `stale.yml` | Mark/close stale issues and PRs |
 
 ### Workflow Templates
 
@@ -97,6 +91,13 @@ Files located here are automatically displayed to contributors in any repository
 |----------|-------------|
 | `dotnet-ci.yml` | Standard .NET CI pipeline with NuGet caching |
 | `dotnet-release.yml` | Release workflow with NuGet packaging |
+
+### Automation Files
+
+| File | Description |
+|------|-------------|
+| [dependabot.yml](.github/dependabot.yml) | Automated dependency updates (Actions, NuGet) |
+| [release.yml](.github/release.yml) | Auto-generated release notes configuration |
 
 ## Labels
 

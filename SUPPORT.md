@@ -1,4 +1,5 @@
-<!-- Last reviewed: 2026-01-14 -->
+<!-- Last reviewed: 2026-01-15 -->
+<!--https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-support-resources-to-your-project-->
 
 # Support
 

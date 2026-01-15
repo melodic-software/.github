@@ -1,4 +1,4 @@
-<!-- Last reviewed: 2026-01-14 -->
+<!-- Last reviewed: 2026-01-15 -->
 # Roadmap
 
 This document tracks future enhancements, technical debt, and improvement opportunities for the Melodic Software `.github` repository.
@@ -17,11 +17,7 @@ The `.github` repository is **well-established** with comprehensive coverage:
 
 ### High Priority
 
-| Enhancement | Description | Spec |
-|-------------|-------------|------|
-| Cross-Repo Label Sync | Extend label-sync to synchronize labels across all org repos (requires PAT) | [spec](specs/enhancement-cross-repo-label-sync.md) |
-| Stale Issue Management | Auto-label and close inactive issues/PRs after configurable period | [spec](specs/enhancement-stale-management.md) |
-| PR Size Labeler | Automatically label PRs by size (trivial/small/medium/large/epic) | [spec](specs/enhancement-pr-size-labeler.md) |
+*No high-priority items currently pending.*
 
 ### Medium Priority
 
@@ -42,13 +38,15 @@ The `.github` repository is **well-established** with comprehensive coverage:
 
 ### Label Sync Architecture
 
-**Decision**: Labels are managed via `EndBug/label-sync` action, currently syncing to `.github` repo only.
+**Decision**: Labels are managed via two complementary workflows for different scopes.
 
 **Context**: GitHub does not automatically inherit labels from `.github` repos like it does with community health files. Organization default labels are only applied once at repo creation and don't stay in sync.
 
-**Current State**: The label-sync workflow syncs 49 labels to the `.github` repo. Other repos must either:
-1. Have the workflow added individually
-2. Wait for cross-repo sync enhancement (requires PAT with repo scope)
+**Current State**: Two workflows handle label synchronization:
+1. `label-sync.yml` - Syncs 45 labels to the `.github` repository using `EndBug/label-sync@v2`
+2. `cross-repo-label-sync.yml` - Syncs labels to all specified org repositories using `srealmoreno/label-sync-action@v2` with a matrix strategy and `LABEL_SYNC_PAT` secret
+
+The matrix approach processes one repository at a time to avoid GitHub API rate limits.
 
 **Why it matters**: Consistent labels enable better triage, filtering, and automation across all repos.
 
@@ -58,7 +56,10 @@ See [ADR-001](docs/adr/001-label-sync-strategy.md) for full decision record.
 
 | Enhancement | Completed | Notes |
 |-------------|-----------|-------|
-| Label taxonomy standardization | 2026-01-14 | 49 namespaced labels with aliases |
+| Cross-Repo Label Sync | 2026-01-15 | Matrix strategy workflow with `LABEL_SYNC_PAT` |
+| Stale Issue Management | 2026-01-15 | Daily workflow using `actions/stale@v9` |
+| PR Size Labeler | 2026-01-15 | Maps to `effort:*` labels using `codelytv/pr-size-labeler` |
+| Label taxonomy standardization | 2026-01-14 | 45 namespaced labels with aliases |
 | Label sync workflow | 2026-01-14 | Fixed config-file path issue |
 | Community health audit | 2026-01-14 | All files modernized |
 

@@ -1,4 +1,5 @@
-<!-- Last reviewed: 2026-01-14 -->
+<!-- Last reviewed: 2026-01-15 -->
+<!--https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/adding-a-security-policy-to-your-repository-->
 
 # Security Policy
 

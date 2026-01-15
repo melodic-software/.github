@@ -1,16 +1,15 @@
-<!-- Last reviewed: 2026-01-14 -->
+<!-- Last reviewed: 2026-01-15 -->
+<!--https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors-->
 
 # Contributing to Melodic Software Projects
 
 Thank you for your interest in contributing! This document outlines the general guidelines for contributing to repositories within the [Melodic Software](https://github.com/melodic-software) organization.
 
-**Note:** Specific repositories may have their own `CONTRIBUTING.md` files with project-specific build instructions and requirements. Please check the root of the repository you are working in.
-
 ## Development Workflow
 
 ### Branching Strategy: Trunk-Based Development
 
-We follow **trunk-based development** with short-lived feature branches:
+We generally follow **trunk-based development** with short-lived feature branches:
 
 1. `main` is always deployable
 2. Feature branches are short-lived (typically 1-3 days, max 1 week)
