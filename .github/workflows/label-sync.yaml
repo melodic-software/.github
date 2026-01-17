@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'labels.yml'
+      - 'labels.yaml'
   workflow_dispatch:
     inputs:
       dry-run:
@@ -26,12 +26,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v5
 
       - name: Sync labels
         uses: EndBug/label-sync@v2.3.3
         with:
-          config-file: ./labels.yml
+          config-file: ./labels.yaml
           dry-run: ${{ inputs.dry-run || false }}
           delete-other-labels: false
         env:

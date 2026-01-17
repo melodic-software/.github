@@ -1,4 +1,4 @@
-<!-- Last reviewed: 2026-01-15 -->
+<!-- Last reviewed: 2026-01-16 -->
 # Roadmap
 
 This document tracks future enhancements, technical debt, and improvement opportunities for the Melodic Software `.github` repository.
@@ -43,8 +43,8 @@ The `.github` repository is **well-established** with comprehensive coverage:
 **Context**: GitHub does not automatically inherit labels from `.github` repos like it does with community health files. Organization default labels are only applied once at repo creation and don't stay in sync.
 
 **Current State**: Two workflows handle label synchronization:
-1. `label-sync.yml` - Syncs 45 labels to the `.github` repository using `EndBug/label-sync@v2`
-2. `cross-repo-label-sync.yml` - Syncs labels to all specified org repositories using `srealmoreno/label-sync-action@v2` with a matrix strategy and `LABEL_SYNC_PAT` secret
+1. `label-sync.yaml` - Syncs 45 labels to the `.github` repository using `EndBug/label-sync@v2`
+2. `cross-repo-label-sync.yaml` - Syncs labels to all specified org repositories using `srealmoreno/label-sync-action@v2` with a matrix strategy and `LABEL_SYNC_PAT` secret
 
 The matrix approach processes one repository at a time to avoid GitHub API rate limits.
 
@@ -56,6 +56,8 @@ See [ADR-001](docs/adr/001-label-sync-strategy.md) for full decision record.
 
 | Enhancement | Completed | Notes |
 |-------------|-----------|-------|
+| Dependabot Auto-Merge | 2026-01-16 | Reusable workflow for auto-merging patch/minor updates |
+| YAML Extension Migration | 2026-01-16 | Migrated all `.yml` files to `.yaml` (official YAML spec) |
 | Cross-Repo Label Sync | 2026-01-15 | Matrix strategy workflow with `LABEL_SYNC_PAT` |
 | Stale Issue Management | 2026-01-15 | Daily workflow using `actions/stale@v9` |
 | PR Size Labeler | 2026-01-15 | Maps to `effort:*` labels using `codelytv/pr-size-labeler` |
@@ -79,5 +81,5 @@ See [ADR-001](docs/adr/001-label-sync-strategy.md) for full decision record.
 ## References
 
 - [Community Health Audit Spec](specs/feature-community-health-audit.md)
-- [Labels Configuration](labels.yml)
+- [Labels Configuration](labels.yaml)
 - [CLAUDE.md](CLAUDE.md) - AI assistant instructions

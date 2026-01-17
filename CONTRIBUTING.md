@@ -1,4 +1,4 @@
-<!-- Last reviewed: 2026-01-15 -->
+<!-- Last reviewed: 2026-01-16 -->
 <!--https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors-->
 
 # Contributing to Melodic Software Projects
@@ -93,7 +93,7 @@ We use a standardized label system across all repositories. When creating issues
 | `area:*` | Affected component | `area:frontend`, `area:api` |
 | `effort:*` | Size estimate | `effort:small`, `effort:large` |
 
-See [`labels.yml`](labels.yml) for the complete label definitions.
+See [`labels.yaml`](labels.yaml) for the complete label definitions.
 
 ## Security
 

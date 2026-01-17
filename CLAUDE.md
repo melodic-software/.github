@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-<!-- Last reviewed: 2026-01-14 -->
+<!-- Last reviewed: 2026-01-16 -->
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -13,15 +13,15 @@ This is the **organization-level `.github` repository** for Melodic Software. It
 ```
 .github/
 ├── .github/
-│   ├── ISSUE_TEMPLATE/           # Issue forms (bug-report, feature-request, documentation, chore, config)
+│   ├── ISSUE_TEMPLATE/           # Issue forms (bug-report, feature-request, documentation, chore)
 │   ├── DISCUSSION_TEMPLATE/      # Discussion forms (general, ideas, q-a, announcements, show-and-tell)
 │   ├── workflows/                # Reusable workflows (release, codeql, dotnet-build, label-sync)
 │   ├── PULL_REQUEST_TEMPLATE.md  # PR description template
-│   ├── dependabot.yml            # Automated dependency updates
-│   └── release.yml               # Auto-generated release notes configuration
+│   ├── dependabot.yaml           # Automated dependency updates
+│   └── release.yaml              # Auto-generated release notes configuration
 ├── workflow-templates/           # Starter workflows for org repos (dotnet-ci, dotnet-release)
 ├── profile/README.md             # Organization profile displayed on GitHub
-├── labels.yml                    # Standard label definitions for GitHub Label Sync
+├── labels.yaml                   # Standard label definitions for GitHub Label Sync
 ├── CODEOWNERS                    # Default code ownership rules
 └── [Community files]             # CODE_OF_CONDUCT, CONTRIBUTING, SECURITY, SUPPORT, GOVERNANCE, etc.
 ```
@@ -51,7 +51,7 @@ Trunk-based development with short-lived feature branches:
 
 ## Labels Schema
 
-Labels in `labels.yml` follow a namespaced convention:
+Labels in `labels.yaml` follow a namespaced convention:
 
 | Category | Purpose | Examples |
 |----------|---------|----------|
@@ -69,7 +69,7 @@ Special labels: `good first issue`, `help wanted`, `dependencies`, `breaking-cha
 This organization primarily builds .NET applications:
 - Target: .NET 10, C# 14
 - Architecture: Modular Monoliths with Clean Architecture, CQRS, DDD
-- The `workflow-templates/dotnet-ci.yml` is the standard CI template for .NET projects
+- The `workflow-templates/dotnet-ci.yaml` is the standard CI template for .NET projects
 
 ## Editing Templates
 
@@ -117,13 +117,13 @@ Require a corresponding `.properties.json` file with metadata:
 
 ## Automation Files
 
-### dependabot.yml
+### dependabot.yaml
 
 Configures automated dependency updates:
 - GitHub Actions: Weekly updates (Mondays)
 - NuGet packages: Weekly updates with grouping
 
-### release.yml
+### release.yaml
 
 Configures auto-generated release notes:
 - Categories based on labels (Breaking Changes, Features, Bug Fixes, etc.)
@@ -135,18 +135,21 @@ Available reusable workflows in `.github/workflows/`:
 
 | Workflow | Purpose |
 |----------|---------|
-| `reusable-release.yml` | Create GitHub releases with artifacts |
-| `reusable-codeql.yml` | Security analysis with CodeQL |
-| `reusable-dotnet-build.yml` | .NET build with caching and test results |
-| `label-sync.yml` | Synchronize labels from labels.yml to .github repo |
-| `cross-repo-label-sync.yml` | Sync labels to all org repos (requires `ORG_PAT` secret) |
+| `release.yaml` | Create GitHub releases with artifacts |
+| `codeql.yaml` | Security analysis with CodeQL |
+| `dotnet-build.yaml` | .NET build with caching and test results |
+| `dependabot-automerge.yaml` | Auto-merge Dependabot PRs for patch/minor updates |
+| `label-sync.yaml` | Synchronize labels from labels.yaml to .github repo |
+| `cross-repo-label-sync.yaml` | Sync labels to all org repos (requires `LABEL_SYNC_PAT` secret) |
+| `pr-size-labeler.yaml` | Label PRs by size using effort labels |
+| `stale.yaml` | Mark/close stale issues and PRs |
 
 Call reusable workflows with:
 
 ```yaml
 jobs:
   build:
-    uses: melodic-software/.github/.github/workflows/reusable-dotnet-build.yml@main
+    uses: melodic-software/.github/.github/workflows/dotnet-build.yaml@main
     with:
       input-name: value
 ```

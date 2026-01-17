@@ -1,4 +1,4 @@
-<!-- Last reviewed: 2026-01-15 -->
+<!-- Last reviewed: 2026-01-16 -->
 
 # Melodic Software - GitHub Community Defaults
 
@@ -13,18 +13,18 @@ Files located here are automatically inherited by all repositories in the organi
 ```
 .github/
 ├── .github/
-│   ├── ISSUE_TEMPLATE/           # Issue forms (bug, feature, docs, chore)
-│   ├── DISCUSSION_TEMPLATE/      # Discussion forms (general, ideas, Q&A)
+│   ├── ISSUE_TEMPLATE/           # Issue forms (bug-report, feature-request, documentation, chore)
+│   ├── DISCUSSION_TEMPLATE/      # Discussion forms (general, ideas, q-a, announcements, show-and-tell)
 │   ├── workflows/                # Reusable and automation workflows
 │   ├── PULL_REQUEST_TEMPLATE.md  # PR description template
-│   ├── dependabot.yml            # Automated dependency updates
-│   └── release.yml               # Auto-generated release notes config
+│   ├── dependabot.yaml           # Automated dependency updates
+│   └── release.yaml              # Auto-generated release notes config
 ├── workflow-templates/           # Starter workflows for org repos
 ├── docs/adr/                     # Architecture decision records
 ├── specs/                        # Feature specifications
 ├── .claude/commands/             # Claude Code custom commands
 ├── profile/README.md             # Organization profile
-├── labels.yml                    # Standard label definitions
+├── labels.yaml                   # Standard label definitions
 ├── CODEOWNERS                    # Default code ownership
 ├── CITATION.cff                  # Citation metadata
 └── [Community Health Files]      # CODE_OF_CONDUCT, CONTRIBUTING, etc.
@@ -42,7 +42,7 @@ Files located here are automatically inherited by all repositories in the organi
 | [SUPPORT.md](SUPPORT.md) | Support channels and how to get help |
 | [GOVERNANCE.md](GOVERNANCE.md) | Project governance and decision-making |
 | [ROADMAP.md](ROADMAP.md) | Project roadmap and planned features |
-| [FUNDING.yml](FUNDING.yml) | Sponsor button configuration |
+| [FUNDING.yaml](FUNDING.yaml) | Sponsor button configuration |
 | [CITATION.cff](CITATION.cff) | Citation metadata for academic references |
 | [CODEOWNERS](CODEOWNERS) | Default code ownership rules |
 | [LICENSE](LICENSE) | Proprietary license |
@@ -51,20 +51,20 @@ Files located here are automatically inherited by all repositories in the organi
 
 | Template | Description |
 |----------|-------------|
-| `bug-report.yml` | Report bugs with severity, environment, and steps |
-| `feature-request.yml` | Propose features with acceptance criteria |
-| `documentation.yml` | Report docs issues or request improvements |
-| `chore.yml` | Request maintenance work or dependency updates |
+| `bug-report.yaml` | Report bugs with severity, environment, and steps |
+| `feature-request.yaml` | Propose features with acceptance criteria |
+| `documentation.yaml` | Report docs issues or request improvements |
+| `chore.yaml` | Request maintenance work or dependency updates |
 
 ### Discussion Templates
 
 | Template | Description |
 |----------|-------------|
-| `general.yml` | Open discussions with category selection |
-| `ideas.yml` | Feature ideas with voting support |
-| `q-a.yml` | Questions with topic categorization |
-| `announcements.yml` | Maintainer announcements |
-| `show-and-tell.yml` | Community project showcases |
+| `general.yaml` | Open discussions with category selection |
+| `ideas.yaml` | Feature ideas with voting support |
+| `q-a.yaml` | Questions with topic categorization |
+| `announcements.yaml` | Maintainer announcements |
+| `show-and-tell.yaml` | Community project showcases |
 
 ### Workflows
 
@@ -72,36 +72,37 @@ Files located here are automatically inherited by all repositories in the organi
 
 | Workflow | Description |
 |----------|-------------|
-| `reusable-release.yml` | GitHub release creation with artifacts |
-| `reusable-codeql.yml` | CodeQL security analysis |
-| `reusable-dotnet-build.yml` | .NET build with caching and test results |
+| `release.yaml` | GitHub release creation with artifacts |
+| `codeql.yaml` | CodeQL security analysis |
+| `dotnet-build.yaml` | .NET build with caching and test results |
+| `dependabot-automerge.yaml` | Auto-merge Dependabot PRs for patch/minor updates |
 
 #### Automation Workflows
 
 | Workflow | Description |
 |----------|-------------|
-| `label-sync.yml` | Sync labels from `labels.yml` to this repo |
-| `cross-repo-label-sync.yml` | Sync labels to all organization repositories |
-| `pr-size-labeler.yml` | Label PRs by size using effort labels |
-| `stale.yml` | Mark/close stale issues and PRs |
+| `label-sync.yaml` | Sync labels from `labels.yaml` to this repo |
+| `cross-repo-label-sync.yaml` | Sync labels to all organization repositories |
+| `pr-size-labeler.yaml` | Label PRs by size using effort labels |
+| `stale.yaml` | Mark/close stale issues and PRs |
 
 ### Workflow Templates
 
 | Template | Description |
 |----------|-------------|
-| `dotnet-ci.yml` | Standard .NET CI pipeline with NuGet caching |
-| `dotnet-release.yml` | Release workflow with NuGet packaging |
+| `dotnet-ci.yaml` | Standard .NET CI pipeline with NuGet caching |
+| `dotnet-release.yaml` | Release workflow with NuGet packaging |
 
 ### Automation Files
 
 | File | Description |
 |------|-------------|
-| [dependabot.yml](.github/dependabot.yml) | Automated dependency updates (Actions, NuGet) |
-| [release.yml](.github/release.yml) | Auto-generated release notes configuration |
+| [dependabot.yaml](.github/dependabot.yaml) | Automated dependency updates (Actions, NuGet) |
+| [release.yaml](.github/release.yaml) | Auto-generated release notes configuration |
 
 ## Labels
 
-Labels are defined in [`labels.yml`](labels.yml) and organized by category:
+Labels are defined in [`labels.yaml`](labels.yaml) and organized by category:
 
 | Category | Purpose | Examples |
 |----------|---------|----------|
@@ -133,7 +134,7 @@ These files are automatically inherited by all public repositories in the organi
 ```yaml
 jobs:
   build:
-    uses: melodic-software/.github/.github/workflows/reusable-dotnet-build.yml@main
+    uses: melodic-software/.github/.github/workflows/dotnet-build.yaml@main
     with:
       dotnet-version: '10.0.x'
       run-tests: true

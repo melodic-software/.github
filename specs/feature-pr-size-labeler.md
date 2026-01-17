@@ -24,18 +24,18 @@ Implement a GitHub Actions workflow using the CodelyTV/pr-size-labeler action th
 
 ### New Files
 
-- `.github/workflows/pr-size-labeler.yml` - Main workflow that triggers on pull_request events and applies size-based labels
+- `.github/workflows/pr-size-labeler.yaml` - Main workflow that triggers on pull_request events and applies size-based labels
 
 ### Modified Files
 
-None - this feature adds a new workflow without modifying existing files. The existing `effort:*` labels in `labels.yml` are already defined and will be reused.
+None - this feature adds a new workflow without modifying existing files. The existing `effort:*` labels in `labels.yaml` are already defined and will be reused.
 
 ## Implementation Plan
 
 ### Foundation Phase
 
 1. Verify existing labels are compatible with the PR size labeler:
-   - Confirm `effort:trivial`, `effort:small`, `effort:medium`, `effort:large`, `effort:epic` exist in `labels.yml`
+   - Confirm `effort:trivial`, `effort:small`, `effort:medium`, `effort:large`, `effort:epic` exist in `labels.yaml`
    - Document the size-to-label mapping that will be used
 
 2. Determine file exclusion patterns for .NET projects:
@@ -47,7 +47,7 @@ None - this feature adds a new workflow without modifying existing files. The ex
 
 ### Core Phase
 
-3. Create the workflow file `.github/workflows/pr-size-labeler.yml`:
+3. Create the workflow file `.github/workflows/pr-size-labeler.yaml`:
    - Set up workflow triggers for `pull_request` events (`opened`, `synchronize`)
    - Configure permissions for `pull-requests: write`, `contents: read`
    - Use `codelytv/pr-size-labeler@v1` action with appropriate version pinning
@@ -74,9 +74,9 @@ None - this feature adds a new workflow without modifying existing files. The ex
 
 ## Step by Step Tasks
 
-1. Read `labels.yml` to confirm effort labels exist with exact names: `effort:trivial`, `effort:small`, `effort:medium`, `effort:large`, `effort:epic` [VERIFIED - see labels.yml:169-186]
+1. Read `labels.yaml` to confirm effort labels exist with exact names: `effort:trivial`, `effort:small`, `effort:medium`, `effort:large`, `effort:epic` [VERIFIED - see labels.yaml:169-186]
 
-2. Create `.github/workflows/pr-size-labeler.yml` with:
+2. Create `.github/workflows/pr-size-labeler.yaml` with:
    ```yaml
    name: PR Size Labeler
    on:
@@ -145,7 +145,7 @@ Not applicable - this is a GitHub Actions workflow using a third-party action. U
 
 ## Acceptance Criteria
 
-- [ ] Workflow file exists at `.github/workflows/pr-size-labeler.yml`
+- [ ] Workflow file exists at `.github/workflows/pr-size-labeler.yaml`
 - [ ] Workflow triggers on `pull_request` events (opened, synchronize)
 - [ ] PRs with < 10 lines receive `effort:trivial` label
 - [ ] PRs with 10-100 lines receive `effort:small` label
@@ -161,8 +161,8 @@ Not applicable - this is a GitHub Actions workflow using a third-party action. U
 
 ## Validation Commands
 
-- Run `yamllint .github/workflows/pr-size-labeler.yml` to verify YAML syntax (if yamllint available)
-- Run `actionlint .github/workflows/pr-size-labeler.yml` to validate GitHub Actions syntax (if actionlint available)
+- Run `yamllint .github/workflows/pr-size-labeler.yaml` to verify YAML syntax (if yamllint available)
+- Run `actionlint .github/workflows/pr-size-labeler.yaml` to validate GitHub Actions syntax (if actionlint available)
 - Manual verification: Create a test PR with a few lines, confirm `effort:trivial` label appears
 - Manual verification: Create a test PR modifying only `package-lock.json` plus a few code lines, confirm line count excludes lock file
 - Manual verification: Push commits to existing PR to cross a size boundary, confirm label updates
@@ -189,9 +189,9 @@ Not applicable - this is a GitHub Actions workflow using a third-party action. U
 ### Dependencies
 
 - Requires `codelytv/pr-size-labeler` GitHub Action (MIT license, well-maintained with 9.1k+ users)
-- Existing labels must be synced to repositories before this workflow will work correctly (use `label-sync.yml` workflow)
+- Existing labels must be synced to repositories before this workflow will work correctly (use `label-sync.yaml` workflow)
 
 ### Related Features
 
-- `label-sync.yml` - Ensures effort labels exist in repositories
-- `release.yml` - Auto-generated release notes may categorize by effort labels
+- `label-sync.yaml` - Ensures effort labels exist in repositories
+- `release.yaml` - Auto-generated release notes may categorize by effort labels

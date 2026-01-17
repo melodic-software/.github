@@ -31,7 +31,7 @@ If no argument provided, default to the repository root `README.md`.
 !`tree -L 2 --noreport 2>/dev/null || find . -maxdepth 2 -type d | grep -v ".git" | sort`
 
 ### All Markdown and Config Files
-!`find . -type f \( -name "*.md" -o -name "*.yml" -o -name "*.yaml" -o -name "*.json" \) | grep -v node_modules | grep -v ".git" | sort`
+!`find . -type f \( -name "*.md" -o -name "*.yaml" -o -name "*.yml" -o -name "*.json" \) | grep -v node_modules | grep -v ".git" | sort`
 
 ### Workflow Files
 !`ls -1 .github/workflows/ 2>/dev/null || echo "No workflows directory"`

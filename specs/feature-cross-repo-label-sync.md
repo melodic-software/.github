@@ -2,7 +2,7 @@
 
 ## Feature Description
 
-A GitHub Actions workflow that synchronizes labels from the organization's `.github` repository to all other repositories in the melodic-software organization. This enables consistent labeling across the entire organization, ensuring that all repositories share the same label taxonomy defined in `labels.yml`.
+A GitHub Actions workflow that synchronizes labels from the organization's `.github` repository to all other repositories in the melodic-software organization. This enables consistent labeling across the entire organization, ensuring that all repositories share the same label taxonomy defined in `labels.yaml`.
 
 ## User Story
 
@@ -10,7 +10,7 @@ As a **maintainer** of the Melodic Software organization, I want **labels to be 
 
 ## Problem Statement
 
-Currently, the `label-sync.yml` workflow only syncs labels to the `.github` repository itself. Other repositories in the organization (medley, citadel, identity-server, membrain, etc.) must manually maintain their labels, leading to:
+Currently, the `label-sync.yaml` workflow only syncs labels to the `.github` repository itself. Other repositories in the organization (medley, citadel, identity-server, membrain, etc.) must manually maintain their labels, leading to:
 
 1. Inconsistent label names and colors across repositories
 2. Manual effort to keep labels synchronized
@@ -19,12 +19,12 @@ Currently, the `label-sync.yml` workflow only syncs labels to the `.github` repo
 
 ## Solution Statement
 
-Create a new workflow `cross-repo-label-sync.yml` that:
+Create a new workflow `cross-repo-label-sync.yaml` that:
 
 1. Uses a matrix strategy to iterate over a configurable list of target repositories
-2. Leverages EndBug/label-sync to apply labels from `labels.yml` to each repository
+2. Leverages EndBug/label-sync to apply labels from `labels.yaml` to each repository
 3. Requires a PAT with `repo` scope (stored as `LABEL_SYNC_PAT` org secret) for cross-repo access
-4. Triggers on push to `labels.yml` and supports manual trigger with dry-run option
+4. Triggers on push to `labels.yaml` and supports manual trigger with dry-run option
 5. Uses `continue-on-error` to prevent one repo failure from stopping the entire sync
 6. Generates a job summary showing success/failure status for each repository
 
@@ -32,7 +32,7 @@ Create a new workflow `cross-repo-label-sync.yml` that:
 
 ### New Files
 
-- `.github/workflows/cross-repo-label-sync.yml` (main workflow implementing cross-repo sync)
+- `.github/workflows/cross-repo-label-sync.yaml` (main workflow implementing cross-repo sync)
 
 ### Modified Files
 
@@ -48,7 +48,7 @@ Create a new workflow `cross-repo-label-sync.yml` that:
    - Use `fromJson()` to parse the repository list for matrix strategy
 
 2. **Configure workflow triggers**
-   - Push trigger on `labels.yml` changes (path filter)
+   - Push trigger on `labels.yaml` changes (path filter)
    - `workflow_dispatch` with `dry-run` boolean input
    - Consider schedule trigger for periodic sync (optional)
 
@@ -65,9 +65,9 @@ Create a new workflow `cross-repo-label-sync.yml` that:
    - Use `max-parallel` to limit concurrent API calls (avoid rate limiting)
 
 5. **Implement label sync step**
-   - Checkout `.github` repository to access `labels.yml`
+   - Checkout `.github` repository to access `labels.yaml`
    - Use EndBug/label-sync@v2 with:
-     - `config-file: ./labels.yml`
+     - `config-file: ./labels.yaml`
      - `dry-run: ${{ inputs.dry-run || false }}`
      - `delete-other-labels: false` (preserve repo-specific labels)
      - `token: ${{ secrets.LABEL_SYNC_PAT }}`
@@ -99,13 +99,13 @@ Create a new workflow `cross-repo-label-sync.yml` that:
 
 ## Step by Step Tasks
 
-1. Create `.github/workflows/cross-repo-label-sync.yml` with workflow metadata and triggers
+1. Create `.github/workflows/cross-repo-label-sync.yaml` with workflow metadata and triggers
 2. Add `workflow_dispatch` input for `dry-run` boolean option
 3. Add `workflow_dispatch` input for optional repository list override
 4. Define the default repository list as a JSON array in the workflow
 5. Create the `sync` job with matrix strategy iterating over repositories
 6. Set `fail-fast: false` and `max-parallel: 3` on the matrix strategy
-7. Add checkout step to get the `labels.yml` file from `.github` repo
+7. Add checkout step to get the `labels.yaml` file from `.github` repo
 8. Research and implement correct EndBug/label-sync invocation for cross-repo sync
 9. Add `continue-on-error: true` to the label-sync step
 10. Create output capture for step success/failure status
@@ -151,11 +151,11 @@ Create a new workflow `cross-repo-label-sync.yml` that:
 4. **Large repository list**: Verify matrix job limit (256 max) is respected
 5. **Empty repository list**: Workflow should handle gracefully
 6. **Labels with special characters**: Ensure YAML parsing handles correctly
-7. **Concurrent runs**: Multiple pushes to labels.yml in quick succession
+7. **Concurrent runs**: Multiple pushes to labels.yaml in quick succession
 
 ## Acceptance Criteria
 
-- [ ] Workflow triggers on push to `labels.yml` in main branch
+- [ ] Workflow triggers on push to `labels.yaml` in main branch
 - [ ] Workflow supports manual trigger via `workflow_dispatch`
 - [ ] Dry-run option prevents actual label changes when enabled
 - [ ] Matrix strategy iterates over configurable list of repositories
@@ -174,18 +174,18 @@ Create a new workflow `cross-repo-label-sync.yml` that:
 
 ```bash
 # Validate workflow YAML syntax
-yamllint .github/workflows/cross-repo-label-sync.yml
+yamllint .github/workflows/cross-repo-label-sync.yaml
 
 # Or use GitHub's workflow validator (via gh CLI extension)
 gh extension install muno92/gh-workflow-validator
-gh workflow-validator .github/workflows/cross-repo-label-sync.yml
+gh workflow-validator .github/workflows/cross-repo-label-sync.yaml
 ```
 
 ### Dry Run Test
 
 ```bash
 # Trigger workflow in dry-run mode via GitHub CLI
-gh workflow run cross-repo-label-sync.yml -f dry-run=true
+gh workflow run cross-repo-label-sync.yaml -f dry-run=true
 
 # Monitor the workflow run
 gh run watch
@@ -239,8 +239,8 @@ Research indicates EndBug/label-sync v2 syncs to the repo specified by `$GITHUB_
 
 ### Related Features
 
-- `label-sync.yml` - Existing workflow for `.github` repo only
-- `labels.yml` - Source of truth for organization labels
+- `label-sync.yaml` - Existing workflow for `.github` repo only
+- `labels.yaml` - Source of truth for organization labels
 - Future: Label-based automation workflows (auto-assign, project boards)
 
 ### Security Considerations
@@ -305,7 +305,7 @@ To create or regenerate the `LABEL_SYNC_PAT` token:
    - Click **Add secret**
 
 7. **Test the workflow**
-   - Go to: https://github.com/melodic-software/.github/actions/workflows/cross-repo-label-sync.yml
+   - Go to: https://github.com/melodic-software/.github/actions/workflows/cross-repo-label-sync.yaml
    - Click **Run workflow** → **Run workflow**
    - Verify all target repositories sync successfully
 

@@ -1,7 +1,7 @@
-# Last reviewed: 2026-01-14
+# Last reviewed: 2026-01-16
 name: Cross-Repo Label Sync
 
-# Syncs labels from labels.yml to all organization repositories
+# Syncs labels from labels.yaml to all organization repositories
 # Uses matrix strategy to process repos sequentially (avoids GitHub API rate limits)
 #
 # REQUIRED: LABEL_SYNC_PAT repository secret with 'Issues: Read and write' permission
@@ -11,7 +11,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'labels.yml'
+      - 'labels.yaml'
   workflow_dispatch:
     inputs:
       clean-labels:
@@ -68,10 +68,10 @@ jobs:
 
     steps:
       - name: Checkout labels configuration
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           sparse-checkout: |
-            labels.yml
+            labels.yaml
           sparse-checkout-cone-mode: false
 
       - name: Sync labels to ${{ matrix.repo }}
@@ -79,7 +79,7 @@ jobs:
         with:
           token: ${{ secrets.LABEL_SYNC_PAT }}
           repositories: ${{ matrix.repo }}
-          config-file: labels.yml
+          config-file: labels.yaml
           clean-labels: ${{ inputs.clean-labels || false }}
 
   summary:
@@ -104,6 +104,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Configuration" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Source**: \`labels.yml\` in \`.github\` repository" >> $GITHUB_STEP_SUMMARY
+          echo "- **Source**: \`labels.yaml\` in \`.github\` repository" >> $GITHUB_STEP_SUMMARY
           echo "- **Clean Labels**: ${{ inputs.clean-labels || false }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Action**: [srealmoreno/label-sync-action@v2](https://github.com/srealmoreno/label-sync-action)" >> $GITHUB_STEP_SUMMARY

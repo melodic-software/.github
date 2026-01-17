@@ -1,0 +1,89 @@
+# Last reviewed: 2026-01-16
+name: Dependabot Auto-Merge
+
+# Auto-merge Dependabot PRs for patch and minor updates
+# Works both locally (pull_request_target) and as a reusable workflow (workflow_call)
+# Auto-merge waits for all required status checks to pass before merging
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+  workflow_call:
+    inputs:
+      update-types:
+        description: 'Comma-separated list of update types to auto-merge'
+        required: false
+        type: string
+        default: 'version-update:semver-patch,version-update:semver-minor'
+      merge-method:
+        description: 'Merge method to use (merge, squash, rebase)'
+        required: false
+        type: string
+        default: 'squash'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    name: Auto-Merge Dependabot PR
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    timeout-minutes: 5
+
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if update type is allowed
+        id: check
+        run: |
+          # Use input if provided (workflow_call), otherwise use defaults
+          ALLOWED_TYPES="${{ inputs.update-types || 'version-update:semver-patch,version-update:semver-minor' }}"
+          UPDATE_TYPE="${{ steps.metadata.outputs.update-type }}"
+
+          echo "Update type: $UPDATE_TYPE"
+          echo "Allowed types: $ALLOWED_TYPES"
+
+          if echo "$ALLOWED_TYPES" | grep -q "$UPDATE_TYPE"; then
+            echo "allowed=true" >> $GITHUB_OUTPUT
+            echo "Update type '$UPDATE_TYPE' is allowed for auto-merge"
+          else
+            echo "allowed=false" >> $GITHUB_OUTPUT
+            echo "Update type '$UPDATE_TYPE' is NOT in the allowed list"
+          fi
+
+      - name: Approve PR
+        if: steps.check.outputs.allowed == 'true'
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge
+        if: steps.check.outputs.allowed == 'true'
+        run: |
+          # Use input if provided (workflow_call), otherwise use default
+          MERGE_METHOD="${{ inputs.merge-method || 'squash' }}"
+          gh pr merge --auto --${MERGE_METHOD} "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        if: steps.check.outputs.allowed == 'true'
+        run: |
+          echo "## Dependabot Auto-Merge" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**PR**: ${{ github.event.pull_request.title }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Update Type**: ${{ steps.metadata.outputs.update-type }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Dependency**: ${{ steps.metadata.outputs.dependency-names }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Previous Version**: ${{ steps.metadata.outputs.previous-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**New Version**: ${{ steps.metadata.outputs.new-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Auto-merge enabled. PR will merge automatically once all status checks pass." >> $GITHUB_STEP_SUMMARY

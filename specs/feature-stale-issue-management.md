@@ -26,14 +26,14 @@ Implement a GitHub Actions workflow using `actions/stale@v9` that:
 3. Closes stale issues after an additional 14 days if no activity occurs
 4. Applies shorter timelines for PRs (30 days to stale, 7 days to close) since PRs are more time-sensitive
 5. Exempts high-priority and blocked items from stale processing
-6. Uses the existing `stale` label from `labels.yml` for consistent labeling
+6. Uses the existing `stale` label from `labels.yaml` for consistent labeling
 7. Provides helpful messages explaining how to reopen if still relevant
 
 ## Relevant Files
 
 ### New Files
 
-- `.github/workflows/stale.yml` - GitHub Actions workflow for stale management
+- `.github/workflows/stale.yaml` - GitHub Actions workflow for stale management
 
 ### Modified Files
 
@@ -42,15 +42,15 @@ Implement a GitHub Actions workflow using `actions/stale@v9` that:
 
 ### Reference Files (Read-Only)
 
-- `labels.yml` - Contains the existing `stale` label definition (line 225-227)
-- `.github/workflows/label-sync.yml` - Example workflow structure to follow (lines 1-43)
-- `.github/workflows/reusable-dotnet-build.yml` - Example of workflow permissions and structure (lines 1-116)
+- `labels.yaml` - Contains the existing `stale` label definition (line 225-227)
+- `.github/workflows/label-sync.yaml` - Example workflow structure to follow (lines 1-43)
+- `.github/workflows/reusable-dotnet-build.yaml` - Example of workflow permissions and structure (lines 1-116)
 
 ## Implementation Plan
 
 ### Foundation Phase
 
-1. **Verify Label Exists**: Confirm `stale` label exists in `labels.yml` (already present at line 225-227)
+1. **Verify Label Exists**: Confirm `stale` label exists in `labels.yaml` (already present at line 225-227)
 2. **Review Exempt Labels**: Identify labels that should exempt issues from stale processing:
    - `priority:critical` - Blocks release, must never auto-close
    - `priority:high` - Important work, should not auto-close
@@ -62,7 +62,7 @@ Implement a GitHub Actions workflow using `actions/stale@v9` that:
 
 ### Core Phase
 
-4. **Create Workflow File**: Build `.github/workflows/stale.yml` with:
+4. **Create Workflow File**: Build `.github/workflows/stale.yaml` with:
    - Daily cron schedule (`0 0 * * *` - midnight UTC)
    - Workflow dispatch trigger for manual runs
    - Appropriate permissions (issues: write, pull-requests: write)
@@ -91,7 +91,7 @@ Implement a GitHub Actions workflow using `actions/stale@v9` that:
 ### Integration Phase
 
 8. **Add Label Management**:
-   - Use existing `stale` label from `labels.yml`
+   - Use existing `stale` label from `labels.yaml`
    - Consider `labels-to-remove-when-stale` for workflow cleanup
 
 9. **Configure Rate Limiting**:
@@ -104,8 +104,8 @@ Implement a GitHub Actions workflow using `actions/stale@v9` that:
 
 ## Step by Step Tasks
 
-1. Read and verify `stale` label exists in `labels.yml` with correct properties
-2. Create `.github/workflows/stale.yml` with review date header comment
+1. Read and verify `stale` label exists in `labels.yaml` with correct properties
+2. Create `.github/workflows/stale.yaml` with review date header comment
 3. Configure workflow triggers: daily cron schedule and workflow_dispatch
 4. Set appropriate permissions: `issues: write`, `pull-requests: write`
 5. Configure `actions/stale@v9` step with all required inputs
@@ -134,7 +134,7 @@ Not applicable - this is a workflow configuration file with no custom code.
 
 - **YAML Validation**: Validate workflow syntax with yamllint
 - **Action Configuration**: Verify all required inputs have valid values
-- **Label References**: Confirm all referenced labels exist in `labels.yml`
+- **Label References**: Confirm all referenced labels exist in `labels.yaml`
 - **Dry Run**: Run workflow with `debug-only: true` to verify behavior without making changes
 
 ### Edge Cases
@@ -148,7 +148,7 @@ Not applicable - this is a workflow configuration file with no custom code.
 
 ## Acceptance Criteria
 
-- [ ] Workflow file `.github/workflows/stale.yml` exists with correct structure
+- [ ] Workflow file `.github/workflows/stale.yaml` exists with correct structure
 - [ ] Workflow runs daily at midnight UTC via cron schedule
 - [ ] Workflow can be triggered manually via workflow_dispatch
 - [ ] Issues are marked stale after 60 days of inactivity
@@ -163,7 +163,7 @@ Not applicable - this is a workflow configuration file with no custom code.
 - [ ] Items with milestones are exempt from stale processing
 - [ ] Stale warning message is friendly and explains how to keep open
 - [ ] Close message explains how to reopen if still relevant
-- [ ] Workflow uses existing `stale` label from `labels.yml`
+- [ ] Workflow uses existing `stale` label from `labels.yaml`
 - [ ] Close reason is set to `not_planned` for issues
 - [ ] YAML syntax is valid
 - [ ] Workflow has appropriate permissions block
@@ -174,27 +174,27 @@ Not applicable - this is a workflow configuration file with no custom code.
 
 ```bash
 # Validate workflow YAML syntax
-yamllint .github/workflows/stale.yml
+yamllint .github/workflows/stale.yaml
 
 # Alternative: use yq to parse
-yq eval '.name' .github/workflows/stale.yml
+yq eval '.name' .github/workflows/stale.yaml
 ```
 
 ### Label Verification
 
 ```bash
-# Verify stale label exists in labels.yml
-grep -A2 'name: "stale"' labels.yml
+# Verify stale label exists in labels.yaml
+grep -A2 'name: "stale"' labels.yaml
 
 # Verify exempt labels exist
-grep 'priority:critical\|priority:high\|status:blocked\|status:on-hold' labels.yml
+grep 'priority:critical\|priority:high\|status:blocked\|status:on-hold' labels.yaml
 ```
 
 ### Workflow Dry Run
 
 ```bash
 # Trigger workflow with debug mode enabled (via GitHub CLI)
-gh workflow run stale.yml
+gh workflow run stale.yaml
 
 # Or manually enable debug-only in the workflow for first run
 ```
@@ -225,8 +225,8 @@ gh workflow run stale.yml
 
 ### Related Features
 
-- `label-sync.yml` - Ensures the `stale` label exists with correct properties
-- `dependabot.yml` - Automated dependency PRs may need special handling (consider exempting `dependencies` label)
+- `label-sync.yaml` - Ensures the `stale` label exists with correct properties
+- `dependabot.yaml` - Automated dependency PRs may need special handling (consider exempting `dependencies` label)
 
 ### Technical Considerations
 
@@ -234,11 +234,11 @@ gh workflow run stale.yml
 
 - **Timing**: Running at midnight UTC means different local times for contributors. Consider this when evaluating "days" of inactivity.
 
-- **Stale Label Case Sensitivity**: The action's default stale label is `Stale` (capitalized), but `labels.yml` defines `stale` (lowercase). Configure `stale-issue-label` and `stale-pr-label` to use lowercase to match the existing label.
+- **Stale Label Case Sensitivity**: The action's default stale label is `Stale` (capitalized), but `labels.yaml` defines `stale` (lowercase). Configure `stale-issue-label` and `stale-pr-label` to use lowercase to match the existing label.
 
 ### Dependencies
 
 - GitHub Actions runners (ubuntu-latest)
 - `actions/stale@v9` action
-- Existing `stale` label in `labels.yml`
+- Existing `stale` label in `labels.yaml`
 - Repository issues and pull-requests write permissions

@@ -1,4 +1,4 @@
-<!-- Last reviewed: 2026-01-14 -->
+<!-- Last reviewed: 2026-01-16 -->
 # ADR-001: Label Synchronization Strategy
 
 ## Status
@@ -16,15 +16,15 @@ GitHub organizations need consistent labels across repositories for:
 
 ## Decision
 
-We will use `EndBug/label-sync` action to manage labels declaratively via `labels.yml`.
+We will use `EndBug/label-sync` action to manage labels declaratively via `labels.yaml`.
 
 ### Current Configuration
 
 ```yaml
-# .github/workflows/label-sync.yml
+# .github/workflows/label-sync.yaml
 - uses: EndBug/label-sync@v2.3.3
   with:
-    config-file: ./labels.yml
+    config-file: ./labels.yaml
     dry-run: ${{ inputs.dry-run || false }}
     delete-other-labels: false
 ```
@@ -39,7 +39,7 @@ We will use `EndBug/label-sync` action to manage labels declaratively via `label
 **Phase 2 (Future)**: Sync labels across all org repos
 - Requires PAT with `repo` scope
 - Matrix strategy to iterate over repos
-- See [enhancement spec](../../specs/enhancement-cross-repo-label-sync.md)
+- See [cross-repo sync spec](../../specs/feature-cross-repo-label-sync.md)
 
 ## Rationale
 
@@ -58,23 +58,23 @@ Organization default labels have limitations:
 - No alias/rename support
 - Limited to 9 labels in the UI
 
-### Why `./labels.yml` path?
+### Why `./labels.yaml` path?
 
-The action requires an explicit `./` prefix to recognize local files. Without it, `labels.yml` is treated as a remote URL, causing failures.
+The action requires an explicit `./` prefix to recognize local files. Without it, `labels.yaml` is treated as a remote URL, causing failures.
 
 ```yaml
 # CORRECT
-config-file: ./labels.yml
+config-file: ./labels.yaml
 
 # INCORRECT - treated as remote URL
-config-file: labels.yml
+config-file: labels.yaml
 ```
 
 ## Consequences
 
 ### Positive
 
-- Single source of truth for labels in `labels.yml`
+- Single source of truth for labels in `labels.yaml`
 - Aliases enable migration from old label names (e.g., `bug` → `type:bug`)
 - Dry-run mode for safe testing
 - Clear audit trail via git history
@@ -83,16 +83,16 @@ config-file: labels.yml
 
 - Currently only syncs to `.github` repo (limited value)
 - Cross-repo sync requires additional setup (PAT, secrets)
-- Teams must manually run workflow or push to `labels.yml` to sync
+- Teams must manually run workflow or push to `labels.yaml` to sync
 
 ### Neutral
 
 - `delete-other-labels: false` means repos can have additional custom labels
-- Labels not in `labels.yml` are preserved, not deleted
+- Labels not in `labels.yaml` are preserved, not deleted
 
 ## Related
 
-- [labels.yml](../../labels.yml) - Label definitions
-- [label-sync.yml](../../.github/workflows/label-sync.yml) - Sync workflow
+- [labels.yaml](../../labels.yaml) - Label definitions
+- [label-sync.yaml](../../.github/workflows/label-sync.yaml) - Sync workflow
 - [ROADMAP.md](../../ROADMAP.md) - Future enhancements
-- [Cross-repo sync spec](../../specs/enhancement-cross-repo-label-sync.md)
+- [Cross-repo sync spec](../../specs/feature-cross-repo-label-sync.md)

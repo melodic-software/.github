@@ -10,7 +10,6 @@ on:
 permissions:
   pull-requests: write
   contents: read
-  issues: write
 
 jobs:
   label-size:

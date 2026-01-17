@@ -38,53 +38,57 @@ Conduct a systematic audit of all files in the `.github` repository against mode
 - `SECURITY.md` - Verify response timelines, safe harbor, reporting instructions
 - `SUPPORT.md` - Verify support channels, response times
 - `GOVERNANCE.md` - Verify roles, contribution ladder, decision-making
-- `FUNDING.yml` - Verify GitHub Sponsors configuration
+- `FUNDING.yaml` - Verify GitHub Sponsors configuration
 - `CITATION.cff` - Verify CFF v1.2.0 compliance, metadata accuracy
 - `CODEOWNERS` - Verify ownership rules, team references
 - `README.md` - Verify structure documentation accuracy
 - `CLAUDE.md` - Verify agent instructions remain accurate
 
 #### Issue Templates (.github/ISSUE_TEMPLATE/)
-- `config.yml` - Verify contact links, blank issue setting
-- `bug-report.yml` - Audit fields, labels, validation
-- `feature-request.yml` - Audit fields, labels, validation
-- `documentation.yml` - Audit fields, labels, validation
-- `chore.yml` - Audit fields, labels, validation
+- `config.yaml` - Verify contact links, blank issue setting
+- `bug-report.yaml` - Audit fields, labels, validation
+- `feature-request.yaml` - Audit fields, labels, validation
+- `documentation.yaml` - Audit fields, labels, validation
+- `chore.yaml` - Audit fields, labels, validation
 
 #### Discussion Templates (.github/DISCUSSION_TEMPLATE/)
-- `general.yml` - Audit fields, labels
-- `ideas.yml` - Audit fields, labels
-- `q-a.yml` - Audit fields, labels
-- `announcements.yml` - Audit fields, labels (should be maintainer-only)
-- `show-and-tell.yml` - Audit fields, labels
+- `general.yaml` - Audit fields, labels
+- `ideas.yaml` - Audit fields, labels
+- `q-a.yaml` - Audit fields, labels
+- `announcements.yaml` - Audit fields, labels (should be maintainer-only)
+- `show-and-tell.yaml` - Audit fields, labels
 
 #### PR Template
 - `.github/PULL_REQUEST_TEMPLATE.md` - Audit checklist items, deployment considerations
 
 #### Reusable Workflows (.github/workflows/)
-- `reusable-dotnet-build.yml` - Verify action versions, caching strategy
-- `reusable-release.yml` - Verify action versions, release process
-- `reusable-codeql.yml` - Verify action versions, security config
-- `label-sync.yml` - Verify sync strategy, org-wide capability
+- `dotnet-build.yaml` - .NET build with caching and test results
+- `release.yaml` - GitHub release creation with artifacts
+- `codeql.yaml` - CodeQL security analysis
+- `label-sync.yaml` - Sync labels from labels.yaml to this repo
+- `cross-repo-label-sync.yaml` - Sync labels to all org repos
+- `pr-size-labeler.yaml` - Label PRs by size using effort labels
+- `stale.yaml` - Mark/close stale issues and PRs
+- `dependabot-automerge.yaml` - Auto-merge Dependabot PRs
 
 #### Workflow Templates (workflow-templates/)
-- `dotnet-ci.yml` + `dotnet-ci.properties.json` - Verify action versions, patterns
-- `dotnet-release.yml` + `dotnet-release.properties.json` - Verify action versions
+- `dotnet-ci.yaml` + `dotnet-ci.properties.json` - Verify action versions, patterns
+- `dotnet-release.yaml` + `dotnet-release.properties.json` - Verify action versions
 
 #### Labels
-- `labels.yml` - Audit taxonomy completeness, color consistency, descriptions
+- `labels.yaml` - Audit taxonomy completeness, color consistency, descriptions
 
 #### Organization Profile
 - `profile/README.md` - Verify accuracy, badges, links
 
 ### New Files to Consider Adding
 
-- `.github/ISSUE_TEMPLATE/security.yml` - Redirect security issues properly (or update config.yml)
-- `.github/dependabot.yml` - Organization-wide Dependabot configuration
-- `.github/workflows/stale.yml` - Automated stale issue management
-- `.github/workflows/pr-labeler.yml` - Automatic PR labeling
+- `.github/ISSUE_TEMPLATE/security.yaml` - Redirect security issues properly (or update config.yaml)
+- `.github/dependabot.yaml` - Organization-wide Dependabot configuration
+- `.github/workflows/stale.yaml` - Automated stale issue management
+- `.github/workflows/pr-labeler.yaml` - Automatic PR labeling
 - `CHANGELOG.md` - Keep a changelog for the .github repo itself
-- `.github/release.yml` - GitHub auto-generated release notes configuration
+- `.github/release.yaml` - GitHub auto-generated release notes configuration
 
 ## Implementation Plan
 
@@ -112,14 +116,14 @@ Conduct a systematic audit of all files in the `.github` repository against mode
 5. Update `GOVERNANCE.md` with review date
 6. Update `CITATION.cff` if any metadata changes needed
 7. Update `CODEOWNERS` if team structure changed
-8. Update `FUNDING.yml` if funding options changed
+8. Update `FUNDING.yaml` if funding options changed
 
 **Task Group 4: Template Improvements**
 1. Add consistent `<!-- Last reviewed: YYYY-MM-DD -->` comments to all templates
 2. Audit issue templates for:
    - Field completeness
    - Appropriate validations (not too strict)
-   - Label consistency with labels.yml
+   - Label consistency with labels.yaml
    - Helpful placeholder text
 3. Audit discussion templates for:
    - Field completeness
@@ -142,15 +146,15 @@ Conduct a systematic audit of all files in the `.github` repository against mode
 3. Update workflow-templates with same action versions
 
 **Task Group 6: New File Additions**
-1. Create `.github/dependabot.yml` for automated dependency updates
-2. Create `.github/release.yml` for auto-generated release notes configuration
-3. Consider `.github/workflows/stale.yml` for issue hygiene
-4. Consider `.github/workflows/pr-labeler.yml` for automatic labeling
+1. Create `.github/dependabot.yaml` for automated dependency updates
+2. Create `.github/release.yaml` for auto-generated release notes configuration
+3. Consider `.github/workflows/stale.yaml` for issue hygiene
+4. Consider `.github/workflows/pr-labeler.yaml` for automatic labeling
 
 ### Integration Phase
 
 **Task Group 7: Labels Finalization**
-1. Apply any label taxonomy changes to `labels.yml`
+1. Apply any label taxonomy changes to `labels.yaml`
 2. Run label-sync workflow to verify changes
 3. Document label usage in CONTRIBUTING.md if not already present
 
@@ -163,7 +167,7 @@ Conduct a systematic audit of all files in the `.github` repository against mode
 1. Verify all YAML files are syntactically valid
 2. Verify all markdown files render correctly
 3. Verify all links are valid
-4. Verify labels.yml syncs without errors
+4. Verify labels.yaml syncs without errors
 5. Test issue/discussion templates in preview mode
 
 ## Step by Step Tasks
@@ -183,32 +187,32 @@ Conduct a systematic audit of all files in the `.github` repository against mode
 10. Ensure SECURITY.md mentions private vulnerability reporting
 
 ### Update Phase - Templates
-11. Audit `bug-report.yml` for field completeness and usability
-12. Audit `feature-request.yml` for field completeness and usability
-13. Audit `documentation.yml` for field completeness
-14. Audit `chore.yml` for field completeness
+11. Audit `bug-report.yaml` for field completeness and usability
+12. Audit `feature-request.yaml` for field completeness and usability
+13. Audit `documentation.yaml` for field completeness
+14. Audit `chore.yaml` for field completeness
 15. Audit all discussion templates for consistency
-16. Verify `config.yml` contact links are correct
+16. Verify `config.yaml` contact links are correct
 17. Add review date comments to all template files
 
 ### Update Phase - Workflows
-18. Update `reusable-dotnet-build.yml` action versions if needed
-19. Update `reusable-release.yml` action versions if needed
-20. Update `reusable-codeql.yml` action versions if needed
-21. Update `label-sync.yml` action versions if needed
-22. Update `workflow-templates/dotnet-ci.yml` action versions
-23. Update `workflow-templates/dotnet-release.yml` action versions
+18. Update `dotnet-build.yaml` action versions if needed
+19. Update `release.yaml` action versions if needed
+20. Update `codeql.yaml` action versions if needed
+21. Update `label-sync.yaml` action versions if needed
+22. Update `workflow-templates/dotnet-ci.yaml` action versions
+23. Update `workflow-templates/dotnet-release.yaml` action versions
 24. Ensure all workflows have appropriate `permissions` blocks
 25. Consider adding SHA pinning for third-party actions
 
 ### New Files Phase
-26. Create `.github/dependabot.yml` for GitHub Actions and NuGet updates
-27. Create `.github/release.yml` for release notes categorization
+26. Create `.github/dependabot.yaml` for GitHub Actions and NuGet updates
+27. Create `.github/release.yaml` for release notes categorization
 28. Evaluate need for stale issue workflow
 29. Evaluate need for PR auto-labeler workflow
 
 ### Labels Phase
-30. Review `labels.yml` for completeness against standard taxonomies
+30. Review `labels.yaml` for completeness against standard taxonomies
 31. Verify color accessibility (contrast ratios)
 32. Add any missing standard labels (e.g., `stale`, `needs-reproduction`)
 33. Ensure label descriptions are clear and actionable
@@ -231,7 +235,7 @@ Conduct a systematic audit of all files in the `.github` repository against mode
 - Not applicable (configuration/documentation files, no code)
 
 ### Integration Tests
-- YAML syntax validation for all `.yml` files
+- YAML syntax validation for all `.yaml` files
 - Markdown rendering validation for all `.md` files
 - Link validation for all internal and external links
 - Label sync dry-run execution
@@ -249,13 +253,13 @@ Conduct a systematic audit of all files in the `.github` repository against mode
 - [ ] CODE_OF_CONDUCT.md uses latest Contributor Covenant version
 - [ ] SECURITY.md includes private vulnerability reporting instructions
 - [ ] All contact emails are consistent across files
-- [ ] FUNDING.yml is correctly configured
+- [ ] FUNDING.yaml is correctly configured
 
 ### Templates
 - [ ] All issue templates have consistent structure and labels
 - [ ] All issue templates have appropriate required/optional field validations
 - [ ] All discussion templates have appropriate labels
-- [ ] config.yml disables blank issues and has correct contact links
+- [ ] config.yaml disables blank issues and has correct contact links
 - [ ] PR template includes all relevant checklist items
 
 ### Workflows
@@ -265,7 +269,7 @@ Conduct a systematic audit of all files in the `.github` repository against mode
 - [ ] Workflow templates match reusable workflow configurations
 
 ### Labels
-- [ ] labels.yml covers all standard label categories
+- [ ] labels.yaml covers all standard label categories
 - [ ] Labels have consistent naming convention (`category:value`)
 - [ ] Labels have accessible color choices
 - [ ] Labels have clear, actionable descriptions
@@ -277,15 +281,15 @@ Conduct a systematic audit of all files in the `.github` repository against mode
 - [ ] profile/README.md has current information and working links
 
 ### New Files
-- [ ] dependabot.yml created for automated updates
-- [ ] release.yml created for release notes configuration
+- [ ] dependabot.yaml created for automated updates
+- [ ] release.yaml created for release notes configuration
 
 ## Validation Commands
 
 ### YAML Validation
 ```bash
 # Validate all YAML files (requires yq or yamllint)
-find . -name "*.yml" -o -name "*.yaml" | xargs -I {} yamllint {}
+find . -name "*.yaml" -o -name "*.yaml" | xargs -I {} yamllint {}
 ```
 
 ### Markdown Validation
@@ -304,7 +308,7 @@ lychee --exclude-mail "**/*.md"
 ```bash
 # Trigger label-sync workflow in dry-run mode via GitHub Actions UI
 # Or use gh CLI:
-gh workflow run label-sync.yml -f dry-run=true
+gh workflow run label-sync.yaml -f dry-run=true
 ```
 
 ### Manual Verification
@@ -316,8 +320,8 @@ gh workflow run label-sync.yml -f dry-run=true
 ## Notes
 
 ### Future Enhancements
-- Consider adding `.github/workflows/welcome.yml` for first-time contributor greeting
-- Consider adding `.github/workflows/auto-assign.yml` for reviewer assignment
+- Consider adding `.github/workflows/welcome.yaml` for first-time contributor greeting
+- Consider adding `.github/workflows/auto-assign.yaml` for reviewer assignment
 - Consider adding `.github/CONTRIBUTING_TEMPLATE/` for repo-specific contribution guides
 - Evaluate GitHub Copilot workspace integration files
 

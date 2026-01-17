@@ -1,4 +1,4 @@
-# Last reviewed: 2026-01-14
+# Last reviewed: 2026-01-16
 name: Stale Issues
 
 on:
@@ -27,7 +27,7 @@ jobs:
       - name: Mark stale issues and PRs
         uses: actions/stale@v9
         with:
-          # Label configuration - use lowercase to match labels.yml
+          # Label configuration - use lowercase to match labels.yaml
           stale-issue-label: stale
           stale-pr-label: stale
 
