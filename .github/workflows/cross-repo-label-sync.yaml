@@ -68,7 +68,7 @@ jobs:
 
     steps:
       - name: Checkout labels configuration
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             labels.yaml
