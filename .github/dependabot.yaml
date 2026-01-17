@@ -25,3 +25,25 @@ updates:
       github-actions:
         patterns:
           - "*"
+
+  # npm - Check weekly for updates
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    labels:
+      - "type:chore"
+      - "area:ci-cd"
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    open-pull-requests-limit: 5
+    groups:
+      # Group all npm updates together
+      npm-dependencies:
+        patterns:
+          - "*"

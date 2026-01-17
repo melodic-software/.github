@@ -1,0 +1,32 @@
+// Last reviewed: 2026-01-17
+// Markdownlint configuration for melodic-software/.github repository
+// https://github.com/DavidAnson/markdownlint-cli2
+{
+  // Automatically ignore paths from .gitignore
+  "gitignore": true,
+
+  // Additional paths to ignore
+  "ignores": [
+    // Claude Code workspace
+    ".claude/temp/**",
+    // Feature specifications (may have non-standard formatting)
+    "specs/**",
+    // GitHub profile README uses intentional HTML for visual styling (centered content, badges, tables)
+    "profile/README.md",
+    // PR template intentionally starts with ## Summary (GitHub adds PR title as h1)
+    ".github/PULL_REQUEST_TEMPLATE.md"
+  ],
+
+  // Rule configuration
+  // https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+  "config": {
+    // Enable all rules by default
+    "default": true,
+
+    // MD013: Line length - disabled (many markdown files have long lines)
+    "MD013": false,
+
+    // MD060: Table column style - disabled (too strict, requires aligned/compact formatting)
+    "MD060": false
+  }
+}

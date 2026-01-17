@@ -10,7 +10,7 @@ This is the **organization-level `.github` repository** for Melodic Software. It
 
 ## Repository Structure
 
-```
+```text
 .github/
 ├── .github/
 │   ├── ISSUE_TEMPLATE/           # Issue forms (bug-report, feature-request, documentation, chore)
@@ -31,12 +31,14 @@ This is the **organization-level `.github` repository** for Melodic Software. It
 ### Review Dates
 
 All files should include a review date comment at the top:
+
 - Markdown files: `<!-- Last reviewed: YYYY-MM-DD -->`
 - YAML files: `# Last reviewed: YYYY-MM-DD`
 
 ### Commit Messages
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
+
 - `feat:` new feature
 - `fix:` bug fix
 - `docs:` documentation only
@@ -46,6 +48,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 ### Branching
 
 Trunk-based development with short-lived feature branches:
+
 - Branch naming: `<type>/<short-description>` (e.g., `feat/add-template`, `fix/typo-in-conduct`)
 - All changes via Pull Requests, squash merge to `main`
 
@@ -67,6 +70,7 @@ Special labels: `good first issue`, `help wanted`, `dependencies`, `breaking-cha
 ## Tech Context
 
 This organization primarily builds .NET applications:
+
 - Target: .NET 10, C# 14
 - Architecture: Modular Monoliths with Clean Architecture, CQRS, DDD
 - The `workflow-templates/dotnet-ci.yaml` is the standard CI template for .NET projects
@@ -120,12 +124,14 @@ Require a corresponding `.properties.json` file with metadata:
 ### dependabot.yaml
 
 Configures automated dependency updates:
+
 - GitHub Actions: Weekly updates (Mondays)
-- NuGet packages: Weekly updates with grouping
+- npm packages: Weekly updates for markdownlint-cli2
 
 ### release.yaml
 
 Configures auto-generated release notes:
+
 - Categories based on labels (Breaking Changes, Features, Bug Fixes, etc.)
 - Excludes dependabot PRs and invalid/duplicate issues
 
@@ -143,6 +149,7 @@ Available reusable workflows in `.github/workflows/`:
 | `cross-repo-label-sync.yaml` | Sync labels to all org repos (requires `LABEL_SYNC_PAT` secret) |
 | `pr-size-labeler.yaml` | Label PRs by size using effort labels |
 | `stale.yaml` | Mark/close stale issues and PRs |
+| `markdown-lint.yaml` | Lint markdown files for quality |
 
 Call reusable workflows with:
 

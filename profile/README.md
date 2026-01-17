@@ -89,6 +89,7 @@ The central home for engineering guidelines — Code of Conduct, Contributing Gu
 ## What's Next
 
 The roadmap includes:
+
 - First public release of Medley reference architecture
 - NuGet packages for reusable building blocks
 - Technical blog posts on modular monolith patterns

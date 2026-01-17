@@ -6,6 +6,7 @@ This document tracks future enhancements, technical debt, and improvement opport
 ## Current Status
 
 The `.github` repository is **well-established** with comprehensive coverage:
+
 - Community health files (CODE_OF_CONDUCT, CONTRIBUTING, SECURITY, SUPPORT, GOVERNANCE)
 - Issue and discussion templates
 - Reusable workflows and starter templates
@@ -43,6 +44,7 @@ The `.github` repository is **well-established** with comprehensive coverage:
 **Context**: GitHub does not automatically inherit labels from `.github` repos like it does with community health files. Organization default labels are only applied once at repo creation and don't stay in sync.
 
 **Current State**: Two workflows handle label synchronization:
+
 1. `label-sync.yaml` - Syncs 45 labels to the `.github` repository using `EndBug/label-sync@v2`
 2. `cross-repo-label-sync.yaml` - Syncs labels to all specified org repositories using `srealmoreno/label-sync-action@v2` with a matrix strategy and `LABEL_SYNC_PAT` secret
 

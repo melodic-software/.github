@@ -15,7 +15,7 @@ We take security seriously. If you discover a security vulnerability, please rep
 
 1. **Do NOT** open a public GitHub issue for security vulnerabilities.
 2. Use **GitHub's private vulnerability reporting**: Navigate to the repository's **Security** tab > **Advisories** > **New draft security advisory**.
-3. If the repository does not have private reporting enabled, please email **security@melodicsoftware.com** (or info@melodicsoftware.com).
+3. If the repository does not have private reporting enabled, please email **<security@melodicsoftware.com>** (or <info@melodicsoftware.com>).
 
 ### What to Include
 

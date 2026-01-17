@@ -10,7 +10,7 @@ Files located here are automatically inherited by all repositories in the organi
 
 ## Repository Structure
 
-```
+```text
 .github/
 ├── .github/
 │   ├── ISSUE_TEMPLATE/           # Issue forms (bug-report, feature-request, documentation, chore)
@@ -85,6 +85,7 @@ Files located here are automatically inherited by all repositories in the organi
 | `cross-repo-label-sync.yaml` | Sync labels to all organization repositories |
 | `pr-size-labeler.yaml` | Label PRs by size using effort labels |
 | `stale.yaml` | Mark/close stale issues and PRs |
+| `markdown-lint.yaml` | Lint markdown files on PRs and pushes |
 
 ### Workflow Templates
 

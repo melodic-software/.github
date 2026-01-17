@@ -1,0 +1,15 @@
+{
+  "name": "melodic-github-defaults",
+  "private": true,
+  "description": "Organization-level GitHub defaults for Melodic Software",
+  "scripts": {
+    "lint:md": "markdownlint-cli2 \"**/*.md\"",
+    "lint:md:fix": "markdownlint-cli2 \"**/*.md\" --fix"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.20.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

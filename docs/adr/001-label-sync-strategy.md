@@ -8,6 +8,7 @@ Accepted
 ## Context
 
 GitHub organizations need consistent labels across repositories for:
+
 - Efficient issue triage and filtering
 - Automation based on labels (release notes, workflows)
 - Clear communication of issue/PR status, priority, and type
@@ -32,11 +33,13 @@ We will use `EndBug/label-sync` action to manage labels declaratively via `label
 ### Scope
 
 **Phase 1 (Current)**: Sync labels to `.github` repo only
+
 - Uses default `GITHUB_TOKEN`
 - No additional secrets required
 - Serves as source of truth for label definitions
 
 **Phase 2 (Future)**: Sync labels across all org repos
+
 - Requires PAT with `repo` scope
 - Matrix strategy to iterate over repos
 - See [cross-repo sync spec](../../specs/feature-cross-repo-label-sync.md)
@@ -53,6 +56,7 @@ We will use `EndBug/label-sync` action to manage labels declaratively via `label
 ### Why not organization default labels?
 
 Organization default labels have limitations:
+
 - Only applied at repo creation (no ongoing sync)
 - No version control
 - No alias/rename support
