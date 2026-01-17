@@ -18,9 +18,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Run markdownlint-cli2
-        uses: DavidAnson/markdownlint-cli2-action@v26
+        uses: DavidAnson/markdownlint-cli2-action@v22
         with:
           globs: '**/*.md'
