@@ -1,4 +1,4 @@
-# Last reviewed: 2026-01-14
+# Last reviewed: 2026-01-19
 # CODEOWNERS - Default code ownership for Melodic Software
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 #
@@ -28,4 +28,4 @@ workflow-templates/ @melodic-software/maintainers
 profile/ @melodic-software/maintainers
 
 # Labels configuration
-labels.yml @melodic-software/maintainers
+labels.yaml @melodic-software/maintainers
