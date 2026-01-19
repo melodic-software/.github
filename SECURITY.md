@@ -1,4 +1,4 @@
-<!-- Last reviewed: 2026-01-15 -->
+<!-- Last reviewed: 2026-01-19 -->
 <!--https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/adding-a-security-policy-to-your-repository-->
 
 # Security Policy
@@ -52,9 +52,24 @@ We prefer all communications to be in English.
 
 ## Security Measures
 
-We generally implement:
+This organization enables the following security features:
 
-- **GitHub Secret Scanning**
-- **Dependabot Security Updates**
-- **Static Code Analysis** (CodeQL or Roslyn Analyzers)
-- **Branch Protection**
+### Organization-Level
+
+- **GitHub Secret Scanning**: Enabled for all repositories
+- **Push Protection**: Blocks commits containing detected secrets
+- **Dependabot Security Updates**: Configured per-repository via `dependabot.yaml`
+
+### Available Reusable Workflows
+
+- **CodeQL Analysis**: `.github/workflows/codeql.yaml` - supports C#, JavaScript, Python
+- **Dependabot Auto-Merge**: `.github/workflows/dependabot-automerge.yaml` - patch/minor updates
+
+### Repository-Level (Recommended)
+
+Individual repositories should enable:
+
+- **Branch Protection Rules**: Require PR reviews and status checks on `main`
+- **Dependency Graph**: Enable for vulnerability detection
+
+For .NET projects, enable Roslyn security analyzers in the project configuration.
