@@ -1,8 +1,8 @@
-<!-- Last reviewed: 2026-01-17 -->
+<!-- Last reviewed: 2026-01-19 -->
 
 <div align="center">
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=28&duration=3000&pause=1000&color=512BD4&center=true&vCenter=true&width=800&lines=Building+software+that+sings;Engineering-led.+Quality-focused.;Modular+architecture+%7C+Clean+patterns)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=28&duration=3000&pause=1000&color=1E90FF&center=true&vCenter=true&width=800&lines=Building+software+that+sings;Engineering-led.+Quality-focused.;Modular+architecture+%7C+Clean+patterns)](https://git.io/typing-svg)
 
 # Melodic Software
 
@@ -12,9 +12,9 @@ Where code finds its rhythm — crafting maintainable .NET systems through modul
 
 ---
 
-[![GitHub Org Stars](https://img.shields.io/github/stars/melodic-software?style=for-the-badge&logo=github&label=Org%20Stars&color=512BD4)](https://github.com/melodic-software)
+[![GitHub Org Stars](https://img.shields.io/github/stars/melodic-software?style=for-the-badge&logo=github&label=Org%20Stars&color=1E90FF)](https://github.com/melodic-software)
 [![.NET](https://img.shields.io/badge/.NET%2010-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-![Visitors](https://komarev.com/ghpvc/?username=melodic-software&color=512BD4&style=for-the-badge&label=Visitors)
+![Visitors](https://komarev.com/ghpvc/?username=melodic-software&color=1E90FF&style=for-the-badge&label=Visitors)
 
 </div>
 
@@ -66,7 +66,7 @@ High standards ensure the codebase remains clean and adaptive.
 
 A reference implementation of a Modular Monolith using .NET 10, Blazor, and .NET Aspire. Demonstrates best practices with Clean Architecture, vertical slices, CQRS, and Domain-Driven Design working in harmony.
 
-[![Stars](https://img.shields.io/github/stars/melodic-software/medley?style=flat-square&color=512BD4)](https://github.com/melodic-software/medley)
+[![Stars](https://img.shields.io/github/stars/melodic-software/medley?style=flat-square&color=1E90FF)](https://github.com/melodic-software/medley)
 [![Issues](https://img.shields.io/github/issues/melodic-software/medley?style=flat-square)](https://github.com/melodic-software/medley/issues)
 
 </td>
@@ -78,7 +78,7 @@ A reference implementation of a Modular Monolith using .NET 10, Blazor, and .NET
 
 The central home for engineering guidelines — Code of Conduct, Contributing Guide, Issue Templates, and reusable workflows that keep all projects in sync.
 
-[![Stars](https://img.shields.io/github/stars/melodic-software/.github?style=flat-square&color=512BD4)](https://github.com/melodic-software/.github)
+[![Stars](https://img.shields.io/github/stars/melodic-software/.github?style=flat-square&color=1E90FF)](https://github.com/melodic-software/.github)
 [![Issues](https://img.shields.io/github/issues/melodic-software/.github?style=flat-square)](https://github.com/melodic-software/.github/issues)
 
 </td>
@@ -105,8 +105,8 @@ More detailed roadmaps and release plans will be shared as projects mature. Watc
 
 ## Connect
 
-[![Website](https://img.shields.io/badge/Website-melodicsoftware.com-512BD4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://melodicsoftware.com)
-[![Email](https://img.shields.io/badge/Email-info@melodicsoftware.com-512BD4?style=for-the-badge&logo=gmail&logoColor=white)](mailto:info@melodicsoftware.com)
+[![Website](https://img.shields.io/badge/Website-melodicsoftware.com-1E90FF?style=for-the-badge&logo=googlechrome&logoColor=white)](https://melodicsoftware.com)
+[![Email](https://img.shields.io/badge/Email-info@melodicsoftware.com-1E90FF?style=for-the-badge&logo=gmail&logoColor=white)](mailto:info@melodicsoftware.com)
 
 ---
 
