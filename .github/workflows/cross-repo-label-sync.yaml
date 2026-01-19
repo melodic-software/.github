@@ -62,9 +62,7 @@ jobs:
       matrix:
         repo:
           - melodic-software/medley
-          - melodic-software/citadel
           - melodic-software/identity-server
-          - melodic-software/membrain
 
     steps:
       - name: Checkout labels configuration
