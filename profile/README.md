@@ -15,15 +15,16 @@ Where code finds its rhythm — crafting maintainable .NET systems through modul
 [![GitHub Org Stars](https://img.shields.io/github/stars/melodic-software?style=for-the-badge&logo=github&label=Org%20Stars&color=1E90FF)](https://github.com/melodic-software)
 [![.NET](https://img.shields.io/badge/.NET%2010-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Discussions](https://img.shields.io/badge/Discussions-Join-1E90FF?style=for-the-badge&logo=github&logoColor=white)](https://github.com/orgs/melodic-software/discussions)
+[![Clone Medley](https://img.shields.io/badge/Clone_Medley-1E90FF?style=for-the-badge&logo=github&logoColor=white)](https://github.com/melodic-software/medley)
 ![Visitors](https://komarev.com/ghpvc/?username=melodic-software&color=1E90FF&style=for-the-badge&label=Visitors)
 
 ---
 
 ### Stats Dashboard
 
-| **Repositories** | **Stars** | **Organization** | **Language** |
+| **Repositories** | **Stars** | **Contributors** | **Updated** |
 | :---: | :---: | :---: | :---: |
-| [![Public Repos](https://img.shields.io/badge/Public_Repos-2-1E90FF?style=flat-square&logo=github)](https://github.com/orgs/melodic-software/repositories) | [![Total Stars](https://img.shields.io/github/stars/melodic-software?style=flat-square&color=1E90FF&label=Total)](https://github.com/melodic-software) | ![Since](https://img.shields.io/badge/Since-2024-512BD4?style=flat-square) | ![C#](https://img.shields.io/badge/C%23-100%25-512BD4?style=flat-square&logo=csharp&logoColor=white) |
+| [![Public Repos](https://img.shields.io/badge/Public_Repos-2-1E90FF?style=flat-square&logo=github)](https://github.com/orgs/melodic-software/repositories) | [![Total Stars](https://img.shields.io/github/stars/melodic-software?style=flat-square&color=1E90FF&label=Total)](https://github.com/melodic-software) | [![Contributors](https://img.shields.io/github/contributors/melodic-software/medley?style=flat-square&color=1E90FF)](https://github.com/melodic-software/medley/graphs/contributors) | ![Updated](https://img.shields.io/badge/Last_Update-January_2026-512BD4?style=flat-square) |
 
 ---
 
@@ -52,6 +53,7 @@ Like a well-composed piece of music, great software requires harmony between its
 | **Pattern** | **Purpose** | **Implementation** |
 | :---: | :--- | :--- |
 | ![Modular Monolith](https://img.shields.io/badge/Modular_Monolith-512BD4?style=flat-square) | Bounded contexts with deployment simplicity | Module-per-folder with explicit boundaries |
+| ![Vertical Slice](https://img.shields.io/badge/Vertical_Slice-512BD4?style=flat-square) | Feature-organized code | REPR pattern, minimal layering for simple features |
 | ![Clean Architecture](https://img.shields.io/badge/Clean_Architecture-512BD4?style=flat-square) | Dependency inversion for testability | Domain → Application → Infrastructure |
 | ![CQRS](https://img.shields.io/badge/CQRS-512BD4?style=flat-square) | Separate read/write concerns | MediatR handlers with distinct models |
 | ![DDD](https://img.shields.io/badge/Domain--Driven_Design-512BD4?style=flat-square) | Business logic in the domain | Aggregates, Value Objects, Domain Events |
@@ -63,10 +65,68 @@ Like a well-composed piece of music, great software requires harmony between its
 | ![.NET](https://img.shields.io/badge/.NET%2010-512BD4?style=flat-square&logo=dotnet&logoColor=white) | ![Blazor](https://img.shields.io/badge/Blazor-512BD4?style=flat-square&logo=blazor&logoColor=white) | ![Aspire](https://img.shields.io/badge/Aspire-512BD4?style=flat-square&logo=dotnet&logoColor=white) | ![Duende](https://img.shields.io/badge/Duende_IdentityServer-6E45AF?style=flat-square) |
 | **C# 14** | **Interactive Auto** | **YARP & OpenTelemetry** | **STS, BFF Pattern** |
 
-| **Data** | **Messaging** | **Testing** | **DevOps** |
-| :---: | :---: | :---: | :---: |
-| ![EF Core](https://img.shields.io/badge/EF_Core-512BD4?style=flat-square&logo=dotnet&logoColor=white) | ![MassTransit](https://img.shields.io/badge/MassTransit-1266CC?style=flat-square) | ![xUnit](https://img.shields.io/badge/xUnit-0A7D9C?style=flat-square) | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white) |
-| **SQL Server, PostgreSQL** | **RabbitMQ, Azure Service Bus** | **FluentAssertions, Testcontainers** | **Aspire, Docker** |
+| **Data** | **Messaging** | **Real-time** | **Testing** | **DevOps** |
+| :---: | :---: | :---: | :---: | :---: |
+| ![EF Core](https://img.shields.io/badge/EF_Core-512BD4?style=flat-square&logo=dotnet&logoColor=white) | ![MassTransit](https://img.shields.io/badge/MassTransit-1266CC?style=flat-square) | ![SignalR](https://img.shields.io/badge/SignalR-512BD4?style=flat-square&logo=dotnet&logoColor=white) | ![xUnit](https://img.shields.io/badge/xUnit-0A7D9C?style=flat-square) | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white) |
+| **SQL Server** | **Azure Service Bus, RabbitMQ** | **WebSockets** | **Shouldly, NSubstitute, Testcontainers** | **Aspire, Docker** |
+
+<details>
+<summary><b>💡 Why These Technology Choices?</b></summary>
+<div align="left">
+
+### Architectural Decisions
+
+**Right-Sized Architecture**
+- Simple apps get pure vertical slices (REPR pattern / Fast Endpoints style) — no unnecessary layers
+- Complex domains get the full stack: Modular Monolith + Clean Architecture + DDD + vertical slices
+- The goal is always the simplest architecture that solves the actual problem
+
+**Modular Monolith over Microservices**
+- Microservices add distributed systems complexity without corresponding business benefits at our scale
+- Monolith maintains single deployment unit while allowing modular organization
+- Easy to split into microservices later if business needs truly require it
+
+**Clean Architecture (When Warranted)**
+- Separates business logic from infrastructure concerns
+- Domain layer remains independent and testable
+- Overkill for simple CRUD apps — use vertical slices instead
+
+**DDD (Selectively)**
+- Applied only in complex domains where business rules justify the investment
+- Not every bounded context needs aggregates and domain events
+- Simple modules can use straightforward data access patterns
+
+**CQRS (Not Everywhere)**
+- Applied only where read/write patterns truly diverge
+- Most features work fine with simple CRUD
+- Prevents premature architectural complexity
+
+**.NET 10 + C# 14**
+- Strong typing with modern language features (records, patterns, nullable reference types)
+- Mature ecosystem with production-proven patterns
+- Performance characteristics required for real-time applications
+- Superior to scripted languages for enterprise systems at scale
+
+**Blazor over Traditional SPA Frameworks**
+- Single language (C#) from backend to frontend
+- No JavaScript framework fatigue
+- Server and client logic in same codebase when beneficial
+- Type safety across entire stack
+
+**Entity Framework Core**
+- ORM eliminates repetitive SQL boilerplate
+- Migrations provide infrastructure-as-code for database schema
+- LINQ provides type-safe queries
+- Fully async/await support
+
+**Docker + GitHub Actions**
+- Infrastructure as code for reproducible builds
+- GitHub Actions integrated directly in version control
+- No vendor lock-in to external CI/CD platforms
+- Fast feedback loops on every commit
+
+</div>
+</details>
 
 </div>
 
@@ -100,6 +160,36 @@ Ready to join the ensemble? Here's how to get started in **three measures**:
 </div>
 
 > **Prerequisites**: [.NET 10 SDK](https://dotnet.microsoft.com/download), [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for Aspire)
+
+### Project Structure at a Glance
+
+```
+Medley/
+├── src/
+│   ├── Modules/                    # Bounded contexts (Users, Orders, Products, etc.)
+│   │   ├── Users/
+│   │   │   ├── Domain/            # Business rules & aggregates
+│   │   │   ├── Application/       # Use cases & handlers
+│   │   │   └── Infrastructure/    # Data access & external services
+│   │   └── ...other modules
+│   ├── Shared/                     # Cross-cutting concerns
+│   │   ├── Constants/
+│   │   ├── Middleware/
+│   │   └── Extensions/
+│   ├── Web/                        # Blazor UI & API endpoints
+│   │   ├── Components/            # Blazor interactive components
+│   │   ├── Pages/                 # Routable pages
+│   │   └── Endpoints/             # Minimal API routes
+│   └── AppHost/                    # .NET Aspire orchestration
+├── tests/
+│   ├── Unit/                       # Domain & application logic tests
+│   ├── Integration/                # Database & external service tests
+│   └── ArchTests/                  # Architectural constraint verification
+└── docs/                           # Architecture decisions & guides
+```
+
+Each module is **self-contained** with its own domain, application, and infrastructure layers.
+The Web project orchestrates them through dependency injection and vertical slices.
 
 *Every composition starts with a single note — start exploring today.*
 
@@ -203,6 +293,21 @@ Current state of repositories across the organization:
 ---
 
 ## Recent Activity
+
+<!--
+  AUTOMATION NOTE: This section is currently manual.
+  To auto-update via GitHub Actions, create: .github/workflows/update-profile-readme.yml
+
+  Suggested workflow updates:
+  - Pull latest releases from Medley & .github repos monthly
+  - Update "Last Updated" timestamp
+  - Fetch commit activity and interesting PRs
+
+  Example data sources:
+  - GitHub API: repos/{owner}/{repo}/releases
+  - GitHub API: repos/{owner}/{repo}/commits?since=2026-01-01
+  - GitHub API: repos/{owner}/{repo}/pulls?state=closed&sort=updated
+-->
 
 | **Date** | **Repository** | **Update** |
 | :---: | :--- | :--- |
