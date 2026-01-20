@@ -1,4 +1,4 @@
-# Last reviewed: 2026-01-14
+# Last reviewed: 2026-01-20
 name: Bug Report
 description: Report a bug or unexpected behavior
 title: "[Bug]: "
@@ -59,16 +59,14 @@ body:
     validations:
       required: true
 
-  - type: dropdown
-    id: dotnet-version
+  - type: input
+    id: technology
     attributes:
-      label: .NET Version (If Applicable)
-      options:
-        - .NET 10
-        - .NET 9
-        - .NET 8
-        - Other/Not Applicable
-      default: 0
+      label: Technology/Runtime Version
+      description: If applicable, specify the technology and version.
+      placeholder: "e.g., .NET 10, Node.js 22.x, Python 3.12"
+    validations:
+      required: false
 
   - type: textarea
     id: environment

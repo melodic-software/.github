@@ -1,12 +1,12 @@
-# Last reviewed: 2026-01-14
+# Last reviewed: 2026-01-20
 blank_issues_enabled: false
 contact_links:
-  - name: Security vulnerabilities
-    url: https://github.com/melodic-software/.github/blob/main/SECURITY.md
-    about: Please review the security policy for reporting instructions.
-  - name: Discussions and ideas
+  - name: Security Vulnerabilities
+    url: https://github.com/melodic-software/.github/security/policy
+    about: Report security vulnerabilities privately. Do NOT open public issues for security concerns.
+  - name: Questions & Discussions
     url: https://github.com/orgs/melodic-software/discussions
-    about: Start a discussion for questions or ideas.
+    about: Ask questions, share ideas, or start general discussions.
   - name: Support
     url: https://github.com/melodic-software/.github/blob/main/SUPPORT.md
-    about: General questions and support.
+    about: Get help with setup, usage, or troubleshooting.

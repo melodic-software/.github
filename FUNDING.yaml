@@ -1,13 +1,18 @@
-# Last reviewed: 2026-01-14
+# Last reviewed: 2026-01-20
 # GitHub Funding Configuration
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
 
-github: [melodic-software]
+# Supports up to 4 GitHub Sponsors usernames
+github: [melodic-software, kyle-sexton]
 
-# Advanced Options (Uncomment to use):
+# Single username per external platform
 # patreon: melodicsoftware
 # open_collective: melodic-software
-# ko_fi: melodicsoftware
+# tidelift: npm/package-name
+# community_bridge: project-name
 # liberapay: melodicsoftware
 # issuehunt: melodic-software
-# custom: ["https://melodicsoftware.com/donate"]
+# ko_fi: melodicsoftware
+
+# Up to 4 custom URLs
+# custom: ["https://melodicsoftware.com/donate", "https.paypal.me/username"]

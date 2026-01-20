@@ -1,31 +1,43 @@
-# Last reviewed: 2026-01-19
-# CODEOWNERS - Default code ownership for Melodic Software
-# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
-#
-# These owners will be requested for review when someone opens a pull request
-# that modifies code that they own. Order matters - later patterns take precedence.
-#
-# Note: This file provides organization-wide defaults. Individual repositories
-# can override by creating their own CODEOWNERS file.
+# Last reviewed: 2026-01-20
+# ===========================================================================
+# CODEOWNERS - Melodic Software Organization Defaults
+# ===========================================================================
+# Provides org-wide default code ownership. Individual repos can override.
+# Order matters: last matching pattern takes precedence.
+# Ref: https://docs.github.com/articles/about-code-owners
+# ===========================================================================
 
-# Default owners for everything (fallback)
+# ---------------------------------------------------------------------------
+# DEFAULT - Fallback for all unmatched files
+# ---------------------------------------------------------------------------
 * @melodic-software/maintainers
 
-# Community health files
+# ---------------------------------------------------------------------------
+# COMMUNITY HEALTH FILES - Org-wide policies requiring careful review
+# ---------------------------------------------------------------------------
 CODE_OF_CONDUCT.md @melodic-software/maintainers
 CONTRIBUTING.md @melodic-software/maintainers
 GOVERNANCE.md @melodic-software/maintainers
 SECURITY.md @melodic-software/maintainers
 SUPPORT.md @melodic-software/maintainers
 
-# GitHub configuration
+# ---------------------------------------------------------------------------
+# GITHUB CONFIGURATION - Repository settings and automation
+# ---------------------------------------------------------------------------
 .github/ @melodic-software/maintainers
 
-# Workflow templates
+# ---------------------------------------------------------------------------
+# WORKFLOW TEMPLATES - Reusable CI/CD patterns (inherited by all repos)
+# ---------------------------------------------------------------------------
 workflow-templates/ @melodic-software/maintainers
 
-# Organization profile
+# ---------------------------------------------------------------------------
+# ORGANIZATION PROFILE - Public-facing org identity on GitHub
+# ---------------------------------------------------------------------------
 profile/ @melodic-software/maintainers
 
-# Labels configuration
+# ---------------------------------------------------------------------------
+# CONFIGURATION FILES - Labels and project metadata
+# ---------------------------------------------------------------------------
 labels.yaml @melodic-software/maintainers
+CODEOWNERS @melodic-software/maintainers
