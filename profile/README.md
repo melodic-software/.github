@@ -68,7 +68,7 @@ Like a well-composed piece of music, great software requires harmony between its
 | **Data** | **Messaging** | **Real-time** | **Testing** | **DevOps** |
 | :---: | :---: | :---: | :---: | :---: |
 | ![EF Core](https://img.shields.io/badge/EF_Core-512BD4?style=flat-square&logo=dotnet&logoColor=white) | ![MassTransit](https://img.shields.io/badge/MassTransit-1266CC?style=flat-square) | ![SignalR](https://img.shields.io/badge/SignalR-512BD4?style=flat-square&logo=dotnet&logoColor=white) | ![xUnit](https://img.shields.io/badge/xUnit-0A7D9C?style=flat-square) | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white) |
-| **SQL Server** | **Azure Service Bus, RabbitMQ** | **WebSockets** | **Shouldly, NSubstitute, Testcontainers** | **Aspire, Docker** |
+| SQL Server | Azure Service Bus, RabbitMQ | WebSockets | Shouldly, NSubstitute, Testcontainers | Aspire, Docker |
 
 <details>
 <summary><b>💡 Why These Technology Choices?</b></summary>
