@@ -1,12 +1,12 @@
-<!-- Last reviewed: 2026-01-19 -->
+<!-- Last reviewed: 2026-01-20 -->
 
 <div align="center">
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=28&duration=3000&pause=1000&color=1E90FF&center=true&vCenter=true&width=800&lines=Building+software+that+sings;Engineering-led.+Quality-focused.;Modular+architecture+%7C+Clean+patterns)](https://git.io/typing-svg)
-
 # Melodic Software
 
-**Engineering-led. Quality-focused. Future-ready.**
+**Building software that sings.**
+
+Engineering-led. Quality-focused. Future-ready.
 
 Where code finds its rhythm — crafting maintainable .NET systems through modular architecture, clean patterns, and deliberate design.
 
@@ -14,7 +14,10 @@ Where code finds its rhythm — crafting maintainable .NET systems through modul
 
 [![GitHub Org Stars](https://img.shields.io/github/stars/melodic-software?style=for-the-badge&logo=github&label=Org%20Stars&color=1E90FF)](https://github.com/melodic-software)
 [![.NET](https://img.shields.io/badge/.NET%2010-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![Discussions](https://img.shields.io/badge/Discussions-Join-1E90FF?style=for-the-badge&logo=github&logoColor=white)](https://github.com/orgs/melodic-software/discussions)
 ![Visitors](https://komarev.com/ghpvc/?username=melodic-software&color=1E90FF&style=for-the-badge&label=Visitors)
+
+[About](#about) | [Tech Stack](#tech-stack) | [Philosophy](#engineering-philosophy) | [Projects](#featured-repositories) | [Roadmap](#whats-next) | [Connect](#connect)
 
 </div>
 
@@ -107,6 +110,7 @@ More detailed roadmaps and release plans will be shared as projects mature. Watc
 
 [![Website](https://img.shields.io/badge/Website-melodicsoftware.com-1E90FF?style=for-the-badge&logo=googlechrome&logoColor=white)](https://melodicsoftware.com)
 [![Email](https://img.shields.io/badge/Email-info@melodicsoftware.com-1E90FF?style=for-the-badge&logo=gmail&logoColor=white)](mailto:info@melodicsoftware.com)
+[![Sponsor](https://img.shields.io/badge/Sponsor-EA4AAA?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/melodic-software)
 
 ---
 
