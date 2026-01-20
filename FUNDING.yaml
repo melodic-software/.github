@@ -3,7 +3,7 @@
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
 
 # Supports up to 4 GitHub Sponsors usernames
-github: [melodic-software, kyle-sexton]
+github: [melodic-software]
 
 # Single username per external platform
 # patreon: melodicsoftware
