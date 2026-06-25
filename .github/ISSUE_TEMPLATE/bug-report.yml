@@ -1,0 +1,51 @@
+name: Bug Report
+description: Report an unexpected problem or behavior.
+title: "[Bug] "
+labels: ["priority: needs-triage", "type: bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: A clear, concise description of the problem.
+    validations:
+      required: true
+  - type: input
+    id: area
+    attributes:
+      label: Affected area / component
+      description: Which part of the project is affected? (optional)
+    validations:
+      required: false
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Minimal steps to reproduce the behavior.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happens? Include error messages, stack traces, or screenshots.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, runtime/tool versions, and anything else relevant.
+    validations:
+      required: false

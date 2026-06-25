@@ -1,0 +1,33 @@
+name: Task
+description: A chore, maintenance task, audit, or other housekeeping item.
+title: "[Task] "
+labels: ["priority: needs-triage", "type: chore"]
+body:
+  - type: input
+    id: area
+    attributes:
+      label: Affected area / component
+      description: Which part of the project does this affect? (optional)
+    validations:
+      required: false
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What needs to be done and why?
+    validations:
+      required: true
+  - type: dropdown
+    id: cadence
+    attributes:
+      label: Cadence
+      description: How often should this recur? Leave blank for one-off tasks.
+      options:
+        - weekly
+        - biweekly
+        - monthly
+        - quarterly
+        - semi-annual
+        - annual
+    validations:
+      required: false
