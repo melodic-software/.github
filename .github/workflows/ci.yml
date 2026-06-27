@@ -1,0 +1,159 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# This repo holds only community-health files (Markdown + issue/PR templates and
+# config), so it consumes the org's reusable lint/hygiene actions from
+# ci-workflows (pinned by SHA) against the vendored standards configs at the repo
+# root, then aggregates them into the single `ci-status` check the org `ci-gate`
+# ruleset requires. Each lane checks out this repo, then runs one remote action.
+jobs:
+  markdown:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Lint Markdown
+        uses: melodic-software/ci-workflows/.github/actions/markdown@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
+        with:
+          config: .markdownlint-cli2.jsonc
+
+  typos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Spell-check
+        uses: melodic-software/ci-workflows/.github/actions/typos@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
+        with:
+          config: _typos.toml
+
+  editorconfig:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Check editorconfig conformance
+        uses: melodic-software/ci-workflows/.github/actions/editorconfig@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
+        with:
+          config: .editorconfig-checker.json
+
+  gitleaks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Scan for secrets
+        uses: melodic-software/ci-workflows/.github/actions/gitleaks@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
+        with:
+          config: .gitleaks.toml
+
+  links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Check links and anchors (offline)
+        uses: melodic-software/ci-workflows/.github/actions/lychee-offline@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
+        with:
+          config: lychee.toml
+
+  actionlint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Lint workflows
+        uses: melodic-software/ci-workflows/.github/actions/actionlint@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
+
+  jsonschema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Validate dependabot.yml
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
+        with:
+          builtin-schema: vendor.dependabot
+          files: .github/dependabot.yml
+      - name: Validate workflows
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
+        with:
+          builtin-schema: vendor.github-workflows
+          files: >-
+            .github/workflows/ci.yml
+            .github/workflows/link-check.yml
+      - name: Validate issue forms
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
+        with:
+          builtin-schema: vendor.github-issue-forms
+          files: >-
+            .github/ISSUE_TEMPLATE/bug-report.yml
+            .github/ISSUE_TEMPLATE/feature-request.yml
+            .github/ISSUE_TEMPLATE/task.yml
+      - name: Validate issue-template chooser config
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
+        with:
+          builtin-schema: vendor.github-issue-config
+          files: .github/ISSUE_TEMPLATE/config.yml
+
+  eol-renormalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Check index-level EOL drift
+        uses: melodic-software/ci-workflows/.github/actions/eol-renormalize@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
+
+  ci-status:
+    if: always()
+    needs: [markdown, typos, editorconfig, gitleaks, links, actionlint, jsonschema, eol-renormalize]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Aggregate lane results
+        env:
+          RESULTS: ${{ needs.markdown.result }} ${{ needs.typos.result }} ${{ needs.editorconfig.result }} ${{ needs.gitleaks.result }} ${{ needs.links.result }} ${{ needs.actionlint.result }} ${{ needs.jsonschema.result }} ${{ needs.eol-renormalize.result }}
+        run: |
+          read -ra results <<< "$RESULTS"
+          for r in "${results[@]}"; do
+            case "$r" in
+              success|skipped) ;;
+              *) echo "A lane did not pass (result: $r)."; exit 1 ;;
+            esac
+          done
+          echo "All lanes passed or were skipped."

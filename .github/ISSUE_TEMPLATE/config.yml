@@ -1,1 +1,5 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Questions and support
+    url: mailto:support@melodicsoftware.com
+    about: For questions, help, or anything that doesn't fit the issue templates above.

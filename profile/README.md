@@ -12,4 +12,4 @@ Most repositories share a common platform: drop-in code-quality standards, reusa
 
 ## Contact
 
-153232337+kyle-sexton@users.noreply.github.com
+<info@melodicsoftware.com>
