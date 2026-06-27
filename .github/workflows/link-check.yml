@@ -1,0 +1,31 @@
+name: link-check
+
+# Scheduled, ADVISORY online link check (external URLs). Deliberately NOT part of
+# ci-status: external link health is flaky (transient outages, anti-bot 403/429),
+# so this runs weekly with fail:false and files a single rolling tracking issue on
+# breakage rather than blocking a merge. Deterministic on-disk link/anchor
+# integrity is enforced in ci.yml via the lychee-offline lane.
+on:
+  schedule:
+    - cron: '17 8 * * 1' # Mondays 08:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  link-check:
+    permissions:
+      contents: read
+      issues: write
+    uses: melodic-software/ci-workflows/.github/workflows/link-check.yml@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
+    with:
+      args: >-
+        --cache
+        --max-cache-age 7d
+        --no-progress
+        --accept-timeouts
+        --config lychee.toml
+        './**/*.md'
+      issue-title: Link checker report

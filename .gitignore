@@ -1,0 +1,26 @@
+# Language/framework-agnostic base: OS/editor noise plus the tooling present in
+# this repo. Language overlays (.NET, Python, …) extend it with their own
+# ignores when adopted.
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vs/
+.vscode/*
+!.vscode/extensions.json
+
+# Claude Code worktrees (per-checkout; PR worktree workflow)
+.claude/worktrees/
+
+# Node
+node_modules/
+
+# Lefthook — per-developer override config and local-only scripts dir
+lefthook-local.yml
+.lefthook-local/
+
+# .NET — build output from the dotnet fixtures
+bin/
+obj/

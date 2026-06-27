@@ -1,7 +1,7 @@
 name: Task
 description: A chore, maintenance task, audit, or other housekeeping item.
 title: "[Task] "
-labels: ["priority: needs-triage", "type: chore"]
+labels: ["priority: needs-triage", "type: task"]
 body:
   - type: input
     id: area

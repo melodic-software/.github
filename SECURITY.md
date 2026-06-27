@@ -9,7 +9,7 @@ Report them privately through GitHub's [private vulnerability reporting](https:/
 1. Open the **Security** tab of the affected repository.
 2. Click **Report a vulnerability** and complete the advisory form.
 
-If private reporting is not available for a repository, email **153232337+kyle-sexton@users.noreply.github.com** instead.
+If private reporting is not available for a repository, email **<security@melodicsoftware.com>** instead.
 
 Please include enough detail to reproduce and assess the issue (affected repository and version, impact, and reproduction steps). We will acknowledge your report and keep you informed as we investigate and address it.
 

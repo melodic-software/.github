@@ -1,1 +1,5 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Questions and support
+    url: https://github.com/melodic-software/.github/blob/main/SUPPORT.md
+    about: How to get help or reach us for anything that doesn't fit the issue templates above.
