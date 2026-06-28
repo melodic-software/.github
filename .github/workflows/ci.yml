@@ -114,6 +114,7 @@ jobs:
           files: >-
             .github/workflows/ci.yml
             .github/workflows/link-check.yml
+            .github/workflows/pr-title.yml
       - name: Validate issue forms
         uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
         with:
