@@ -1,0 +1,26 @@
+name: pr-title
+
+# Conventional Commits PR-title gate. Calls the shared semantic-pr reusable
+# workflow from ci-workflows. This repo is squash-only with the squash title set
+# to PR_TITLE, so the PR title becomes the default-branch commit subject; this
+# gates that subject against Conventional Commits. `edited` re-validates on a
+# re-title; `synchronize` keeps the check fresh across pushes. No `merge_group`
+# trigger — this repo has no merge queue. The emitted required-check context is
+# `pr-title / pr-title` (caller job / reusable job), the exact context the org
+# `ci-gate` ruleset requires.
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pr-title:
+    permissions:
+      pull-requests: read
+    uses: melodic-software/ci-workflows/.github/workflows/semantic-pr.yml@025be4512ede5f24ec159d52608613c167a49881
