@@ -3,13 +3,6 @@ description: A chore, maintenance task, audit, or other housekeeping item.
 title: "[Task] "
 labels: ["priority: needs-triage", "type: task"]
 body:
-  - type: input
-    id: area
-    attributes:
-      label: Affected area / component
-      description: Which part of the project does this affect? (optional)
-    validations:
-      required: false
   - type: textarea
     id: description
     attributes:
@@ -17,6 +10,13 @@ body:
       description: What needs to be done and why?
     validations:
       required: true
+  - type: input
+    id: area
+    attributes:
+      label: Affected area / component
+      description: Which part of the project does this affect? (optional)
+    validations:
+      required: false
   - type: dropdown
     id: cadence
     attributes:
