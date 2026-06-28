@@ -3,13 +3,6 @@ description: Propose a new feature or enhancement.
 title: "[Feature] "
 labels: ["priority: needs-triage", "type: feature"]
 body:
-  - type: input
-    id: area
-    attributes:
-      label: Affected area / component
-      description: Which part of the project would this affect? (optional)
-    validations:
-      required: false
   - type: textarea
     id: user-story
     attributes:
@@ -18,6 +11,13 @@ body:
       placeholder: "As a [role], I want [capability] so that [benefit]."
     validations:
       required: true
+  - type: input
+    id: area
+    attributes:
+      label: Affected area / component
+      description: Which part of the project would this affect? (optional)
+    validations:
+      required: false
   - type: textarea
     id: acceptance-criteria
     attributes:
