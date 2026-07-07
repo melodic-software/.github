@@ -26,6 +26,6 @@ jobs:
         --max-cache-age 7d
         --no-progress
         --accept-timeouts
-        --config lychee.toml
+        --config modules/lychee/lychee.toml
         './**/*.md'
       issue-title: Link checker report

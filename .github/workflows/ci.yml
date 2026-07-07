@@ -80,8 +80,6 @@ jobs:
           persist-credentials: false
       - name: Check links and anchors (offline)
         uses: melodic-software/ci-workflows/.github/actions/lychee-offline@f8ee5b49f05c114b956d4a09dd923e82e1f15830 # main
-        with:
-          config: lychee.toml
 
   actionlint:
     runs-on: ubuntu-latest
