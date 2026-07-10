@@ -19,13 +19,13 @@ jobs:
     permissions:
       contents: read
       issues: write
-    uses: melodic-software/ci-workflows/.github/workflows/link-check.yml@2e39e73d3bae160518e7bfb222cddccb7cc37995 # main
+    uses: melodic-software/ci-workflows/.github/workflows/link-check.yml@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
     with:
       args: >-
         --cache
         --max-cache-age 7d
         --no-progress
         --accept-timeouts
-        --config modules/lychee/lychee.toml
+        --config lychee.toml
         './**/*.md'
       issue-title: Link checker report
