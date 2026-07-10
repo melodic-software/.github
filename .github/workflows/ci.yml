@@ -27,7 +27,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint Markdown
-        uses: melodic-software/ci-workflows/.github/actions/markdown@2e39e73d3bae160518e7bfb222cddccb7cc37995 # main
+        uses: melodic-software/ci-workflows/.github/actions/markdown@e103a330577206213a4ebc0919029d2533c39cdb # e103a33 2026-07-10
         with:
           config: .markdownlint-cli2.jsonc
 
@@ -40,7 +40,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Spell-check
-        uses: melodic-software/ci-workflows/.github/actions/typos@2e39e73d3bae160518e7bfb222cddccb7cc37995 # main
+        uses: melodic-software/ci-workflows/.github/actions/typos@e103a330577206213a4ebc0919029d2533c39cdb # e103a33 2026-07-10
         with:
           config: _typos.toml
 
@@ -53,7 +53,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Check editorconfig conformance
-        uses: melodic-software/ci-workflows/.github/actions/editorconfig@2e39e73d3bae160518e7bfb222cddccb7cc37995 # main
+        uses: melodic-software/ci-workflows/.github/actions/editorconfig@e103a330577206213a4ebc0919029d2533c39cdb # e103a33 2026-07-10
         with:
           config: .editorconfig-checker.json
 
@@ -66,7 +66,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Scan for secrets
-        uses: melodic-software/ci-workflows/.github/actions/gitleaks@2e39e73d3bae160518e7bfb222cddccb7cc37995 # main
+        uses: melodic-software/ci-workflows/.github/actions/gitleaks@e103a330577206213a4ebc0919029d2533c39cdb # e103a33 2026-07-10
         with:
           config: .gitleaks.toml
 
@@ -79,7 +79,9 @@ jobs:
         with:
           persist-credentials: false
       - name: Check links and anchors (offline)
-        uses: melodic-software/ci-workflows/.github/actions/lychee-offline@2e39e73d3bae160518e7bfb222cddccb7cc37995 # main
+        uses: melodic-software/ci-workflows/.github/actions/lychee-offline@e103a330577206213a4ebc0919029d2533c39cdb # e103a33 2026-07-10
+        with:
+          config: lychee.toml
 
   actionlint:
     runs-on: ubuntu-latest
@@ -90,7 +92,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint workflows
-        uses: melodic-software/ci-workflows/.github/actions/actionlint@2e39e73d3bae160518e7bfb222cddccb7cc37995 # main
+        uses: melodic-software/ci-workflows/.github/actions/actionlint@e103a330577206213a4ebc0919029d2533c39cdb # e103a33 2026-07-10
 
   jsonschema:
     runs-on: ubuntu-latest
@@ -101,12 +103,12 @@ jobs:
         with:
           persist-credentials: false
       - name: Validate dependabot.yml
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@2e39e73d3bae160518e7bfb222cddccb7cc37995 # main
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@e103a330577206213a4ebc0919029d2533c39cdb # e103a33 2026-07-10
         with:
           builtin-schema: vendor.dependabot
           files: .github/dependabot.yml
       - name: Validate workflows
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@2e39e73d3bae160518e7bfb222cddccb7cc37995 # main
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@e103a330577206213a4ebc0919029d2533c39cdb # e103a33 2026-07-10
         with:
           builtin-schema: vendor.github-workflows
           files: >-
@@ -114,7 +116,7 @@ jobs:
             .github/workflows/link-check.yml
             .github/workflows/pr-title.yml
       - name: Validate issue forms
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@2e39e73d3bae160518e7bfb222cddccb7cc37995 # main
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@e103a330577206213a4ebc0919029d2533c39cdb # e103a33 2026-07-10
         with:
           builtin-schema: vendor.github-issue-forms
           files: >-
@@ -122,7 +124,7 @@ jobs:
             .github/ISSUE_TEMPLATE/feature-request.yml
             .github/ISSUE_TEMPLATE/task.yml
       - name: Validate issue-template chooser config
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@2e39e73d3bae160518e7bfb222cddccb7cc37995 # main
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@e103a330577206213a4ebc0919029d2533c39cdb # e103a33 2026-07-10
         with:
           builtin-schema: vendor.github-issue-config
           files: .github/ISSUE_TEMPLATE/config.yml
@@ -136,7 +138,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Check index-level EOL drift
-        uses: melodic-software/ci-workflows/.github/actions/eol-renormalize@2e39e73d3bae160518e7bfb222cddccb7cc37995 # main
+        uses: melodic-software/ci-workflows/.github/actions/eol-renormalize@e103a330577206213a4ebc0919029d2533c39cdb # e103a33 2026-07-10
 
   ci-status:
     if: always()
