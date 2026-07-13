@@ -8,8 +8,10 @@ on:
 permissions:
   contents: read
 
+# The PR number scopes cancellation to exactly one PR (head_ref would collide
+# across same-named fork branches); pushes to main fall back to the run id.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 # This repo holds only community-health files (Markdown + issue/PR templates and
