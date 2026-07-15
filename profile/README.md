@@ -1,14 +1,35 @@
 # melodic-software
 
-Polyglot, .NET-first software built with an AI-assisted development workflow.
+We build polyglot, .NET-first software with an AI-assisted development workflow.
+Our public repositories currently expose the engineering platform behind that
+work: reusable quality controls, CI building blocks, and isolated runners.
 
-Most repositories share a common platform: drop-in code-quality standards, reusable CI workflows, and GitHub governance managed as infrastructure-as-code.
+## Public projects
+
+- [ci-workflows](https://github.com/melodic-software/ci-workflows) — SHA-pinned,
+  configurable code-quality actions and reusable GitHub Actions workflows.
+- [ci-runner](https://github.com/melodic-software/ci-runner) — a native Windows
+  scale-set controller for fresh, one-job Docker workers with GitHub-hosted
+  fallback.
+
+## How we work
+
+- Shared standards make the expected quality bar explicit for people and agents.
+- Reusable workflows enforce that bar consistently across repositories.
+- GitHub governance is managed as infrastructure-as-code so settings are
+  reviewable and reproducible.
+- AI assists implementation and review; automated checks and maintainer judgment
+  remain the release gates.
 
 ## Getting involved
 
-- Browse the repositories below and open an issue or pull request — each repo ships issue and pull-request templates.
-- Please review our [Code of Conduct](https://github.com/melodic-software/.github/blob/main/CODE_OF_CONDUCT.md) and [contribution guidelines](https://github.com/melodic-software/.github/blob/main/CONTRIBUTING.md) before contributing.
-- Found a security issue? See our [security policy](https://github.com/melodic-software/.github/blob/main/SECURITY.md) — do not report vulnerabilities publicly.
+- Browse the repositories above and open an issue or pull request where you can
+  improve them.
+- Review our [Code of Conduct](https://github.com/melodic-software/.github/blob/main/CODE_OF_CONDUCT.md)
+  and [contribution guidelines](https://github.com/melodic-software/.github/blob/main/CONTRIBUTING.md)
+  before contributing.
+- Found a security issue? Follow our [security policy](https://github.com/melodic-software/.github/blob/main/SECURITY.md)
+  and do not report vulnerabilities publicly.
 
 ## Contact
 
