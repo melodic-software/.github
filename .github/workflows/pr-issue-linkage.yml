@@ -1,7 +1,8 @@
 name: pr-issue-linkage
 
-# Requires the PR body to carry a native closing keyword (or the literal
-# "No linked issue") and a non-empty "## Related" section. Thin caller of the
+# Requires the PR body to carry a native closing keyword (or a no-issue marker)
+# and a non-empty "## Related" section; the reusable below is authoritative on
+# the exact accepted forms. Thin caller of the
 # shared pr-issue-linkage reusable; the emitted required-check context is
 # `pr-issue-linkage / pr-issue-linkage`. pull_request_target runs the
 # base-branch definition (the gate reads PR body metadata only — no head code
