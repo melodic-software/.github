@@ -113,10 +113,7 @@ jobs:
         uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
         with:
           builtin-schema: vendor.github-workflows
-          files: >-
-            .github/workflows/ci.yml
-            .github/workflows/link-check.yml
-            .github/workflows/pr-title.yml
+          files: .github/workflows/*.yml
       - name: Validate issue forms
         uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
         with:

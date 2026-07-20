@@ -21,6 +21,6 @@ node_modules/
 lefthook-local.yml
 .lefthook-local/
 
-# .NET — build output from the dotnet fixtures
+# .NET — build output
 bin/
 obj/

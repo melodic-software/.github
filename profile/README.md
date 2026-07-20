@@ -2,15 +2,22 @@
 
 We build polyglot, .NET-first software with an AI-assisted development workflow.
 Our public repositories currently expose the engineering platform behind that
-work: reusable quality controls, CI building blocks, and isolated runners.
+work: shared quality standards, CI building blocks, isolated runners, and the
+agent tooling we develop with.
 
 ## Public projects
 
+- [standards](https://github.com/melodic-software/standards) — shared
+  repository-quality configs and engineering/review conventions, distributed to
+  consuming repos for consistent human and AI contributions.
 - [ci-workflows](https://github.com/melodic-software/ci-workflows) — SHA-pinned,
   configurable code-quality actions and reusable GitHub Actions workflows.
 - [ci-runner](https://github.com/melodic-software/ci-runner) — a native Windows
   scale-set controller for fresh, one-job Docker workers with GitHub-hosted
   fallback.
+- [claude-code-plugins](https://github.com/melodic-software/claude-code-plugins)
+  — a Claude Code plugin marketplace of reusable, repo-agnostic skills, hooks,
+  agents, and MCP servers.
 
 ## How we work
 
