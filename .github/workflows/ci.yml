@@ -105,17 +105,17 @@ jobs:
         with:
           persist-credentials: false
       - name: Validate dependabot.yml
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@058f5e42e81f9966e7f788bc4a0fe9849cea7c9d # 058f5e4 2026-07-20
         with:
           builtin-schema: vendor.dependabot
           files: .github/dependabot.yml
       - name: Validate workflows
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@058f5e42e81f9966e7f788bc4a0fe9849cea7c9d # 058f5e4 2026-07-20
         with:
           builtin-schema: vendor.github-workflows
           files: .github/workflows/*.yml
       - name: Validate issue forms
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@058f5e42e81f9966e7f788bc4a0fe9849cea7c9d # 058f5e4 2026-07-20
         with:
           builtin-schema: vendor.github-issue-forms
           files: >-
@@ -123,7 +123,7 @@ jobs:
             .github/ISSUE_TEMPLATE/feature-request.yml
             .github/ISSUE_TEMPLATE/task.yml
       - name: Validate issue-template chooser config
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@058f5e42e81f9966e7f788bc4a0fe9849cea7c9d # 058f5e4 2026-07-20
         with:
           builtin-schema: vendor.github-issue-config
           files: .github/ISSUE_TEMPLATE/config.yml
@@ -146,14 +146,6 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Aggregate lane results
-        env:
-          RESULTS: ${{ needs.markdown.result }} ${{ needs.typos.result }} ${{ needs.editorconfig.result }} ${{ needs.gitleaks.result }} ${{ needs.links.result }} ${{ needs.actionlint.result }} ${{ needs.jsonschema.result }} ${{ needs.eol-renormalize.result }}
-        run: |
-          read -ra results <<< "$RESULTS"
-          for r in "${results[@]}"; do
-            case "$r" in
-              success|skipped) ;;
-              *) echo "A lane did not pass (result: $r)."; exit 1 ;;
-            esac
-          done
-          echo "All lanes passed or were skipped."
+        uses: melodic-software/ci-workflows/.github/actions/ci-status@058f5e42e81f9966e7f788bc4a0fe9849cea7c9d # 058f5e4 2026-07-20
+        with:
+          results: ${{ needs.markdown.result }} ${{ needs.typos.result }} ${{ needs.editorconfig.result }} ${{ needs.gitleaks.result }} ${{ needs.links.result }} ${{ needs.actionlint.result }} ${{ needs.jsonschema.result }} ${{ needs.eol-renormalize.result }}
