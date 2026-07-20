@@ -1,6 +1,7 @@
-# Language/framework-agnostic base: OS/editor noise plus the tooling present in
-# this repo. Language overlays (.NET, Python, …) extend it with their own
-# ignores when adopted.
+# Owned by this repository. Git has no include mechanism, so there is no shared
+# .gitignore to inherit from — each repo maintains its own. Sections below cover
+# OS/editor noise plus tooling that may run against this checkout locally, even
+# where this repo carries no such source of its own.
 
 # OS / editor noise
 .DS_Store
