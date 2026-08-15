@@ -1,18 +1,31 @@
 #!/usr/bin/env bash
-# SessionStart: install the plugin catalog this repo enables.
+# Cloud bootstrap: install the plugin catalog this repo enables into cloud
+# (Claude Code on the web) sessions. Two callers run this script:
+#   1. The account environment's setup script, with CLAUDE_CODE_REMOTE=true,
+#      after clone and before the session process launches. Claude Code builds
+#      its plugin/command/skill registry at process start and never re-reads
+#      it, so this pre-launch call is the only path that gets plugins loaded
+#      at turn one.
+#   2. The SessionStart hook (startup|resume), as drift repair — the
+#      environment cache can be ~7 days stale. Installs from this path go
+#      live at the next resume.
 # Declaring a marketplace is gated on workspace trust and cloud sessions arrive
 # untrusted, so the declaration alone can load nothing there. Hooks run untrusted.
 # Idempotent and best effort: a failed plugin costs its skills, not the session.
 set -euo pipefail
 
+# Cloud sessions only. Local sessions are trusted, so the committed marketplace
+# declaration in .claude/settings.json provisions them without this script.
+[[ "${CLAUDE_CODE_REMOTE:-}" == "true" ]] || exit 0
+
 # mapfile is bash 4+; macOS ships bash 3.2 at /bin/bash. Degrade quietly rather
 # than tripping set -e and surfacing a hook error on the user's first prompt.
 if ((BASH_VERSINFO[0] < 4)); then
-  echo "install-plugins: needs bash 4+, found ${BASH_VERSION}" >&2
+  echo "cloud-bootstrap: needs bash 4+, found ${BASH_VERSION}" >&2
   exit 0
 fi
 
-repo_root="${CLAUDE_PROJECT_DIR:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)}"
+repo_root="${CLAUDE_PROJECT_DIR:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)}"
 cd -- "$repo_root"
 
 command -v claude >/dev/null 2>&1 || exit 0
@@ -29,7 +42,7 @@ source_repo="melodic-software/claude-code-plugins"
 if ! claude plugin marketplace list --json 2>/dev/null |
   jq -e --arg n "$marketplace" 'any(.[]; .name == $n)' >/dev/null; then
   claude plugin marketplace add "$source_repo" --scope user >/dev/null || {
-    echo "install-plugins: could not add the $marketplace marketplace" >&2
+    echo "cloud-bootstrap: could not add the $marketplace marketplace" >&2
     exit 0
   }
 fi
@@ -49,12 +62,14 @@ for id in "${wanted[@]}"; do
   if claude plugin install "$id" --scope local -y >/dev/null 2>&1; then
     installed=$((installed + 1))
   else
-    echo "install-plugins: install failed: $id" >&2
+    echo "cloud-bootstrap: install failed: $id" >&2
   fi
 done
-echo "install-plugins: ${#wanted[@]} enabled, $installed newly installed" >&2
+echo "cloud-bootstrap: ${#wanted[@]} enabled, $installed newly installed" >&2
 
-# Skill discovery runs before SessionStart hooks finish, so ask Claude Code to
-# re-scan; without this, anything installed above waits for the next session.
-# stdout must stay pure JSON for this to parse, hence the summary on stderr.
+# For the SessionStart-hook caller: the running session's registry is fixed at
+# process start, so anything installed above lands at the next resume; this
+# best-effort reload request costs nothing. stdout must stay pure JSON for the
+# hook to parse it, hence the summary on stderr. The pre-launch caller ignores
+# stdout, so emitting it unconditionally is harmless.
 printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","reloadSkills":true}}'
