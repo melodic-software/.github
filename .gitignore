@@ -15,6 +15,11 @@ Thumbs.db
 # Claude Code worktrees (per-checkout; PR worktree workflow)
 .claude/worktrees/
 
+# Claude Code local settings — the SessionStart plugin hook installs at local
+# scope, so this file carries per-machine plugin enablement. Claude Code also
+# ignores it globally, but that is a user-level file this repo cannot assume.
+.claude/settings.local.json
+
 # Node
 node_modules/
 

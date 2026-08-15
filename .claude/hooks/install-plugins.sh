@@ -21,6 +21,11 @@ command -v jq >/dev/null 2>&1 || exit 0
 marketplace="melodic-software"
 source_repo="melodic-software/claude-code-plugins"
 
+# Registration goes to user scope: it only makes the marketplace known and
+# enables nothing, and it is the path proven to work in an untrusted session.
+# Installs go to local scope (.claude/settings.local.json, gitignored) so
+# enabling 65 plugins here does not enable them in every other project.
+
 if ! claude plugin marketplace list --json 2>/dev/null |
   jq -e --arg n "$marketplace" 'any(.[]; .name == $n)' >/dev/null; then
   claude plugin marketplace add "$source_repo" --scope user >/dev/null || {
@@ -41,7 +46,7 @@ installed=0
 for id in "${wanted[@]}"; do
   [[ -n "$id" ]] || continue
   if [[ " ${have[*]} " == *" $id "* ]]; then continue; fi
-  if claude plugin install "$id" --scope user -y >/dev/null 2>&1; then
+  if claude plugin install "$id" --scope local -y >/dev/null 2>&1; then
     installed=$((installed + 1))
   else
     echo "install-plugins: install failed: $id" >&2
