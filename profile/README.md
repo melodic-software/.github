@@ -11,13 +11,20 @@ agent tooling we develop with.
   repository-quality configs and engineering/review conventions, distributed to
   consuming repos for consistent human and AI contributions.
 - [ci-workflows](https://github.com/melodic-software/ci-workflows) — SHA-pinned,
-  configurable code-quality actions and reusable GitHub Actions workflows.
-- [ci-runner](https://github.com/melodic-software/ci-runner) — a native Windows
-  scale-set controller for fresh, one-job Docker workers with GitHub-hosted
-  fallback.
+  configurable composite actions (one per code-quality tool) and reusable GitHub
+  Actions workflows, aggregated by consumers into a single status gate.
+- [ci-runner](https://github.com/melodic-software/ci-runner) — an official
+  Actions runner image plus a native Windows scale-set controller for fresh,
+  one-job Docker workers with GitHub-hosted fallback.
 - [claude-code-plugins](https://github.com/melodic-software/claude-code-plugins)
   — a Claude Code plugin marketplace of reusable, repo-agnostic skills, hooks,
   agents, and MCP servers.
+- [codex-plugins](https://github.com/melodic-software/codex-plugins) — the same
+  marketplace idea for Codex: reusable, repo-agnostic skills, hooks, MCP
+  servers, and other Codex-native capabilities.
+- [cursor-plugins](https://github.com/melodic-software/cursor-plugins) — the
+  Cursor-native marketplace of reusable, repo-agnostic skills, agents, hooks,
+  and MCP servers.
 
 ## How we work
 
