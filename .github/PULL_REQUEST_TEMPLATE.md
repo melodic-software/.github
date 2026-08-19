@@ -1,28 +1,37 @@
 Closes #
 
+<!--
+Complete the `Closes #` line above with the issue number to auto-close it on
+merge, one closing keyword per issue (cross-repo:
+`Closes <owner>/<repo>#<issue-number>`). Supported keywords are GitHub's:
+https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue
+
+If this PR closes no issue, replace that line with `No related issue: <reason>`
+for an orphan PR (drift sweep, hotfix, refactor).
+
+Every `##` section below must be filled with real content — HTML comments like
+this one are stripped before validation, so an untouched template fails the
+pr-issue-linkage gate on every section rather than passing vacuously. The
+gate's check output reports the exact rule it applied and is authoritative
+over this comment.
+-->
+
 ## Summary
 
--
+<!-- What changes and why — a sentence or two of problem context. -->
 
-## Test plan
+## Fix
 
-- [ ]
+<!-- The concrete change and how it addresses the problem. -->
+
+## Verification
+
+<!-- How this was proven: tests run, commands executed, evidence observed. -->
 
 ## Related
 
 <!--
-Complete the `Closes #` line above with the issue number to auto-close it on merge,
-one closing keyword per issue (cross-repo: `Closes <owner>/<repo>#<issue-number>`).
-Supported keywords are GitHub's:
-https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue
-
-If this PR closes no issue, replace that line with `No related issue: <reason>` for an
-orphan PR (drift sweep, hotfix, refactor).
-
-Fill `## Related` with issues, PRs, or decision records this change touches without
-closing (one per line, e.g. `- Refs #<issue-number>`). The section must be non-empty —
-this comment does not count, so the PR fails until you add content.
-
-The pr-issue-linkage gate reports the exact rule it applied when it fails; its check
-output is authoritative over this comment.
+Issues, PRs, or decision records this change touches without closing
+(one per line, e.g. `- Refs #<issue-number>`). If nothing applies, state
+`No linked issue` and why.
 -->
