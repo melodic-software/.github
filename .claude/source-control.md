@@ -13,7 +13,8 @@ that makes this reviewed file the recorded baseline are defined in
 ## pr_body_required_sections
 
 - Summary
-- Test plan
+- Fix
+- Verification
 - Related
 
 ## babysit_loop_merge
