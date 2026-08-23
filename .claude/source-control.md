@@ -2,13 +2,18 @@
 
 Team-tracked layer of the source-control plugin's layered config seam. Key names, valid values, and
 resolution order are defined upstream in
-<https://github.com/melodic-software/claude-code-plugins/blob/main/plugins/source-control/reference/config-resolution.md>.
-
-This file carries a tracked `babysit_loop_*` key and is therefore an adoption of the babysit merge
-lane. See that reference's "Baseline activation is tracked adoption". The merge rung is set
-explicitly rather than left to the baseline default; the merge-rung ladder and the ratification rule
-that makes this reviewed file the recorded baseline are defined in
+<https://github.com/melodic-software/claude-code-plugins/blob/main/plugins/source-control/reference/config-resolution.md>;
+the merge-rung ladder and the ratification rule that makes this reviewed file the recorded baseline
+are defined in
 <https://github.com/melodic-software/claude-code-plugins/blob/main/docs/conventions/loop-lane/README.md>.
+
+## subject_pattern
+
+Conventional Commits
+
+## pr_title_pattern
+
+Same as `subject_pattern`.
 
 ## pr_body_required_sections
 

@@ -19,6 +19,10 @@ concurrency:
 # ci-workflows (pinned by SHA) against the vendored standards configs at the repo
 # root, then aggregates them into the single `ci-status` check the org `ci-gate`
 # ruleset requires. Each lane checks out this repo, then runs one remote action.
+#
+# Adding a lane: a new job gates merges only once its name appears in BOTH the
+# `ci-status` job's `needs:` list and its `results:` expression. Adding the job
+# alone leaves it running but ignored — `ci-status` stays green while it fails.
 jobs:
   markdown:
     runs-on: ubuntu-latest

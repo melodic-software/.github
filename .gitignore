@@ -20,6 +20,28 @@ Thumbs.db
 # ignores it globally, but that is a user-level file this repo cannot assume.
 .claude/settings.local.json
 
+# Layered-config personal overlays. Plugins that ship a tracked team config layer
+# also resolve an optional per-operator overlay beside it — a per-machine deviation
+# from team policy that is never committed. The .claude/ glob is the form the
+# source-control plugin prescribes (reference/config-resolution.md, "Consumer
+# .gitignore"); the work-items tracker overlay sits at the repo root instead, so it
+# needs its own line. The glob also covers overlays of surfaces added later.
+.claude/*.local.*
+.work-item-tracker.local.json
+
+# Exception: cloud-bootstrap.local.sh is a repo-owned, team-shared extension
+# point, not a per-operator overlay — .claude/cloud-bootstrap.sh documents it as
+# "a repo enriches through its own .claude/cloud-bootstrap.local.sh" and invokes
+# it directly. It matches the glob above by name only, so it is re-included:
+# ignoring it would silently drop a tracked file that cloud sessions depend on.
+!.claude/cloud-bootstrap.local.sh
+
+# Claude Code observability telemetry — per-checkout JSONL written by the
+# observability plugin. Previously ignored only via .git/info/exclude, which is
+# per-clone and does not travel, so a fresh checkout showed a dirty tree as soon
+# as the plugin wrote to it.
+.claude/observability/
+
 # Node
 node_modules/
 
