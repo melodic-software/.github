@@ -31,11 +31,11 @@ managed as Pulumi IaC there, not here.
   `pr-title.yml`, `pr-issue-linkage.yml`, and `do-not-merge.yml` are thin
   callers of the shared PR gates; `link-check.yml` is a weekly advisory online
   link sweep. `.github/dependabot.yml` keeps the pinned actions current.
-- **Quality configs** — the root dotfiles (`.editorconfig`, `.gitattributes`,
-  `.markdownlint-cli2.jsonc`, `_typos.toml`, `.gitleaks.toml`, `lychee.toml`,
-  `.editorconfig-checker.json`) are synced from
-  [`standards`](https://github.com/melodic-software/standards) and are what the
-  CI lanes run against; `.gitignore` is owned by this repository.
+- **Quality configs** — the root lint and hygiene dotfiles are synced from
+  [`standards`](https://github.com/melodic-software/standards), which owns them.
+  The CI lanes run against the synced copies, and a hand-edit here is reverted by
+  the next sync — change the standards source instead. `.gitignore` is owned by
+  this repository.
 - **Agent config** — `.claude/` declares the `melodic-software` plugin
   marketplace and the plugins enabled for this project, plus the tracked
   source-control settings (required PR-body sections, merge lane).
