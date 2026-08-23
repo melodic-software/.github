@@ -15,8 +15,6 @@ body:
     attributes:
       label: Affected area / component
       description: Which part of the project is affected? (optional)
-    validations:
-      required: false
   - type: textarea
     id: steps
     attributes:
@@ -47,5 +45,3 @@ body:
     attributes:
       label: Environment
       description: OS, runtime/tool versions, and anything else relevant.
-    validations:
-      required: false
