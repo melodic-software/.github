@@ -20,11 +20,13 @@ Thumbs.db
 # ignores it globally, but that is a user-level file this repo cannot assume.
 .claude/settings.local.json
 
-# Layered-config personal overlays. The source-control and work-items plugins each
-# resolve an optional per-operator overlay beside their tracked team layer
-# (.claude/source-control.md and .work-item-tracker.json respectively). Both are
-# per-machine deviations from team policy and are never committed.
-.claude/source-control.local.md
+# Layered-config personal overlays. Plugins that ship a tracked team config layer
+# also resolve an optional per-operator overlay beside it — a per-machine deviation
+# from team policy that is never committed. The .claude/ glob is the form the
+# source-control plugin prescribes (reference/config-resolution.md, "Consumer
+# .gitignore"); the work-items tracker overlay sits at the repo root instead, so it
+# needs its own line. The glob also covers overlays of surfaces added later.
+.claude/*.local.*
 .work-item-tracker.local.json
 
 # Node
