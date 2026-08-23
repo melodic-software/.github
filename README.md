@@ -7,8 +7,7 @@ GitHub falls back to the files in this special repository for any repo that does
 not provide its own. It supplies default issue forms, a pull request template,
 the security policy, and the contribution, governance, conduct, and support
 policies, so individual repositories inherit a consistent contribution and
-disclosure workflow without each one redefining it. `profile/README.md` renders
-as the organization's public profile page.
+disclosure workflow without each one redefining it.
 
 These are the file-based governance defaults that GitHub's API cannot express.
 Everything the [GitHub provider](https://github.com/melodic-software/github-iac)
@@ -37,9 +36,13 @@ managed as Pulumi IaC there, not here.
   `.editorconfig-checker.json`) are synced from
   [`standards`](https://github.com/melodic-software/standards) and are what the
   CI lanes run against; `.gitignore` is owned by this repository.
-- **Agent config** — `.claude/` declares the `melodic-software` plugin
-  marketplace and the plugins enabled for this project, plus the tracked
-  source-control settings (required PR-body sections, merge lane).
+- **Agent config** — `.claude/settings.json` declares the `melodic-software`
+  plugin marketplace, the plugins enabled for this project, and the SessionStart
+  hook that runs `.claude/cloud-bootstrap.sh` to install them in cloud sessions.
+  `.claude/source-control.md` is the tracked team layer of the source-control
+  convention seam (commit and PR-title pattern, required PR-body sections, merge
+  lane); `.work-item-tracker.json` binds the work-items tracker provider. Both
+  resolve an optional gitignored `*.local.*` overlay for per-operator deviations.
 
 Editing a policy here changes it for every repository that has not overridden
 it, so treat these files as org-wide.

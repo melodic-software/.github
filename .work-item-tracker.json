@@ -1,5 +1,6 @@
 {
   "schema_version": "1.0",
   "provider": "github",
+  "docs": "Work-item tracker binding — plugins/work-items/tools/work-item-tracker/CONTRACT.md (Setup)",
   "config": { "lease_ttl_hours": 24 }
 }
