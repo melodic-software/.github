@@ -42,7 +42,10 @@ managed as Pulumi IaC there, not here.
   repository.
 - **Agent config** — `.claude/` declares the `melodic-software` plugin
   marketplace and the plugins enabled for this project, plus the tracked
-  source-control settings (required PR-body sections, merge lane).
+  source-control settings (required PR-body sections, merge lane) and the
+  synced `cloud-bootstrap.sh` each cloud session runs. `CLAUDE.md` is the
+  agent-loaded entry point: it routes to this file rather than restating it,
+  and carries only what no other file states.
 
 Editing a policy here changes it for every repository that has not overridden
 it, so treat these files as org-wide.
