@@ -48,12 +48,17 @@ excludes it from the online link lane.)
   is a byte-identical copy of the same canonical file but is **not** synced —
   this repo is not on the `shellcheck` component's managed list, so adopting it
   there is the durable fix and this copy is interim.
-- **Agent config** — `.claude/` declares the `melodic-software` plugin
-  marketplace and the plugins enabled for this project, plus the tracked
-  source-control settings (required PR-body sections, merge lane). It also
-  carries `cloud-bootstrap.sh` — a standards-synced script, run by the
-  `SessionStart` hook in `settings.json`, that installs the repo toolchain and
-  those plugins in cloud sessions.
+- **Agent config** — `.claude/settings.json` declares the `melodic-software`
+  plugin marketplace, the plugins enabled for this project, and the SessionStart
+  hook that runs `.claude/cloud-bootstrap.sh`, itself synced from
+  [`standards`](https://github.com/melodic-software/standards)
+  and extended per-repo by an optional `.claude/cloud-bootstrap.local.sh`.
+  `.claude/source-control.md` is the tracked team layer of the source-control
+  convention seam (commit and PR-title pattern, required PR-body sections, merge
+  lane); `.work-item-tracker.json` binds the work-items tracker provider and
+  `.github/recurring-schedule.json` holds its recurring-work schedule. The two
+  config surfaces each resolve an optional gitignored `*.local.*` overlay for
+  per-operator deviations.
 
 Editing a policy here changes it for every repository that has not overridden
 it, so treat these files as org-wide.
