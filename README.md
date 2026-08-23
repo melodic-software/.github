@@ -10,7 +10,10 @@ disclosure workflow without redefining it.
 These are the file-based governance defaults that GitHub's API cannot express.
 Everything the Pulumi GitHub provider *can* express — repository settings,
 custom properties, rulesets, and labels — is managed as infrastructure-as-code
-in [`github-iac`](https://github.com/melodic-software/github-iac), not here.
+in the private `github-iac` repository, not here. That name is deliberately not
+a link: the repository is private, so a link 404s for every reader outside the
+organization, which is also why `lychee.toml` excludes it from the online link
+lane.
 
 ## What's here
 
@@ -28,7 +31,13 @@ in [`github-iac`](https://github.com/melodic-software/github-iac), not here.
   aggregates them into the single `ci-status` check the org ruleset requires.
   `pr-title.yml`, `pr-issue-linkage.yml`, and `do-not-merge.yml` are thin
   callers of the shared PR gates. `link-check.yml` is a weekly advisory sweep of
-  external links. `.github/dependabot.yml` keeps the pinned actions current.
+  external links. `.github/dependabot.yml` keeps the SHA-pinned composite actions
+  current. It does not touch the three reusable-workflow pins: the standards
+  runner-policy allowlist admits only independently reviewed refs, so those move
+  through explicit reviewed pull requests. Give every composite-action pin a
+  `# vX.Y.Z` tag comment. Standards' pin-comment convention also permits a
+  short-sha-and-date fallback, but Dependabot reads the current version out of
+  that comment, so the fallback form leaves an action silently un-updated.
 - **Quality configs** — the root dotfiles the CI lanes run against.
   `.editorconfig`, `.gitattributes`, `.markdownlint-cli2.jsonc`, `_typos.toml`,
   `.gitleaks.toml`, `lychee.toml`, and `.editorconfig-checker.json` are synced
@@ -36,10 +45,15 @@ in [`github-iac`](https://github.com/melodic-software/github-iac), not here.
   `.gitignore` is owned by this repository. Change a lint or hygiene rule in
   `standards` and let the sync land it here — an edit made directly to one of
   these files survives only until the next sync commit overwrites it.
+  `.shellcheckrc` is the exception. It is a byte-identical copy of the same
+  canonical file, but this repository is not on the `shellcheck` component's
+  managed list, so nothing syncs it and nothing overwrites a local edit either.
+  Adopting the component upstream is the durable fix; until then the copy drifts
+  silently.
 - **Agent config** — `.claude/settings.json` declares the `melodic-software`
   plugin marketplace, the plugins enabled for this project, and the SessionStart
   hook that runs `.claude/cloud-bootstrap.sh`, itself synced from
-  [`claude-code-plugins`](https://github.com/melodic-software/claude-code-plugins)
+  [`standards`](https://github.com/melodic-software/standards)
   and extended per-repo by an optional `.claude/cloud-bootstrap.local.sh`.
   `.claude/source-control.md` is the tracked team layer of the source-control
   convention seam (commit and PR-title pattern, required PR-body sections, merge

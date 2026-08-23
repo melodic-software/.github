@@ -4,21 +4,55 @@ name: pr-title
 # workflow from ci-workflows. This repo is squash-only with the squash title set
 # to PR_TITLE, so the PR title becomes the default-branch commit subject; this
 # gates that subject against Conventional Commits. `edited` re-validates on a
-# re-title; `synchronize` keeps the check fresh across pushes. No `merge_group`
-# trigger — this repo has no merge queue. The emitted required-check context is
-# `pr-title / pr-title` (caller job / reusable job), the exact context the org
-# `ci-gate` ruleset requires.
+# re-title; `synchronize` keeps the check fresh across pushes. The emitted
+# required-check context is `pr-title / pr-title` (caller job / reusable job),
+# the exact context the org `ci-gate` ruleset requires.
+#
+# MIGRATION IN PROGRESS — PHASE 1 OF 2. This caller previously triggered on
+# `pull_request` alone, copying ci-workflows' in-repo dogfood file; that repo's
+# README names its own file the thing NOT to copy and publishes a canonical
+# consumer block on `pull_request_target` + `merge_group`. Under `pull_request`
+# a fork PR runs the HEAD definition of this file, so a contributor can repoint
+# the `uses:` below and emit a green `pr-title / pr-title` themselves —
+# `pull_request_target` closes that by always running the base-branch
+# definition (safe here: semantic-pr reads PR title metadata only and checks
+# out no head code).
+#
+# The flip cannot be done in one PR. `pr-title / pr-title` is already a required
+# check, and `pull_request_target` resolves against the BASE branch: a PR that
+# only swapped the trigger would find no `pull_request_target` on main and no
+# `pull_request` on its own head, the check would never report, and the required
+# gate would block its own fix. So phase 1 (this commit) ADDS the two triggers
+# while keeping `pull_request`; only `pull_request` fires here, because main
+# does not yet carry the others.
+#
+# PHASE 2 — REQUIRED FOLLOW-UP PR: delete the `pull_request:` block below. Once
+# main carries `pull_request_target`, that event resolves and reports, so the
+# removal lands cleanly. Until phase 2 merges the head-definition bypass above
+# is still open.
+#
+# Known cost of the window between the two phases: once main carries both
+# triggers, each PR fires both events, and both emit the same
+# `pr-title / pr-title` context (same workflow name, same job id) — the required
+# check takes whichever finishes last. The `pull_request_target` run is the
+# trustworthy one; the `pull_request` run is the bypassable one. Keep the window
+# to a single follow-up PR.
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize]
+  merge_group:
 
 permissions:
   pull-requests: read
 
 # The PR number scopes cancellation to exactly one PR (head_ref would collide
-# across same-named fork branches).
+# across same-named fork branches). Falls back to `github.ref`, not `run_id`, so
+# a merge_group run groups with the ref it is queued against rather than being
+# unique per run.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:

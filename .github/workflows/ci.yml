@@ -34,7 +34,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint Markdown
-        uses: melodic-software/ci-workflows/.github/actions/markdown@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
+        uses: melodic-software/ci-workflows/.github/actions/markdown@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
           config: .markdownlint-cli2.jsonc
 
@@ -47,7 +47,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Spell-check
-        uses: melodic-software/ci-workflows/.github/actions/typos@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
+        uses: melodic-software/ci-workflows/.github/actions/typos@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
           config: _typos.toml
 
@@ -60,7 +60,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Check editorconfig conformance
-        uses: melodic-software/ci-workflows/.github/actions/editorconfig@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
+        uses: melodic-software/ci-workflows/.github/actions/editorconfig@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
           config: .editorconfig-checker.json
 
@@ -73,7 +73,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Scan for secrets
-        uses: melodic-software/ci-workflows/.github/actions/gitleaks@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
+        uses: melodic-software/ci-workflows/.github/actions/gitleaks@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
           config: .gitleaks.toml
 
@@ -86,7 +86,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Check links and anchors (offline)
-        uses: melodic-software/ci-workflows/.github/actions/lychee-offline@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
+        uses: melodic-software/ci-workflows/.github/actions/lychee-offline@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
           config: lychee.toml
           # The action's default `**/*.md` skips hidden directories, so Markdown
@@ -109,7 +109,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint workflows
-        uses: melodic-software/ci-workflows/.github/actions/actionlint@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
+        uses: melodic-software/ci-workflows/.github/actions/actionlint@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
 
   jsonschema:
     runs-on: ubuntu-latest
@@ -120,17 +120,17 @@ jobs:
         with:
           persist-credentials: false
       - name: Validate dependabot.yml
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@058f5e42e81f9966e7f788bc4a0fe9849cea7c9d # 058f5e4 2026-07-20
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
           builtin-schema: vendor.dependabot
           files: .github/dependabot.yml
       - name: Validate workflows
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@058f5e42e81f9966e7f788bc4a0fe9849cea7c9d # 058f5e4 2026-07-20
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
           builtin-schema: vendor.github-workflows
           files: .github/workflows/*.yml
       - name: Validate issue forms
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@058f5e42e81f9966e7f788bc4a0fe9849cea7c9d # 058f5e4 2026-07-20
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
           builtin-schema: vendor.github-issue-forms
           files: >-
@@ -138,10 +138,37 @@ jobs:
             .github/ISSUE_TEMPLATE/feature-request.yml
             .github/ISSUE_TEMPLATE/task.yml
       - name: Validate issue-template chooser config
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@058f5e42e81f9966e7f788bc4a0fe9849cea7c9d # 058f5e4 2026-07-20
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
           builtin-schema: vendor.github-issue-config
           files: .github/ISSUE_TEMPLATE/config.yml
+      # No vendored builtin covers Claude Code settings, so this validates
+      # against the same schemastore URL the file itself declares in `$schema`.
+      # Unlike every other lane this reaches an unpinned remote schema, so a
+      # breaking schemastore change reddens the lane without this repo changing
+      # — swap to a builtin if one ever ships.
+      - name: Validate Claude Code settings
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
+        with:
+          schemafile: https://json.schemastore.org/claude-code-settings.json
+          files: .claude/settings.json
+
+  # The SessionStart bootstrap is the repo's only shell source, and it arrives
+  # by standards sync already written against the canonical .shellcheckrc
+  # (it carries `disable=` directives and cites check-set-e-suppressed/SC2310).
+  # Nothing was checking that until this lane.
+  shellcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Lint shell scripts
+        uses: melodic-software/ci-workflows/.github/actions/shellcheck@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
+        with:
+          rcfile: .shellcheckrc
 
   eol-renormalize:
     runs-on: ubuntu-latest
@@ -152,16 +179,16 @@ jobs:
         with:
           persist-credentials: false
       - name: Check index-level EOL drift
-        uses: melodic-software/ci-workflows/.github/actions/eol-renormalize@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
+        uses: melodic-software/ci-workflows/.github/actions/eol-renormalize@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
 
   ci-status:
     if: always()
-    needs: [markdown, typos, editorconfig, gitleaks, links, actionlint, jsonschema, eol-renormalize]
+    needs: [markdown, typos, editorconfig, gitleaks, links, actionlint, jsonschema, shellcheck, eol-renormalize]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Aggregate lane results
-        uses: melodic-software/ci-workflows/.github/actions/ci-status@058f5e42e81f9966e7f788bc4a0fe9849cea7c9d # 058f5e4 2026-07-20
+        uses: melodic-software/ci-workflows/.github/actions/ci-status@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
           # Derived from `needs:` rather than restating it. Hand-listing the
           # results let a lane be dropped from this input alone — still gated via

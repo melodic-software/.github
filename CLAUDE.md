@@ -17,8 +17,9 @@ it; the sections below route rather than restate.
 
 ## Where a change belongs
 
-Repository settings, rulesets, labels, and custom properties are Pulumi IaC in
-[`github-iac`](https://github.com/melodic-software/github-iac); what a CI lane actually
+Repository settings, rulesets, labels, and custom properties are Pulumi IaC in the
+private `github-iac` repository (unlinked for the same reason `README.md` leaves it
+unlinked — it 404s for readers outside the org); what a CI lane actually
 runs lives in [`ci-workflows`](https://github.com/melodic-software/ci-workflows), which
 `.github/workflows/` only pins by SHA and calls. `README.md` covers why the split falls
 where it does — go there when a change fits none of the files already in this repo.
@@ -26,8 +27,8 @@ where it does — go there when a change fits none of the files already in this 
 ## Adding or renaming a CI lane
 
 The wiring rule sits in `.github/workflows/ci.yml`'s header comment, beside the
-`ci-status` job it governs. The lane is done when both references there name it and a PR
-run shows `ci-status` waiting on it.
+`ci-status` job it governs. The lane is done when that job's `needs:` roster names it and
+a PR run shows `ci-status` waiting on it.
 
 ## Opening a PR here
 
