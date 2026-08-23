@@ -16,7 +16,7 @@ A specific repository may override this org-wide default with its own `CONTRIBUT
 2. Make your change, with tests where applicable.
 3. Ensure the project builds and its checks pass locally.
 4. Open a pull request, fill out the template, and link the related issue.
-5. Address review feedback. Pull requests are squash-merged once approved and their checks pass.
+5. Address review feedback. Pull requests are squash-merged once every review thread is resolved and any required checks pass.
 
 ## Reporting security issues
 
