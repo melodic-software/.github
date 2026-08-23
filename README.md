@@ -53,5 +53,8 @@ managed as Pulumi IaC there, not here.
   routes to this file rather than restating it, and carries only what no other
   file states.
 
+The inventory above covers every tracked file, and no check enforces that. When
+a file is added or removed, update this section in the same change.
+
 Editing a policy here changes it for every repository that has not overridden
 it, so treat these files as org-wide.
