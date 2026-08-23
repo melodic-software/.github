@@ -129,14 +129,46 @@ jobs:
         with:
           builtin-schema: vendor.github-workflows
           files: .github/workflows/*.yml
+      # Derived from the directory rather than restating it, for the same reason
+      # `ci-status` derives its lane list — a hand-listed roster let a newly
+      # added issue form go unvalidated with this lane still green, and nothing
+      # caught the omission. Unlike `ci-status` this cannot be an expression:
+      # Actions expressions have no filesystem access, so the roster is built in
+      # shell. Everything matching *.yml/*.yaml here is an issue form except
+      # `config.yml`, the chooser the next step validates against its own schema.
+      - name: Derive the issue-form roster
+        id: issue-forms
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          forms=()
+          for form in .github/ISSUE_TEMPLATE/*.yml .github/ISSUE_TEMPLATE/*.yaml; do
+            if [[ "${form##*/}" == config.yml ]]; then
+              continue
+            fi
+            # The consuming action word-splits and re-globs whatever it receives,
+            # so a name carrying whitespace or a glob metacharacter would be
+            # mangled — and a bracket/star/question pattern that matches nothing
+            # is dropped outright, leaving that form unvalidated with this step
+            # still green. Refusing the name keeps that silent, which is the
+            # failure mode deriving this list exists to remove.
+            if [[ "$form" == *[[:space:]*?[]* ]]; then
+              echo "::error::Issue-form path is unsafe for the consuming action's word-split and re-glob: $form"
+              exit 1
+            fi
+            forms+=("$form")
+          done
+          if [[ ${#forms[@]} -eq 0 ]]; then
+            echo '::error::No issue forms (*.yml/*.yaml other than config.yml) found under .github/ISSUE_TEMPLATE/.'
+            exit 1
+          fi
+          echo "files=${forms[*]}" >> "$GITHUB_OUTPUT"
       - name: Validate issue forms
         uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
           builtin-schema: vendor.github-issue-forms
-          files: >-
-            .github/ISSUE_TEMPLATE/bug-report.yml
-            .github/ISSUE_TEMPLATE/feature-request.yml
-            .github/ISSUE_TEMPLATE/task.yml
+          files: ${{ steps.issue-forms.outputs.files }}
       - name: Validate issue-template chooser config
         uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
@@ -153,10 +185,13 @@ jobs:
           schemafile: https://json.schemastore.org/claude-code-settings.json
           files: .claude/settings.json
 
-  # The SessionStart bootstrap is the repo's only shell source, and it arrives
-  # by standards sync already written against the canonical .shellcheckrc
-  # (it carries `disable=` directives and cites check-set-e-suppressed/SC2310).
-  # Nothing was checking that until this lane.
+  # The SessionStart bootstrap is this lane's only input — discovery is tracked
+  # *.sh/*.bash files — and it arrives by standards sync already written against
+  # the canonical .shellcheckrc (it carries `disable=` directives and cites
+  # check-set-e-suppressed/SC2310). Nothing was checking that until this lane.
+  # The `jsonschema` job's roster step is shell too, but an embedded `run:` block
+  # is not a file this discovery sees; the `actionlint` lane covers it instead,
+  # via its own bundled ShellCheck, which does not read .shellcheckrc.
   shellcheck:
     runs-on: ubuntu-latest
     timeout-minutes: 15
