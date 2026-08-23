@@ -162,4 +162,11 @@ jobs:
       - name: Aggregate lane results
         uses: melodic-software/ci-workflows/.github/actions/ci-status@058f5e42e81f9966e7f788bc4a0fe9849cea7c9d # 058f5e4 2026-07-20
         with:
-          results: ${{ needs.markdown.result }} ${{ needs.typos.result }} ${{ needs.editorconfig.result }} ${{ needs.gitleaks.result }} ${{ needs.links.result }} ${{ needs.actionlint.result }} ${{ needs.jsonschema.result }} ${{ needs.eol-renormalize.result }}
+          # Derived from the `needs:` roster above rather than restating it: a lane
+          # added there is aggregated here automatically. Hand-listing the results
+          # let a lane be dropped from this input alone, which still gated the merge
+          # via `needs:` but withheld its verdict from the aggregator — a silent
+          # green on that lane's failure, caught by no linter. `join` over the
+          # `needs.*` object filter yields the whitespace-separated form the action
+          # documents and word-splits.
+          results: ${{ join(needs.*.result, ' ') }}
