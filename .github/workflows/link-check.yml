@@ -28,4 +28,6 @@ jobs:
         --accept-timeouts
         --config lychee.toml
         './**/*.md'
+        '.claude/**/*.md'
+        '.github/**/*.md'
       issue-title: Link checker report
