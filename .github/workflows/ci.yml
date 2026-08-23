@@ -20,9 +20,10 @@ concurrency:
 # root, then aggregates them into the single `ci-status` check the org `ci-gate`
 # ruleset requires. Each lane checks out this repo, then runs one remote action.
 #
-# Adding a lane: a new job gates merges only once its name appears in BOTH the
-# `ci-status` job's `needs:` list and its `results:` expression. Adding the job
-# alone leaves it running but ignored — `ci-status` stays green while it fails.
+# Adding a lane: a new job gates merges once its name appears in the `ci-status`
+# job's `needs:` list. Its `results:` input is derived from that list and needs
+# no edit. Adding the job without the `needs:` entry leaves it running but
+# ignored — `ci-status` stays green while it fails.
 jobs:
   markdown:
     runs-on: ubuntu-latest
@@ -162,11 +163,10 @@ jobs:
       - name: Aggregate lane results
         uses: melodic-software/ci-workflows/.github/actions/ci-status@058f5e42e81f9966e7f788bc4a0fe9849cea7c9d # 058f5e4 2026-07-20
         with:
-          # Derived from the `needs:` roster above rather than restating it: a lane
-          # added there is aggregated here automatically. Hand-listing the results
-          # let a lane be dropped from this input alone, which still gated the merge
-          # via `needs:` but withheld its verdict from the aggregator — a silent
-          # green on that lane's failure, caught by no linter. `join` over the
-          # `needs.*` object filter yields the whitespace-separated form the action
-          # documents and word-splits.
+          # Derived from `needs:` rather than restating it. Hand-listing the
+          # results let a lane be dropped from this input alone — still gated via
+          # `needs:`, but its verdict withheld from the aggregator, so the check
+          # went green on that lane's failure with no linter to catch it. `join`
+          # over the `needs.*` object filter yields the whitespace-separated form
+          # the action word-splits.
           results: ${{ join(needs.*.result, ' ') }}
