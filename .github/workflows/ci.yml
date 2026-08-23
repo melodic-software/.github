@@ -84,6 +84,16 @@ jobs:
         uses: melodic-software/ci-workflows/.github/actions/lychee-offline@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
         with:
           config: lychee.toml
+          # The action's default `**/*.md` skips hidden directories, so Markdown
+          # under `.claude/` and `.github/` went unchecked — verified against the
+          # pinned lychee 0.24.2, where the default glob resolves 7 of this
+          # repo's 9 Markdown files. Dot-prefixed globs are listed explicitly
+          # rather than adding `--hidden` because this action exposes no
+          # arbitrary-args input; the default glob is repeated, not replaced.
+          globs: >-
+            **/*.md
+            .claude/**/*.md
+            .github/**/*.md
 
   actionlint:
     runs-on: ubuntu-latest
