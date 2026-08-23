@@ -1,6 +1,6 @@
 # Security Policy
 
-## Reporting a Vulnerability
+## Reporting a vulnerability
 
 Please do **not** report security vulnerabilities through public GitHub issues, discussions, or pull requests.
 
@@ -13,6 +13,6 @@ If private reporting is not available for a repository, email **<security@melodi
 
 Please include enough detail to reproduce and assess the issue (affected repository and version, impact, and reproduction steps). We will acknowledge your report and keep you informed as we investigate and address it.
 
-## Supported Versions
+## Supported versions
 
 Security fixes are applied to the latest released version on the default branch. Older versions are not maintained unless a specific repository states otherwise.

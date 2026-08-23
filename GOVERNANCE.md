@@ -13,4 +13,4 @@ Decisions are made by the maintainers. Significant or hard-to-reverse decisions 
 
 ## Changes to governance
 
-Changes to this document are made by the maintainers through the normal pull-request process.
+The maintainers change this document through the normal pull-request process.

@@ -1,9 +1,9 @@
 # melodic-software
 
 We build polyglot, .NET-first software with an AI-assisted development workflow.
-Our public repositories currently expose the engineering platform behind that
-work: shared quality standards, CI building blocks, isolated runners, and the
-agent tooling we develop with.
+Our public repositories are currently the engineering platform behind that work:
+shared quality standards, CI building blocks, isolated runners, and the agent
+tooling we develop with.
 
 ## Public projects
 
@@ -14,17 +14,13 @@ agent tooling we develop with.
   configurable composite actions (one per code-quality tool) and reusable GitHub
   Actions workflows, aggregated by consumers into a single status gate.
 - [ci-runner](https://github.com/melodic-software/ci-runner) — an official
-  Actions runner image plus a native Windows scale-set controller for fresh,
-  one-job Docker workers with GitHub-hosted fallback.
-- [claude-code-plugins](https://github.com/melodic-software/claude-code-plugins)
-  — a Claude Code plugin marketplace of reusable, repo-agnostic skills, hooks,
-  agents, and MCP servers.
-- [codex-plugins](https://github.com/melodic-software/codex-plugins) — the same
-  marketplace idea for Codex: reusable, repo-agnostic skills, hooks, MCP
-  servers, and other Codex-native capabilities.
-- [cursor-plugins](https://github.com/melodic-software/cursor-plugins) — the
-  Cursor-native marketplace of reusable, repo-agnostic skills, agents, hooks,
-  and MCP servers.
+  Actions runner image plus a native Windows scale-set controller. Each job gets
+  a fresh, one-job Docker worker, with GitHub-hosted runners as fallback.
+- Marketplaces of reusable, repo-agnostic agent tooling — skills, agents, hooks,
+  and MCP servers — one per assistant:
+  [claude-code-plugins](https://github.com/melodic-software/claude-code-plugins),
+  [codex-plugins](https://github.com/melodic-software/codex-plugins), and
+  [cursor-plugins](https://github.com/melodic-software/cursor-plugins).
 
 ## How we work
 
@@ -37,8 +33,8 @@ agent tooling we develop with.
 
 ## Getting involved
 
-- Browse the repositories above and open an issue or pull request where you can
-  improve them.
+- Browse the repositories above, and open an issue or pull request where you see
+  something to improve.
 - Review our [Code of Conduct](https://github.com/melodic-software/.github/blob/main/CODE_OF_CONDUCT.md)
   and [contribution guidelines](https://github.com/melodic-software/.github/blob/main/CONTRIBUTING.md)
   before contributing.
