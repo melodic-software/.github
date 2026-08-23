@@ -15,6 +15,13 @@ Thumbs.db
 # Claude Code worktrees (per-checkout; PR worktree workflow)
 .claude/worktrees/
 
+# Claude Code plugin telemetry — the claude-ops skill-usage hooks write a JSONL
+# store plus its lock file here, into the working tree rather than the plugin's own
+# data directory. The plugin already excludes the path lazily on first hook fire, but
+# it does so via .git/info/exclude, which is per-clone metadata: never committed, not
+# transferred by clone, and gone on re-clone. This line is the reviewed, portable copy.
+.claude/observability/
+
 # Claude Code local settings — the cloud bootstrap script (.claude/cloud-bootstrap.sh)
 # installs plugins at local scope, so this file carries per-machine plugin enablement. Claude Code also
 # ignores it globally, but that is a user-level file this repo cannot assume.
