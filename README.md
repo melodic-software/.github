@@ -36,7 +36,10 @@ managed as Pulumi IaC there, not here.
   `.markdownlint-cli2.jsonc`, `_typos.toml`, `.gitleaks.toml`, `lychee.toml`,
   `.editorconfig-checker.json`) are synced from
   [`standards`](https://github.com/melodic-software/standards) and are what the
-  CI lanes run against; `.gitignore` is owned by this repository.
+  CI lanes run against. Change a lint or hygiene rule in `standards` and let the
+  sync land it here; an edit made directly to one of these files survives only
+  until the next sync commit overwrites it. `.gitignore` is owned by this
+  repository.
 - **Agent config** — `.claude/` declares the `melodic-software` plugin
   marketplace and the plugins enabled for this project, plus the tracked
   source-control settings (required PR-body sections, merge lane).
