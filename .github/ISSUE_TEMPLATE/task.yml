@@ -14,7 +14,7 @@ body:
     id: area
     attributes:
       label: Affected area / component
-      description: Which part of the project does this affect? (optional)
+      description: Which part of the project does this affect?
   - type: dropdown
     id: cadence
     attributes:
