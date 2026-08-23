@@ -34,11 +34,15 @@ in [`github-iac`](https://github.com/melodic-software/github-iac), not here.
   `.gitleaks.toml`, `lychee.toml`, and `.editorconfig-checker.json` are synced
   from [`standards`](https://github.com/melodic-software/standards);
   `.gitignore` is owned by this repository.
-- **Agent config** — `.claude/` declares the `melodic-software` plugin
-  marketplace, the plugins enabled for this project, and the tracked
-  source-control settings (required PR-body sections, merge lane).
-  `.work-item-tracker.json` and `.github/recurring-schedule.json` hold the
-  work-item tooling's tracked state.
+- **Agent config** — `.claude/settings.json` declares the `melodic-software`
+  plugin marketplace and the plugins enabled for this project, and
+  `.claude/source-control.md` carries the tracked source-control settings
+  (required PR-body sections, merge lane). `.claude/cloud-bootstrap.sh` installs
+  those plugins in cloud sessions, which arrive untrusted and so cannot load a
+  marketplace from `settings.json` alone; it is synced from
+  [`claude-code-plugins`](https://github.com/melodic-software/claude-code-plugins),
+  not authored here. `.work-item-tracker.json` and
+  `.github/recurring-schedule.json` hold the work-item tooling's tracked state.
 
 Editing a policy here changes it for every repository that has not overridden
 it, so treat these files as org-wide.
