@@ -1,6 +1,6 @@
 # Governance
 
-This document describes how melodic-software projects are governed. It is an org-wide default; a repository may override it with its own `GOVERNANCE.md` when its governance differs.
+This document describes how melodic-software projects are governed. A repository may override this org-wide default with its own `GOVERNANCE.md` when its governance differs.
 
 ## Roles
 
@@ -13,4 +13,4 @@ Decisions are made by the maintainers. Significant or hard-to-reverse decisions 
 
 ## Changes to governance
 
-Changes to this document are made by the maintainers through the normal pull-request process.
+The maintainers change this document through the normal pull-request process.

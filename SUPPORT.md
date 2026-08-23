@@ -6,4 +6,4 @@ Need help with a melodic-software project?
 - **Security issues** — see [SECURITY.md](SECURITY.md); do not report them publicly.
 - **Anything else** — email **<support@melodicsoftware.com>**.
 
-A specific repository may document additional support channels in its own `SUPPORT.md` or README, which takes precedence over this org-wide default.
+A repository may override this org-wide default with its own `SUPPORT.md` or README documenting additional support channels.

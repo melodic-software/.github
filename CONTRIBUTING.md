@@ -5,7 +5,7 @@ Thanks for your interest in contributing to a melodic-software project.
 ## Ground rules
 
 - Be respectful — all interaction is governed by our [Code of Conduct](CODE_OF_CONDUCT.md).
-- Open an issue before significant work so the approach can be discussed.
+- Open an issue before significant work so we can discuss the approach.
 - Keep changes focused: one logical change per pull request.
 
 ## Workflow
@@ -14,9 +14,9 @@ Thanks for your interest in contributing to a melodic-software project.
 2. Make your change, with tests where applicable.
 3. Ensure the project builds and its checks pass locally.
 4. Open a pull request, fill out the template, and link the related issue.
-5. Address review feedback. Pull requests are squash-merged once approved and green.
+5. Address review feedback. Pull requests are squash-merged once approved and their checks pass.
 
-A specific repository may add its own `CONTRIBUTING.md` with project-specific details, which takes precedence over this org-wide default.
+A repository may override this org-wide default with its own `CONTRIBUTING.md` for project-specific details.
 
 ## Reporting security issues
 
