@@ -16,8 +16,6 @@ body:
     attributes:
       label: Affected area / component
       description: Which part of the project would this affect? (optional)
-    validations:
-      required: false
   - type: textarea
     id: acceptance-criteria
     attributes:

@@ -2,7 +2,7 @@
 
 Need help with a melodic-software project?
 
-- **Bugs and feature requests** — open an issue using the provided templates.
+- **Bugs, feature requests, and tasks** — open an issue using the provided templates.
 - **Security issues** — see [SECURITY.md](SECURITY.md); do not report them publicly.
 - **Anything else** — email **<support@melodicsoftware.com>**.
 

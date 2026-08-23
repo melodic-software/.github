@@ -19,6 +19,10 @@ concurrency:
 # ci-workflows (pinned by SHA) against the vendored standards configs at the repo
 # root, then aggregates them into the single `ci-status` check the org `ci-gate`
 # ruleset requires. Each lane checks out this repo, then runs one remote action.
+#
+# Adding a lane: a new job gates merges only once its name appears in BOTH the
+# `ci-status` job's `needs:` list and its `results:` expression. Adding the job
+# alone leaves it running but ignored — `ci-status` stays green while it fails.
 jobs:
   markdown:
     runs-on: ubuntu-latest
@@ -84,6 +88,16 @@ jobs:
         uses: melodic-software/ci-workflows/.github/actions/lychee-offline@1d3762c2ace413db0f347048307946c46850161c # 1d3762c 2026-07-10
         with:
           config: lychee.toml
+          # The action's default `**/*.md` skips hidden directories, so Markdown
+          # under `.claude/` and `.github/` went unchecked — verified against the
+          # pinned lychee 0.24.2, where the default glob resolves 7 of this
+          # repo's 9 Markdown files. Dot-prefixed globs are listed explicitly
+          # rather than adding `--hidden` because this action exposes no
+          # arbitrary-args input; the default glob is repeated, not replaced.
+          globs: >-
+            **/*.md
+            .claude/**/*.md
+            .github/**/*.md
 
   actionlint:
     runs-on: ubuntu-latest

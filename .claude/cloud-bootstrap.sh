@@ -40,8 +40,7 @@ cd -- "$repo_root"
 # Environment-snapshot inventory line: the shared environment's setup script
 # writes its version + build time to this stamp as its last action. Logging it
 # from every session makes "which snapshot is this account booting" visible
-# without a per-account audit; a missing stamp means an unmanaged environment
-# or an interrupted cache build.
+# without a per-account audit.
 if [[ -f /opt/melodic-env-setup.done ]]; then
   echo "cloud-bootstrap: env snapshot $(cat /opt/melodic-env-setup.done)" >&2
 else
@@ -75,7 +74,7 @@ fi
     grep -qxF "$1" "$CLAUDE_ENV_FILE" 2>/dev/null || printf '%s\n' "$1" >>"$CLAUDE_ENV_FILE"
   }
 
-  # Node from .node-version (VM nvm at /opt/nvm; image ships 20/21/22).
+  # Node from .node-version, via the VM's nvm.
   if [[ -f .node-version ]]; then
     node_pin="$(tr -d '[:space:]' <.node-version)"
     if [[ "$(node --version 2>/dev/null)" != "v$node_pin" ]]; then
@@ -240,7 +239,7 @@ echo "cloud-bootstrap: $enabled enabled, $installed newly installed" >&2
 # `marketplace add` above, so naming the difference costs one jq pass and no
 # network. Deliberately an inventory line and not a WARN: a repo may declare a
 # subset on purpose, and this must not read as a defect on every session.
-undeclared=$(claude plugin marketplace list --json 2>/dev/null |
+registered_dirs=$(claude plugin marketplace list --json 2>/dev/null |
   jq -r '.[] | select((.installLocation // "") != "")
     | [.name, .installLocation] | @tsv' 2>/dev/null || true)
 declared_mps=$(jq -r '(.extraKnownMarketplaces // {}) | keys[]' "$settings" 2>/dev/null || true)
@@ -268,7 +267,7 @@ while IFS=$'\t' read -r mp_name mp_dir; do
     echo "cloud-bootstrap: $mp_name carries plugins this repo does not declare: $missing" >&2
   fi
 done <<EOF
-$undeclared
+$registered_dirs
 EOF
 
 # When the SessionStart hook is the caller, stdout is parsed as hook output —

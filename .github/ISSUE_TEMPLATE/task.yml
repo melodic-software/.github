@@ -15,8 +15,6 @@ body:
     attributes:
       label: Affected area / component
       description: Which part of the project does this affect? (optional)
-    validations:
-      required: false
   - type: dropdown
     id: cadence
     attributes:
@@ -29,5 +27,3 @@ body:
         - quarterly
         - semi-annual
         - annual
-    validations:
-      required: false
