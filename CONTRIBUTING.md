@@ -7,7 +7,7 @@ A specific repository may override this org-wide default with its own `CONTRIBUT
 ## Ground rules
 
 - Be respectful — all interaction is governed by our [Code of Conduct](CODE_OF_CONDUCT.md).
-- Open an issue before significant work so the approach can be discussed.
+- Open an issue before significant work so we can discuss the approach.
 - Keep changes focused: one logical change per pull request.
 
 ## Workflow
@@ -16,7 +16,7 @@ A specific repository may override this org-wide default with its own `CONTRIBUT
 2. Make your change, with tests where applicable.
 3. Ensure the project builds and its checks pass locally.
 4. Open a pull request, fill out the template, and link the related issue.
-5. Address review feedback. Pull requests are squash-merged once approved and green.
+5. Address review feedback. Pull requests are squash-merged once approved and their checks pass.
 
 ## Reporting security issues
 
