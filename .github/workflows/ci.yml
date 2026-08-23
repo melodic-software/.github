@@ -20,9 +20,10 @@ concurrency:
 # root, then aggregates them into the single `ci-status` check the org `ci-gate`
 # ruleset requires. Each lane checks out this repo, then runs one remote action.
 #
-# Adding a lane: a new job gates merges only once its name appears in BOTH the
-# `ci-status` job's `needs:` list and its `results:` expression. Adding the job
-# alone leaves it running but ignored — `ci-status` stays green while it fails.
+# Adding a lane: a new job gates merges only once its name appears in the
+# `ci-status` job's `needs:` list. Adding the job alone leaves it running but
+# ignored — `ci-status` stays green while it fails. The `results:` input is
+# derived from that roster, so it needs no separate edit.
 jobs:
   markdown:
     runs-on: ubuntu-latest
@@ -88,6 +89,16 @@ jobs:
         uses: melodic-software/ci-workflows/.github/actions/lychee-offline@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
           config: lychee.toml
+          # The action's default `**/*.md` skips hidden directories, so Markdown
+          # under `.claude/` and `.github/` went unchecked — verified against the
+          # pinned lychee 0.24.2, where the default glob resolves 7 of this
+          # repo's 9 Markdown files. Dot-prefixed globs are listed explicitly
+          # rather than adding `--hidden` because this action exposes no
+          # arbitrary-args input; the default glob is repeated, not replaced.
+          globs: >-
+            **/*.md
+            .claude/**/*.md
+            .github/**/*.md
 
   actionlint:
     runs-on: ubuntu-latest
@@ -179,4 +190,11 @@ jobs:
       - name: Aggregate lane results
         uses: melodic-software/ci-workflows/.github/actions/ci-status@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
         with:
-          results: ${{ needs.markdown.result }} ${{ needs.typos.result }} ${{ needs.editorconfig.result }} ${{ needs.gitleaks.result }} ${{ needs.links.result }} ${{ needs.actionlint.result }} ${{ needs.jsonschema.result }} ${{ needs.shellcheck.result }} ${{ needs.eol-renormalize.result }}
+          # Derived from the `needs:` roster above rather than restating it: a lane
+          # added there is aggregated here automatically. Hand-listing the results
+          # let a lane be dropped from this input alone, which still gated the merge
+          # via `needs:` but withheld its verdict from the aggregator — a silent
+          # green on that lane's failure, caught by no linter. `join` over the
+          # `needs.*` object filter yields the whitespace-separated form the action
+          # documents and word-splits.
+          results: ${{ join(needs.*.result, ' ') }}
