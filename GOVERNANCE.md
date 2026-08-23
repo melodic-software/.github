@@ -1,6 +1,6 @@
 # Governance
 
-This document describes how melodic-software projects are governed. A repository may override this org-wide default with its own `GOVERNANCE.md` when its governance differs.
+This document describes how melodic-software projects are governed. A specific repository may override this org-wide default with its own `GOVERNANCE.md` when its governance differs; where it does, that file takes precedence.
 
 ## Roles
 
