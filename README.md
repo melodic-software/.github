@@ -35,7 +35,10 @@ managed as Pulumi IaC there, not here.
   `.markdownlint-cli2.jsonc`, `_typos.toml`, `.gitleaks.toml`, `lychee.toml`,
   `.editorconfig-checker.json`) are synced from
   [`standards`](https://github.com/melodic-software/standards) and are what the
-  CI lanes run against; `.gitignore` is owned by this repository.
+  CI lanes run against. Change a lint or hygiene rule in `standards` and let the
+  sync land it here; an edit made directly to one of these files survives only
+  until the next sync commit overwrites it. `.gitignore` is owned by this
+  repository.
 - **Agent config** — `.claude/settings.json` declares the `melodic-software`
   plugin marketplace, the plugins enabled for this project, and the SessionStart
   hook that runs `.claude/cloud-bootstrap.sh`, itself synced from
@@ -46,7 +49,9 @@ managed as Pulumi IaC there, not here.
   lane); `.work-item-tracker.json` binds the work-items tracker provider and
   `.github/recurring-schedule.json` holds its recurring-work schedule. The two
   config surfaces each resolve an optional gitignored `*.local.*` overlay for
-  per-operator deviations.
+  per-operator deviations. `CLAUDE.md` is the agent-loaded entry point: it
+  routes to this file rather than restating it, and carries only what no other
+  file states.
 
 Editing a policy here changes it for every repository that has not overridden
 it, so treat these files as org-wide.
