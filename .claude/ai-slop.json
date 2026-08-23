@@ -1,0 +1,11 @@
+{
+  "em_dash_allowed_paths": [
+    "README.md",
+    "profile/README.md",
+    "SUPPORT.md",
+    "GOVERNANCE.md",
+    "CONTRIBUTING.md",
+    ".github/PULL_REQUEST_TEMPLATE.md"
+  ],
+  "_comment": "These six documents use an inline-header list idiom as their house style: '- **Term** - definition' with an em dash as the separator between the bolded term and its gloss. The em-dash rule is zero-tolerance by design and must never be threshold-tuned, so per-document exemption is the supported mechanism. Exempting a path turns off the em-dash rule for that whole file, not just its list lines; the appositive dashes in CONTRIBUTING.md and in the PR template's HTML comments are covered by the same entry and were reviewed as acceptable. Every other rule still runs on these files. Add a path here only when the document genuinely needs em dashes; the default posture is that most prose does not."
+}
