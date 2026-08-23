@@ -16,7 +16,7 @@ Thanks for your interest in contributing to a melodic-software project.
 4. Open a pull request, fill out the template, and link the related issue.
 5. Address review feedback. Pull requests are squash-merged once approved and green.
 
-A specific repository may add its own `CONTRIBUTING.md` with project-specific details, which takes precedence over this org-wide default.
+A specific repository may override this org-wide default with its own `CONTRIBUTING.md` carrying project-specific details; where it does, that file takes precedence.
 
 ## Reporting security issues
 
