@@ -10,9 +10,11 @@ policies, so individual repositories inherit a consistent contribution and
 disclosure workflow without each one redefining it.
 
 These are the file-based governance defaults that GitHub's API cannot express.
-Everything the [GitHub provider](https://github.com/melodic-software/github-iac)
-*can* express — repository settings, custom properties, rulesets, and labels — is
-managed as Pulumi IaC there, not here.
+Everything the GitHub provider *can* express — repository settings, custom
+properties, rulesets, and labels — is managed as Pulumi IaC in the private
+`github-iac` repository, not here. (Unlinked deliberately: that repo is private,
+so a link 404s for every reader outside the org — the same reason `lychee.toml`
+excludes it from the online link lane.)
 
 ## What's here
 
@@ -30,15 +32,28 @@ managed as Pulumi IaC there, not here.
   aggregates them into the single `ci-status` check the org ruleset requires;
   `pr-title.yml`, `pr-issue-linkage.yml`, and `do-not-merge.yml` are thin
   callers of the shared PR gates; `link-check.yml` is a weekly advisory online
-  link sweep. `.github/dependabot.yml` keeps the pinned actions current.
+  link sweep. `.github/dependabot.yml` keeps the SHA-pinned *composite actions*
+  in `ci.yml` current — the three reusable-workflow pins are deliberately
+  excluded from it, because the standards runner-policy allowlist admits only
+  independently reviewed refs, so those move through explicit reviewed PRs
+  instead. Prefer the `# vX.Y.Z` tag form on a composite-action pin comment:
+  standards' pin-comment convention also permits a `# <short-sha> <date>`
+  fallback, but Dependabot reads the current version out of that comment, so
+  the fallback form leaves an action silently un-updated.
 - **Quality configs** — the root dotfiles (`.editorconfig`, `.gitattributes`,
   `.markdownlint-cli2.jsonc`, `_typos.toml`, `.gitleaks.toml`, `lychee.toml`,
   `.editorconfig-checker.json`) are synced from
   [`standards`](https://github.com/melodic-software/standards) and are what the
-  CI lanes run against; `.gitignore` is owned by this repository.
+  CI lanes run against; `.gitignore` is owned by this repository. `.shellcheckrc`
+  is a byte-identical copy of the same canonical file but is **not** synced —
+  this repo is not on the `shellcheck` component's managed list, so adopting it
+  there is the durable fix and this copy is interim.
 - **Agent config** — `.claude/` declares the `melodic-software` plugin
   marketplace and the plugins enabled for this project, plus the tracked
-  source-control settings (required PR-body sections, merge lane).
+  source-control settings (required PR-body sections, merge lane). It also
+  carries `cloud-bootstrap.sh` — a standards-synced script, run by the
+  `SessionStart` hook in `settings.json`, that installs the repo toolchain and
+  those plugins in cloud sessions.
 
 Editing a policy here changes it for every repository that has not overridden
 it, so treat these files as org-wide.
