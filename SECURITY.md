@@ -1,5 +1,7 @@
 # Security Policy
 
+A specific repository may override this org-wide default with its own `SECURITY.md` documenting a different disclosure process; where it does, that file takes precedence.
+
 ## Reporting a vulnerability
 
 Please do **not** report security vulnerabilities through public GitHub issues, discussions, or pull requests.
