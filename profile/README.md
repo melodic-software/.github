@@ -43,4 +43,4 @@ tooling we develop with.
 
 ## Contact
 
-<info@melodicsoftware.com>
+<support@melodicsoftware.com>
