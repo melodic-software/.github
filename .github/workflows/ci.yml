@@ -18,12 +18,17 @@ concurrency:
 # config), so it consumes the org's reusable lint/hygiene actions from
 # ci-workflows (pinned by SHA) against the vendored standards configs at the repo
 # root, then aggregates them into the single `ci-status` check the org `ci-gate`
-# ruleset requires. Each lane checks out this repo, then runs one remote action.
+# ruleset requires. Each hygiene lane checks out this repo, then runs one remote
+# action; `pr-section-drift` is the local-script exception noted below.
 #
 # Adding a lane: a new job gates merges once its name appears in the `ci-status`
 # job's `needs:` list. Its `results:` input is derived from that list and needs
 # no edit. Adding the job without the `needs:` entry leaves it running but
-# ignored — `ci-status` stays green while it fails.
+# ignored — `ci-status` stays green while it fails. `pr-section-drift` is the
+# one lane that is a local script rather than a remote action: it fetches the
+# pinned `pr-issue-linkage` reusable and compares this repository's two PR-body
+# mirrors to that ref's `requiredSections` (issue #58). A fetch failure is red,
+# never a skip — the same posture as standards' `pr-convention-lockstep`.
 jobs:
   markdown:
     runs-on: ubuntu-latest
@@ -216,9 +221,31 @@ jobs:
       - name: Check index-level EOL drift
         uses: melodic-software/ci-workflows/.github/actions/eol-renormalize@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
 
+  # Compares `.github/PULL_REQUEST_TEMPLATE.md` headings and
+  # `.claude/source-control.md`'s `pr_body_required_sections` to the
+  # `requiredSections` array inside the SHA-pinned `pr-issue-linkage` reusable
+  # (issue #58). The comparison target is that pin's bytes, not a third
+  # hardcoded copy of the four names. Fetches over the network; a fetch
+  # failure is red, never a skip — same posture as standards'
+  # `pr-convention-lockstep` (ADR-0008).
+  pr-section-drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Test the drift checker
+        run: node --test .github/scripts/pr-section-drift.test.mjs
+      - name: Compare local mirrors to the pinned reusable
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node .github/scripts/pr-section-drift.mjs
+
   ci-status:
     if: always()
-    needs: [markdown, typos, editorconfig, gitleaks, links, actionlint, jsonschema, shellcheck, eol-renormalize]
+    needs: [markdown, typos, editorconfig, gitleaks, links, actionlint, jsonschema, shellcheck, eol-renormalize, pr-section-drift]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

@@ -25,10 +25,14 @@ lane.
   `.github/PULL_REQUEST_TEMPLATE.md`.
 - **Profile** — `profile/README.md` renders as the organization's public profile
   page. Other repositories do not inherit it.
-- **This repository's own CI** — `.github/workflows/`. `ci.yml` runs the
-  SHA-pinned lint and hygiene lanes from
+- **This repository's own CI** — `.github/workflows/` and `.github/scripts/`.
+  `ci.yml` runs the SHA-pinned lint and hygiene lanes from
   [`ci-workflows`](https://github.com/melodic-software/ci-workflows) and
   aggregates them into the single `ci-status` check the org ruleset requires.
+  The `pr-section-drift` lane is a local script (`.github/scripts/pr-section-drift.mjs`
+  and its tests) that compares `.github/PULL_REQUEST_TEMPLATE.md` and
+  `.claude/source-control.md` against the `pr-issue-linkage` reusable at the
+  SHA `.github/workflows/pr-issue-linkage.yml` pins.
   `pr-title.yml`, `pr-issue-linkage.yml`, and `do-not-merge.yml` are thin
   callers of the shared PR gates. `link-check.yml` is a weekly advisory sweep of
   external links. `.github/dependabot.yml` keeps the SHA-pinned composite actions
