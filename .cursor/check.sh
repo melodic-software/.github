@@ -117,6 +117,13 @@ lane_eol() {
   return "$rc"
 }
 
+lane_pr_section_drift() {
+  local rc=0
+  node --test .github/scripts/pr-section-drift.test.mjs || rc=1
+  node .github/scripts/pr-section-drift.mjs || rc=1
+  return "$rc"
+}
+
 # --- Run every lane ---------------------------------------------------------
 
 heading markdown
@@ -155,6 +162,10 @@ record shellcheck "$?"
 heading eol-renormalize
 lane_eol
 record eol-renormalize "$?"
+
+heading pr-section-drift
+lane_pr_section_drift
+record pr-section-drift "$?"
 
 # --- Summary ----------------------------------------------------------------
 

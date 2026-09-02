@@ -33,7 +33,7 @@ const SOURCE_CONTROL_HEADING = "pr_body_required_sections";
 
 const CALLER_PIN_RE =
   /uses:\s*melodic-software\/ci-workflows\/\.github\/workflows\/pr-issue-linkage\.yml@([0-9a-f]{40})/g;
-const REQUIRED_SECTIONS_ARRAY_RE = /const requiredSections = \[([\s\S]*?)\n\s*\];/;
+const REQUIRED_SECTIONS_ARRAY_RE = /const requiredSections = \[([\s\S]*?)\n\s*\];/g;
 const REQUIRED_SECTION_NAME_RE = /name:\s*"([^"]+)"/g;
 
 export class DriftError extends Error {
@@ -68,11 +68,16 @@ export function parseCallerPin(callerText, location = CALLER_PATH) {
 
 // Same two regexes as standards lockstep-drift.mjs parseGateSections.
 export function parseGateSections(workflowText, location) {
-  const arrayMatch = workflowText.match(REQUIRED_SECTIONS_ARRAY_RE);
-  if (!arrayMatch) {
+  const blocks = [...workflowText.matchAll(REQUIRED_SECTIONS_ARRAY_RE)];
+  if (blocks.length === 0) {
     throw new DriftError(`${location}: no \`const requiredSections = [...]\` block found`);
   }
-  const names = [...arrayMatch[1].matchAll(REQUIRED_SECTION_NAME_RE)].map((match) => match[1]);
+  if (blocks.length > 1) {
+    throw new DriftError(
+      `${location}: ${blocks.length} \`const requiredSections = [...]\` blocks found; refuse to guess which is live`,
+    );
+  }
+  const names = [...blocks[0][1].matchAll(REQUIRED_SECTION_NAME_RE)].map((match) => match[1]);
   if (names.length === 0) {
     throw new DriftError(`${location}: requiredSections block carries no name: entries`);
   }

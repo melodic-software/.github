@@ -113,6 +113,14 @@ describe("parseGateSections", () => {
       (error) => error instanceof DriftError && /no name: entries/.test(error.message),
     );
   });
+
+  it("fails loud when more than one requiredSections block is present", () => {
+    const text = `${reusableYaml(namedSections("Alpha"))}\n${reusableYaml(namedSections("Beta"))}`;
+    assert.throws(
+      () => parseGateSections(text, "fixture"),
+      (error) => error instanceof DriftError && /2 `const requiredSections/.test(error.message),
+    );
+  });
 });
 
 describe("parseTemplateHeadings", () => {
