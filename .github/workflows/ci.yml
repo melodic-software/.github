@@ -4,15 +4,43 @@ on:
   push:
     branches: [main]
   pull_request:
+    # `edited`, `labeled` and `unlabeled` can change the pr-title /
+    # do-not-merge / issue-linkage answers without a new commit, so the required
+    # check has to re-evaluate. Whether such an event is CONTRACT-ONLY (lanes
+    # gated off, ci-status carrying the recorded `ci-lanes` verdict forward) is
+    # decided by one predicate, repeated verbatim in `cancel-in-progress` and in
+    # every job's `if:` except `ci-status`:
+    #
+    #   github.event.pull_request.head.repo.full_name == github.repository &&
+    #   (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) ||
+    #    (github.event.action == 'edited' && !github.event.changes.base))
+    #
+    # An `edited` event carrying `changes.base` is a BASE-BRANCH change: the
+    # merge commit the lanes test changes with it, so that runs in full. A fork
+    # pull request is never contract-only — its token is read-only on
+    # `pull_request` whatever `permissions:` requests, so it cannot record lane
+    # state — and runs the full workflow on every event exactly as before.
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
 
 permissions:
   contents: read
 
 # The PR number scopes cancellation to exactly one PR (head_ref would collide
 # across same-named fork branches); pushes to main fall back to the run id.
+#
+# A contract-only event never cancels: it must queue behind an in-flight full
+# run so the `ci-lanes` status it reads is already written. GitHub keeps one
+# running and one pending run per group and the newest pending wins, so the
+# carry-forward always executes after the full run it depends on. A
+# `synchronize` still cancels everything on the old SHA.
+#
+# On a push `github.event.pull_request` is null, so the predicate is false and
+# this stays `true` — the value it has always had. It is moot either way here:
+# the group's push fallback is the run id, so a push run is alone in its group
+# and has nothing to cancel.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
 
 # This repo holds only community-health files (Markdown + issue/PR templates and
 # config), so it consumes the org's reusable lint/hygiene actions from
@@ -31,6 +59,7 @@ concurrency:
 # never a skip — the same posture as standards' `pr-convention-lockstep`.
 jobs:
   markdown:
+    if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -44,6 +73,7 @@ jobs:
           config: .markdownlint-cli2.jsonc
 
   typos:
+    if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -57,6 +87,7 @@ jobs:
           config: _typos.toml
 
   editorconfig:
+    if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -70,6 +101,7 @@ jobs:
           config: .editorconfig-checker.json
 
   gitleaks:
+    if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -83,6 +115,7 @@ jobs:
           config: .gitleaks.toml
 
   links:
+    if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -106,6 +139,7 @@ jobs:
             .github/**/*.md
 
   actionlint:
+    if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -117,6 +151,7 @@ jobs:
         uses: melodic-software/ci-workflows/.github/actions/actionlint@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
 
   jsonschema:
+    if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -198,6 +233,7 @@ jobs:
   # is not a file this discovery sees; the `actionlint` lane covers it instead,
   # via its own bundled ShellCheck, which does not read .shellcheckrc.
   shellcheck:
+    if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -211,6 +247,7 @@ jobs:
           rcfile: .shellcheckrc
 
   eol-renormalize:
+    if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -229,6 +266,7 @@ jobs:
   # failure is red, never a skip — same posture as standards'
   # `pr-convention-lockstep` (ADR-0008).
   pr-section-drift:
+    if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -248,9 +286,24 @@ jobs:
     needs: [markdown, typos, editorconfig, gitleaks, links, actionlint, jsonschema, shellcheck, eol-renormalize, pr-section-drift]
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      # pr-contract upserts the advisory linkage comment and moves the linkage
+      # label; ci-status records the `ci-lanes` commit status the carry-forward
+      # branch reads back on the next contract-only event.
+      pull-requests: write
+      statuses: write
     steps:
+      - name: Check the pull-request contract
+        uses: melodic-software/ci-workflows/.github/actions/pr-contract@449157aaa8e30f7b1457305d8048ebe6168e174a # v0.20.0
+        with:
+          token: ${{ github.token }}
       - name: Aggregate lane results
-        uses: melodic-software/ci-workflows/.github/actions/ci-status@0f8176e87e0be518f382664779655011bf95784a # v0.17.2
+        # `!cancelled()` so a failing pr-contract step does not skip the
+        # aggregation: the job still fails on the contract step's exit code, and
+        # the `ci-lanes` status is on the SHA for the next contract-only run.
+        if: ${{ !cancelled() }}
+        uses: melodic-software/ci-workflows/.github/actions/ci-status@449157aaa8e30f7b1457305d8048ebe6168e174a # v0.20.0
         with:
           # Derived from `needs:` rather than restating it. Hand-listing the
           # results let a lane be dropped from this input alone — still gated via
@@ -259,3 +312,4 @@ jobs:
           # over the `needs.*` object filter yields the whitespace-separated form
           # the action word-splits.
           results: ${{ join(needs.*.result, ' ') }}
+          token: ${{ github.token }}
