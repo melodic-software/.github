@@ -74,7 +74,7 @@ lane.
   (`markdownlint-cli2`, `typos`, `editorconfig-checker`, `gitleaks`, `lychee`,
   `actionlint`, `check-jsonschema`, `shellcheck`), each pinned to the version the
   SHA-pinned `ci-workflows` action uses, so `.cursor/check.sh` reproduces the CI
-  lanes and their `ci-status` aggregate locally.
+  lanes — including `pr-section-drift` — and their `ci-status` aggregate locally.
 
 The inventory above covers every tracked file, and no check enforces that. When
 a file is added or removed, update this section in the same change.

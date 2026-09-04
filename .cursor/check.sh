@@ -47,9 +47,14 @@ lane_jsonschema() {
     [[ "$(basename -- "$f")" == config.yml ]] && continue
     forms+=("$f")
   done
-  if [[ ${#forms[@]} -gt 0 ]]; then
-    check-jsonschema --builtin-schema vendor.github-issue-forms "${forms[@]}" || rc=1
+  if [[ ${#forms[@]} -eq 0 ]]; then
+    # Match ci.yml's roster step: an empty set is a failed derivation, not a
+    # skipped validation. Skipping here let a deleted-forms change pass locally
+    # while CI went red.
+    echo "No issue forms (*.yml/*.yaml other than config.yml) found under .github/ISSUE_TEMPLATE/." >&2
+    return 1
   fi
+  check-jsonschema --builtin-schema vendor.github-issue-forms "${forms[@]}" || rc=1
   check-jsonschema --builtin-schema vendor.github-issue-config \
     .github/ISSUE_TEMPLATE/config.yml || rc=1
   check-jsonschema --schemafile https://json.schemastore.org/claude-code-settings.json \
@@ -70,18 +75,37 @@ lane_shellcheck() {
 }
 
 # Detect EOL drift the way CI does (re-stage through git's clean filter and see
-# if any blob changes), but against a throwaway copy of the current index so the
-# caller's real staging area is never touched. Comparing the index tree before
-# vs. after renormalization isolates line-ending drift from ordinary content
-# edits, so it stays accurate on a dirty working tree (CI runs on a clean one).
+# if any blob changes). `git add --renormalize` reads the working tree
+# (https://git-scm.com/docs/git-add --renormalize, implies -u), so running it
+# against the caller's dirty tree would treat ordinary pending edits as drift.
+# Materialize the current index into a throwaway worktree and renormalize
+# there, leaving the caller's index and working tree untouched. CI itself
+# runs on a clean checkout, so this extra isolation is local-only.
 lane_eol() {
-  local tmp before after drift rc=0
-  tmp="$(mktemp)"
-  cp -- "$(git rev-parse --git-path index)" "$tmp"
-  before="$(GIT_INDEX_FILE="$tmp" git write-tree)"
-  GIT_INDEX_FILE="$tmp" git add --renormalize -- .
-  after="$(GIT_INDEX_FILE="$tmp" git write-tree)"
-  rm -f "$tmp"
+  local tmp tmpindex tmpwt gitdir before after drift rc=0
+  gitdir="$(git rev-parse --absolute-git-dir)"
+  tmp="$(mktemp -d)"
+  tmpindex="$tmp/index"
+  tmpwt="$tmp/wt"
+  mkdir -p "$tmpwt"
+  cp -- "$(git rev-parse --git-path index)" "$tmpindex"
+  before="$(GIT_DIR="$gitdir" GIT_INDEX_FILE="$tmpindex" git write-tree)" || {
+    rm -rf "$tmp"
+    return 1
+  }
+  GIT_DIR="$gitdir" GIT_INDEX_FILE="$tmpindex" GIT_WORK_TREE="$tmpwt" git checkout-index --all || {
+    rm -rf "$tmp"
+    return 1
+  }
+  GIT_DIR="$gitdir" GIT_INDEX_FILE="$tmpindex" GIT_WORK_TREE="$tmpwt" git add --renormalize -- . || {
+    rm -rf "$tmp"
+    return 1
+  }
+  after="$(GIT_DIR="$gitdir" GIT_INDEX_FILE="$tmpindex" git write-tree)" || {
+    rm -rf "$tmp"
+    return 1
+  }
+  rm -rf "$tmp"
   drift="$(git diff --name-only "$before" "$after")"
   if [[ -z "$drift" ]]; then
     echo "index EOL clean"
@@ -90,6 +114,13 @@ lane_eol() {
     printf '%s\n' "$drift" >&2
     rc=1
   fi
+  return "$rc"
+}
+
+lane_pr_section_drift() {
+  local rc=0
+  node --test .github/scripts/pr-section-drift.test.mjs || rc=1
+  node .github/scripts/pr-section-drift.mjs || rc=1
   return "$rc"
 }
 
@@ -131,6 +162,10 @@ record shellcheck "$?"
 heading eol-renormalize
 lane_eol
 record eol-renormalize "$?"
+
+heading pr-section-drift
+lane_pr_section_drift
+record pr-section-drift "$?"
 
 # --- Summary ----------------------------------------------------------------
 
