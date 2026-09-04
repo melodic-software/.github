@@ -33,9 +33,14 @@ permissions:
 # running and one pending run per group and the newest pending wins, so the
 # carry-forward always executes after the full run it depends on. A
 # `synchronize` still cancels everything on the old SHA.
+#
+# On a push `github.event.pull_request` is null, so the predicate is false and
+# this stays `true` — the value it has always had. It is moot either way here:
+# the group's push fallback is the run id, so a push run is alone in its group
+# and has nothing to cancel.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' && !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
+  cancel-in-progress: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
 
 # This repo holds only community-health files (Markdown + issue/PR templates and
 # config), so it consumes the org's reusable lint/hygiene actions from
