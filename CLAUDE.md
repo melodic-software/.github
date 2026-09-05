@@ -32,8 +32,10 @@ a PR run shows `ci-status` waiting on it.
 
 ## Opening a PR here
 
-PR bodies are gated by the `pr-issue-linkage` check: a closing keyword (or a stated
-no-issue reason) plus the tracked `##` sections, each non-empty.
+`ci-status` is the single required check, and its `pr-contract` step runs the
+pull-request contract.
+[`.claude/rules/pr-body-contract.md`](.claude/rules/pr-body-contract.md) states the rule
+and what is gating versus advisory;
 [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) carries the layout
-and [`.claude/source-control.md`](.claude/source-control.md) the section list; the check's
+and [`.claude/source-control.md`](.claude/source-control.md) the section list. The step's
 own output is authoritative on the accepted forms.
