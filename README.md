@@ -31,13 +31,16 @@ lane.
   aggregates them into the single `ci-status` check the org ruleset requires.
   The `pr-section-drift` lane is a local script (`.github/scripts/pr-section-drift.mjs`
   and its tests) that compares `.github/PULL_REQUEST_TEMPLATE.md` and
-  `.claude/source-control.md` against the `pr-issue-linkage` reusable at the
-  SHA `.github/workflows/pr-issue-linkage.yml` pins.
-  `pr-title.yml`, `pr-issue-linkage.yml`, and `do-not-merge.yml` are thin
-  callers of the shared PR gates. `link-check.yml` is a weekly advisory sweep of
-  external links. `.github/dependabot.yml` keeps the SHA-pinned composite actions
-  current. It does not touch the three reusable-workflow pins: the standards
-  runner-policy allowlist admits only independently reviewed refs, so those move
+  `.claude/source-control.md` against the `pr-contract` composite at the
+  SHA `.github/workflows/ci.yml` pins.
+  The pull-request contract itself (Conventional Commits title, `do-not-merge`
+  label, issue linkage) is the `pr-contract` step inside the `ci-status` job,
+  so there are no separate caller workflows for it.
+  `link-check.yml` is a weekly advisory sweep of
+  external links and the one remaining caller of a ci-workflows reusable
+  workflow. `.github/dependabot.yml` keeps the SHA-pinned composite actions
+  current. It does not touch that reusable-workflow pin: the standards
+  runner-policy allowlist admits only independently reviewed refs, so it moves
   through explicit reviewed pull requests. Give every composite-action pin a
   `# vX.Y.Z` tag comment. Standards' pin-comment convention also permits a
   short-sha-and-date fallback, but Dependabot reads the current version out of

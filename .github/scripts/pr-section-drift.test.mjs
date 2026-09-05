@@ -5,7 +5,7 @@ import {
   DriftError,
   FetchError,
   collectDrift,
-  fetchReusable,
+  fetchGateSource,
   formatList,
   parseCallerPin,
   parseGateSections,
@@ -21,34 +21,25 @@ const OTHER_SHA = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 function callerYaml(sha) {
   return [
     "jobs:",
-    "  pr-issue-linkage:",
-    `    uses: melodic-software/ci-workflows/.github/workflows/pr-issue-linkage.yml@${sha} # v9.9.9`,
-    "",
-  ].join("\n");
-}
-
-function reusableYaml(sectionBlock) {
-  return [
-    "jobs:",
-    "  pr-issue-linkage:",
+    "  ci-status:",
     "    steps:",
-    "      - uses: actions/github-script@v7",
-    "        with:",
-    "          script: |",
-    "              const requiredSections = [",
-    sectionBlock,
-    "              ];",
+    `      - uses: melodic-software/ci-workflows/.github/actions/pr-contract@${sha} # v9.9.9`,
     "",
   ].join("\n");
 }
 
-function namedSections(...names) {
-  return names
-    .map(
-      (name, index) =>
-        `                {\n                  name: "${name}",\n                  guidance: "fixture ${index}",\n                },`,
-    )
-    .join("\n");
+// Shaped like the composite's awk END block: the function definition takes an
+// unquoted parameter and must not match, only the quoted call sites do.
+function runSh(...names) {
+  return [
+    "function section_report(name,   i, trimmed, start) {",
+    '  printf "%s\\n" "$name"',
+    "}",
+    "END {",
+    ...names.map((name) => `  section_report("${name}")`),
+    "}",
+    "",
+  ].join("\n");
 }
 
 function sourceControl(...names) {
@@ -82,6 +73,15 @@ describe("parseCallerPin", () => {
     assert.throws(() => parseCallerPin("uses: actions/checkout@v4\n"), /no 40-hex/);
   });
 
+  it("ignores the sibling ci-status composite pinned in the same job", () => {
+    const text = [
+      callerYaml(SHA),
+      `      - uses: melodic-software/ci-workflows/.github/actions/ci-status@${OTHER_SHA} # v9.9.9`,
+      "",
+    ].join("\n");
+    assert.equal(parseCallerPin(text), SHA);
+  });
+
   it("fails when two distinct pins are present", () => {
     const text = `${callerYaml(SHA)}\n${callerYaml(OTHER_SHA)}`;
     assert.throws(() => parseCallerPin(text), /multiple distinct/);
@@ -94,31 +94,29 @@ describe("parseCallerPin", () => {
 });
 
 describe("parseGateSections", () => {
-  it("parses a reusable fixture shaped like the real requiredSections block", () => {
-    const text = reusableYaml(namedSections("Alpha", "Beta", "Gamma"));
-    assert.deepEqual(parseGateSections(text, "fixture"), ["Alpha", "Beta", "Gamma"]);
+  it("parses a run.sh fixture shaped like the real awk END block", () => {
+    assert.deepEqual(parseGateSections(runSh("Alpha", "Beta", "Gamma"), "fixture"), [
+      "Alpha",
+      "Beta",
+      "Gamma",
+    ]);
   });
 
-  it("fails loud when the requiredSections block is absent", () => {
+  it("ignores the unquoted function definition", () => {
+    assert.deepEqual(parseGateSections(runSh("Alpha"), "fixture"), ["Alpha"]);
+  });
+
+  it("fails loud when no section_report call is present", () => {
     assert.throws(
-      () => parseGateSections("jobs: {}\n", "fixture"),
-      (error) => error instanceof DriftError && /no `const requiredSections/.test(error.message),
+      () => parseGateSections("END {\n  exit 0\n}\n", "fixture"),
+      (error) => error instanceof DriftError && /no `section_report/.test(error.message),
     );
   });
 
-  it("fails loud when the block carries zero name: entries", () => {
-    const text = reusableYaml("                // empty on purpose");
+  it("fails loud when a section name is reported twice", () => {
     assert.throws(
-      () => parseGateSections(text, "fixture"),
-      (error) => error instanceof DriftError && /no name: entries/.test(error.message),
-    );
-  });
-
-  it("fails loud when more than one requiredSections block is present", () => {
-    const text = `${reusableYaml(namedSections("Alpha"))}\n${reusableYaml(namedSections("Beta"))}`;
-    assert.throws(
-      () => parseGateSections(text, "fixture"),
-      (error) => error instanceof DriftError && /2 `const requiredSections/.test(error.message),
+      () => parseGateSections(runSh("Alpha", "Alpha"), "fixture"),
+      (error) => error instanceof DriftError && /repeated section_report names: Alpha/.test(error.message),
     );
   });
 });
@@ -202,23 +200,23 @@ describe("collectDrift", () => {
     assert.match(errors[1], /source-control/);
   });
 
-  it("names the pinned reusable as the source of truth", () => {
+  it("names the pinned composite as the source of truth", () => {
     const errors = collectDrift(contract, ["Alpha"], ["Alpha", "Beta"], SHA);
-    assert.match(errors[0], /melodic-software\/ci-workflows\/\.github\/workflows\/pr-issue-linkage\.yml@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa requiredSections/);
+    assert.match(errors[0], /melodic-software\/ci-workflows\/\.github\/actions\/pr-contract\/run\.sh@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa section_report calls/);
   });
 });
 
-describe("fetchReusable", () => {
+describe("fetchGateSource", () => {
   it("returns the body of a 2xx Contents API response", async () => {
-    const text = reusableYaml(namedSections("Alpha"));
+    const text = runSh("Alpha");
     const fetchImpl = async () => ({ ok: true, text: async () => text });
-    assert.equal(await fetchReusable(SHA, fetchImpl), text);
+    assert.equal(await fetchGateSource(SHA, fetchImpl), text);
   });
 
   it("fails closed as fetch-error after repeated non-2xx", async () => {
     const fetchImpl = async () => ({ ok: false, status: 503, text: async () => "" });
     await assert.rejects(
-      () => fetchReusable(SHA, fetchImpl, { backoffMs: 0 }),
+      () => fetchGateSource(SHA, fetchImpl, { backoffMs: 0 }),
       (error) => error instanceof FetchError && /^fetch-error:/.test(error.message),
     );
   });

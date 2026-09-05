@@ -10,10 +10,11 @@ If this PR closes no issue, replace that line with `No related issue: <reason>`
 for an orphan PR (drift sweep, hotfix, refactor).
 
 Every `##` section below must be filled with real content — HTML comments like
-this one are stripped before validation, so an untouched template fails the
-pr-issue-linkage gate on every section rather than passing vacuously. The
-gate's check output reports the exact rule it applied and is authoritative
-over this comment.
+this one are stripped before validation, so an untouched template is reported
+as missing every section rather than passing vacuously. The linkage rule is
+advisory: the `pr-contract` step inside `ci-status` leaves a comment and the
+`needs-issue-linkage` label instead of failing. That step's output reports the
+exact rule it applied and is authoritative over this comment.
 -->
 
 ## Summary

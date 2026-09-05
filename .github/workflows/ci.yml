@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
-    # `edited`, `labeled` and `unlabeled` can change the pr-title /
-    # do-not-merge / issue-linkage answers without a new commit, so the required
+    # `edited`, `labeled` and `unlabeled` can change the title, do-not-merge
+    # label and issue-linkage answers without a new commit, so the required
     # check has to re-evaluate. Whether such an event is CONTRACT-ONLY (lanes
     # gated off, ci-status carrying the recorded `ci-lanes` verdict forward) is
     # decided by one predicate, repeated verbatim in `cancel-in-progress` and in
@@ -54,9 +54,10 @@ concurrency:
 # no edit. Adding the job without the `needs:` entry leaves it running but
 # ignored — `ci-status` stays green while it fails. `pr-section-drift` is the
 # one lane that is a local script rather than a remote action: it fetches the
-# pinned `pr-issue-linkage` reusable and compares this repository's two PR-body
-# mirrors to that ref's `requiredSections` (issue #58). A fetch failure is red,
-# never a skip — the same posture as standards' `pr-convention-lockstep`.
+# `run.sh` of the pinned `pr-contract` composite and compares this repository's
+# two PR-body mirrors to the sections that gate reports (issue #58). A fetch
+# failure is red, never a skip — the same posture as standards'
+# `pr-convention-lockstep`.
 jobs:
   markdown:
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
@@ -260,9 +261,9 @@ jobs:
 
   # Compares `.github/PULL_REQUEST_TEMPLATE.md` headings and
   # `.claude/source-control.md`'s `pr_body_required_sections` to the
-  # `requiredSections` array inside the SHA-pinned `pr-issue-linkage` reusable
-  # (issue #58). The comparison target is that pin's bytes, not a third
-  # hardcoded copy of the four names. Fetches over the network; a fetch
+  # `section_report` calls inside the SHA-pinned `pr-contract` composite's
+  # `run.sh` (issue #58). The comparison target is that pin's bytes, not a
+  # third hardcoded copy of the four names. Fetches over the network; a fetch
   # failure is red, never a skip — same posture as standards'
   # `pr-convention-lockstep` (ADR-0008).
   pr-section-drift:
@@ -276,7 +277,7 @@ jobs:
           persist-credentials: false
       - name: Test the drift checker
         run: node --test .github/scripts/pr-section-drift.test.mjs
-      - name: Compare local mirrors to the pinned reusable
+      - name: Compare local mirrors to the pinned composite
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node .github/scripts/pr-section-drift.mjs

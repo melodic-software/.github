@@ -3,38 +3,39 @@
 // Local complement to standards' fleet lockstep (ADR-0008): this repository's
 // two PR-body declarations — `.github/PULL_REQUEST_TEMPLATE.md` headings and
 // `.claude/source-control.md`'s `pr_body_required_sections` — are unchecked
-// mirrors of the `requiredSections` array inside the SHA-pinned
-// `pr-issue-linkage` reusable. ADR-0008 fleet-checks the template and the pin
-// from standards CI *after* merge; it deliberately does not check this
-// repository's source-control key. This lane fails the PR that introduces
-// either drift, comparing both mirrors to the exact reusable bytes this
-// repository's gate already executes.
+// mirrors of the section list the `pr-contract` composite enforces. ADR-0008
+// fleet-checks the template and the pin from standards CI *after* merge; it
+// deliberately does not check this repository's source-control key. This lane
+// fails the PR that introduces either drift, comparing both mirrors to the
+// exact composite bytes this repository's gate already executes.
 //
-// Comparison target is derived: the 40-hex pin in
-// `.github/workflows/pr-issue-linkage.yml`, then that ref's reusable. The
-// four section names are not hardcoded here. Fetch failures are `fetch-error`
-// (never a skip), matching standards' `lockstep-drift.mjs` posture.
+// Comparison target is derived: the 40-hex `pr-contract` pin in
+// `.github/workflows/ci.yml`, then that ref's `run.sh`. The four section names
+// are not hardcoded here. Fetch failures are `fetch-error` (never a skip),
+// matching standards' `lockstep-drift.mjs` posture.
 //
-// Parsing of the reusable's `requiredSections` block uses the same two
-// regexes as `melodic-software/standards` `components/pr-convention-policy/lockstep-drift.mjs`
-// `parseGateSections`, so a shape change breaks both parsers together.
+// Parsing of the composite's section list uses the same regex as
+// `melodic-software/standards` `components/pr-convention-policy/lockstep-drift.mjs`
+// `parseCompositeSections`, so a shape change breaks both parsers together.
+// The gate's awk block calls `section_report("<name>")` once per required
+// section, in contract order; the function definition takes an unquoted
+// parameter, so only the call sites match.
 
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const CALLER_PATH = ".github/workflows/pr-issue-linkage.yml";
+const CALLER_PATH = ".github/workflows/ci.yml";
 const TEMPLATE_PATH = ".github/PULL_REQUEST_TEMPLATE.md";
 const SOURCE_CONTROL_PATH = ".claude/source-control.md";
 const UPSTREAM_REPO = "melodic-software/ci-workflows";
-const UPSTREAM_WORKFLOW = ".github/workflows/pr-issue-linkage.yml";
+const UPSTREAM_GATE = ".github/actions/pr-contract/run.sh";
 const SOURCE_CONTROL_HEADING = "pr_body_required_sections";
 
 const CALLER_PIN_RE =
-  /uses:\s*melodic-software\/ci-workflows\/\.github\/workflows\/pr-issue-linkage\.yml@([0-9a-f]{40})/g;
-const REQUIRED_SECTIONS_ARRAY_RE = /const requiredSections = \[([\s\S]*?)\n\s*\];/g;
-const REQUIRED_SECTION_NAME_RE = /name:\s*"([^"]+)"/g;
+  /uses:\s*melodic-software\/ci-workflows\/\.github\/actions\/pr-contract@([0-9a-f]{40})/g;
+const SECTION_REPORT_RE = /section_report\("([^"]+)"\)/g;
 
 export class DriftError extends Error {
   constructor(message) {
@@ -51,35 +52,32 @@ export class FetchError extends Error {
 }
 
 export function sourceOfTruth(sha) {
-  return `${UPSTREAM_REPO}/${UPSTREAM_WORKFLOW}@${sha} requiredSections`;
+  return `${UPSTREAM_REPO}/${UPSTREAM_GATE}@${sha} section_report calls`;
 }
 
 export function parseCallerPin(callerText, location = CALLER_PATH) {
   const shas = [...callerText.matchAll(CALLER_PIN_RE)].map((match) => match[1]);
   const unique = [...new Set(shas)];
   if (unique.length === 0) {
-    throw new DriftError(`${location}: no 40-hex pr-issue-linkage.yml@ pin found on a uses: line`);
+    throw new DriftError(`${location}: no 40-hex pr-contract@ pin found on a uses: line`);
   }
   if (unique.length > 1) {
-    throw new DriftError(`${location}: multiple distinct pr-issue-linkage pins: ${unique.join(", ")}`);
+    throw new DriftError(`${location}: multiple distinct pr-contract pins: ${unique.join(", ")}`);
   }
   return unique[0];
 }
 
-// Same two regexes as standards lockstep-drift.mjs parseGateSections.
-export function parseGateSections(workflowText, location) {
-  const blocks = [...workflowText.matchAll(REQUIRED_SECTIONS_ARRAY_RE)];
-  if (blocks.length === 0) {
-    throw new DriftError(`${location}: no \`const requiredSections = [...]\` block found`);
-  }
-  if (blocks.length > 1) {
-    throw new DriftError(
-      `${location}: ${blocks.length} \`const requiredSections = [...]\` blocks found; refuse to guess which is live`,
-    );
-  }
-  const names = [...blocks[0][1].matchAll(REQUIRED_SECTION_NAME_RE)].map((match) => match[1]);
+// Same regex as standards lockstep-drift.mjs parseCompositeSections.
+export function parseGateSections(runShText, location) {
+  const names = [...runShText.matchAll(SECTION_REPORT_RE)].map((match) => match[1]);
   if (names.length === 0) {
-    throw new DriftError(`${location}: requiredSections block carries no name: entries`);
+    throw new DriftError(`${location}: no \`section_report("<name>")\` calls found in run.sh`);
+  }
+  const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
+  if (duplicates.length > 0) {
+    throw new DriftError(
+      `${location}: repeated section_report names: ${[...new Set(duplicates)].join(", ")}`,
+    );
   }
   return names;
 }
@@ -147,10 +145,10 @@ export function collectDrift(contract, templateHeadings, sourceControlSections, 
 }
 
 export function contentsUrl(sha) {
-  return `https://api.github.com/repos/${UPSTREAM_REPO}/contents/${UPSTREAM_WORKFLOW}?ref=${sha}`;
+  return `https://api.github.com/repos/${UPSTREAM_REPO}/contents/${UPSTREAM_GATE}?ref=${sha}`;
 }
 
-export async function fetchReusable(sha, fetchImpl = fetch, { backoffMs } = {}) {
+export async function fetchGateSource(sha, fetchImpl = fetch, { backoffMs } = {}) {
   const url = contentsUrl(sha);
   const headers = { Accept: "application/vnd.github.raw+json" };
   if (process.env.GITHUB_TOKEN) {
@@ -178,7 +176,7 @@ export async function fetchReusable(sha, fetchImpl = fetch, { backoffMs } = {}) 
 }
 
 const CONTRACT_FOOTER =
-  "The pinned reusable is the enforcement authority; the fleet convention record is " +
+  "The pinned composite is the enforcement authority; the fleet convention record is " +
   "melodic-software/standards components/pr-convention-policy/policy.json (ADR-0008). " +
   "Change the contract there and bump the pin, then update both local files in the same PR.";
 
@@ -196,8 +194,8 @@ function emitErrors(messages) {
 export async function runLiveCheck(repoRoot, fetchImpl = fetch) {
   const callerText = await readFile(path.join(repoRoot, CALLER_PATH), "utf8");
   const sha = parseCallerPin(callerText);
-  const reusableText = await fetchReusable(sha, fetchImpl);
-  const contract = parseGateSections(reusableText, sourceOfTruth(sha));
+  const runShText = await fetchGateSource(sha, fetchImpl);
+  const contract = parseGateSections(runShText, sourceOfTruth(sha));
   const templateHeadings = parseTemplateHeadings(
     await readFile(path.join(repoRoot, TEMPLATE_PATH), "utf8"),
   );
