@@ -1,11 +1,11 @@
 # Governance
 
-This document describes how melodic-software projects are governed. A specific repository may override this org-wide default with its own `GOVERNANCE.md` when its governance differs; where it does, that file takes precedence.
+A specific repository may override this org-wide default with its own `GOVERNANCE.md` when its governance differs; where it does, that file takes precedence.
 
 ## Roles
 
-- **Maintainers** — own project direction, review and merge changes, and manage releases. melodic-software is currently maintained by [@kyle-sexton](https://github.com/kyle-sexton).
-- **Contributors** — anyone who opens an issue or pull request.
+- **Maintainers** own project direction, review and merge changes, and manage releases. melodic-software is currently maintained by [@kyle-sexton](https://github.com/kyle-sexton).
+- **Contributors** are anyone who opens an issue or pull request.
 
 ## Decision-making
 

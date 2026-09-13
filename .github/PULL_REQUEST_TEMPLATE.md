@@ -9,7 +9,7 @@ https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-
 If this PR closes no issue, replace that line with `No related issue: <reason>`
 for an orphan PR (drift sweep, hotfix, refactor).
 
-Every `##` section below must be filled with real content — HTML comments like
+Every `##` section below must be filled with real content. HTML comments like
 this one are stripped before validation, so an untouched template is reported
 as missing every section rather than passing vacuously. The linkage rule is
 advisory: the `pr-contract` step inside `ci-status` leaves a comment and the
@@ -19,7 +19,7 @@ exact rule it applied and is authoritative over this comment.
 
 ## Summary
 
-<!-- What changes and why — a sentence or two of problem context. -->
+<!-- What changes and why, in a sentence or two of problem context. -->
 
 ## Fix
 
@@ -27,7 +27,7 @@ exact rule it applied and is authoritative over this comment.
 
 ## Verification
 
-<!-- How this was proven: tests run, commands executed, evidence observed. -->
+<!-- How this was proven: the commands run and what they showed, or the manual check performed. -->
 
 ## Related
 
