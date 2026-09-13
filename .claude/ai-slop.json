@@ -1,15 +1,5 @@
 {
-  "excluded_paths": [
-    "CODE_OF_CONDUCT.md"
-  ],
-  "em_dash_allowed_paths": [
-    "CLAUDE.md",
-    "README.md",
-    "profile/README.md",
-    "SUPPORT.md",
-    "GOVERNANCE.md",
-    "CONTRIBUTING.md",
-    ".github/PULL_REQUEST_TEMPLATE.md"
-  ],
-  "_comment": "CODE_OF_CONDUCT.md is excluded outright because it is verbatim Contributor Covenant v2.1, published in 2021. Its two findings (a negative parallelism on line 17 and a rule-of-three density of 5.5 per 1000 words) are properties of upstream text whose value depends on being unmodified, so rewriting them would fork the document to satisfy a detector. The catalog's own rule-pre-llm-text counter-sign covers exactly this case. The seven em_dash_allowed_paths documents use an inline-header list idiom as their house style: '- **Term** - definition' with an em dash as the separator between the bolded term and its gloss. The em-dash rule is zero-tolerance by design and must never be threshold-tuned, so per-document exemption is the supported mechanism. Exempting a path turns off the em-dash rule for that whole file, not just its list lines; the appositive dashes in CONTRIBUTING.md, in CLAUDE.md, and in the PR template's HTML comments are covered by the same entry and were reviewed as acceptable. Every other rule still runs on these files. Add a path here only when the document genuinely needs em dashes; the default posture is that most prose does not."
+  "excluded_paths": [],
+  "em_dash_allowed_paths": [],
+  "_comment": "Only text this repository does not own may be excluded here, and nothing currently qualifies. CODE_OF_CONDUCT.md is adapted from Contributor Covenant v2.1 under CC BY 4.0 and is maintained as this organization's own policy, so it is audited and edited like every other file. .claude/rules/pr-body-contract.md is sync-managed from melodic-software/standards; it stays in scope so findings there are reported and filed upstream, never edited here. The em-dash rule is zero-tolerance and runs on every file: the former '- **Term** — definition' list idiom was rewritten to '- **Term**: definition' rather than exempted. Before adding a path to either list, name whose text it is and why it cannot be changed here."
 }

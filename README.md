@@ -8,24 +8,24 @@ that does not provide its own, so they all inherit the same contribution and
 disclosure workflow without redefining it.
 
 These are the file-based governance defaults that GitHub's API cannot express.
-Everything the Pulumi GitHub provider *can* express — repository settings,
-custom properties, rulesets, and labels — is managed as infrastructure-as-code
-in the private `github-iac` repository, not here. That name is deliberately not
-a link: the repository is private, so a link 404s for every reader outside the
-organization, which is also why `lychee.toml` excludes it from the online link
-lane.
+Everything the Pulumi GitHub provider *can* express is managed as
+infrastructure-as-code in the private `github-iac` repository, not here:
+repository settings, custom properties, rulesets, and labels. That name is
+deliberately not a link. The repository is private, so a link 404s for every
+reader outside the organization, and `lychee.toml` excludes it from the online
+link lane for the same reason.
 
 ## What's here
 
-- **Policies** — `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `GOVERNANCE.md`,
+- **Policies**: `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `GOVERNANCE.md`,
   `SECURITY.md`, and `SUPPORT.md`. A repository that ships its own copy
   overrides the default; everything else inherits these.
-- **Templates** — `.github/ISSUE_TEMPLATE/` (bug report, feature request, task,
+- **Templates**: `.github/ISSUE_TEMPLATE/` (bug report, feature request, task,
   and the chooser config that disables blank issues) and
   `.github/PULL_REQUEST_TEMPLATE.md`.
-- **Profile** — `profile/README.md` renders as the organization's public profile
+- **Profile**: `profile/README.md` renders as the organization's public profile
   page. Other repositories do not inherit it.
-- **This repository's own CI** — `.github/workflows/` and `.github/scripts/`.
+- **This repository's own CI**: `.github/workflows/` and `.github/scripts/`.
   `ci.yml` runs the SHA-pinned lint and hygiene lanes from
   [`ci-workflows`](https://github.com/melodic-software/ci-workflows) and
   aggregates them into the single `ci-status` check the org ruleset requires.
@@ -39,25 +39,25 @@ lane.
   `link-check.yml` is a weekly advisory sweep of
   external links and the one remaining caller of a ci-workflows reusable
   workflow. `.github/dependabot.yml` keeps the SHA-pinned composite actions
-  current. It does not touch that reusable-workflow pin: the standards
-  runner-policy allowlist admits only independently reviewed refs, so it moves
-  through explicit reviewed pull requests. Give every composite-action pin a
+  current. It does not touch that reusable-workflow pin. The standards
+  runner-policy allowlist admits only independently reviewed refs, so that pin
+  moves through explicit reviewed pull requests. Give every composite-action pin a
   `# vX.Y.Z` tag comment. Standards' pin-comment convention also permits a
   short-sha-and-date fallback, but Dependabot reads the current version out of
   that comment, so the fallback form leaves an action silently un-updated.
-- **Quality configs** — the root dotfiles the CI lanes run against.
+- **Quality configs**: the root dotfiles the CI lanes run against.
   `.editorconfig`, `.gitattributes`, `.markdownlint-cli2.jsonc`, `_typos.toml`,
   `.gitleaks.toml`, `lychee.toml`, and `.editorconfig-checker.json` are synced
   from [`standards`](https://github.com/melodic-software/standards);
   `.gitignore` is owned by this repository. Change a lint or hygiene rule in
-  `standards` and let the sync land it here — an edit made directly to one of
+  `standards` and let the sync land it here. An edit made directly to one of
   these files survives only until the next sync commit overwrites it.
   `.shellcheckrc` is the exception. It is a byte-identical copy of the same
   canonical file, but this repository is not on the `shellcheck` component's
   managed list, so nothing syncs it and nothing overwrites a local edit either.
   Adopting the component upstream is the durable fix; until then the copy drifts
   silently.
-- **Agent config** — `.claude/settings.json` declares the `melodic-software`
+- **Agent config**: `.claude/settings.json` declares the `melodic-software`
   plugin marketplace, the plugins enabled for this project, and the SessionStart
   hook that runs `.claude/cloud-bootstrap.sh`, itself synced from
   [`standards`](https://github.com/melodic-software/standards)
@@ -70,14 +70,14 @@ lane.
   optional gitignored `*.local.*` overlay for per-operator deviations.
   `CLAUDE.md` is the agent-loaded entry point: it routes to this file rather
   than restating it, and carries only what no other file states.
-- **Cloud Agent environment** — `.cursor/environment.json` is the repo-managed
+- **Cloud Agent environment**: `.cursor/environment.json` is the repo-managed
   [Cursor Cloud Agent](https://cursor.com/docs/cloud-agent/setup) config and the
   highest-precedence environment source. Its `install` runs `.cursor/install.sh`,
   which installs the same lint/hygiene tools `.github/workflows/ci.yml` runs
   (`markdownlint-cli2`, `typos`, `editorconfig-checker`, `gitleaks`, `lychee`,
   `actionlint`, `check-jsonschema`, `shellcheck`), each pinned to the version the
   SHA-pinned `ci-workflows` action uses, so `.cursor/check.sh` reproduces the CI
-  lanes — including `pr-section-drift` — and their `ci-status` aggregate locally.
+  lanes, `pr-section-drift` included, and their `ci-status` aggregate locally.
 
 The inventory above covers every tracked file, and no check enforces that. When
 a file is added or removed, update this section in the same change.

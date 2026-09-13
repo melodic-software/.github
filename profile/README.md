@@ -7,17 +7,17 @@ tooling we develop with.
 
 ## Public projects
 
-- [standards](https://github.com/melodic-software/standards) — shared
+- [standards](https://github.com/melodic-software/standards): shared
   repository-quality configs and engineering/review conventions, distributed to
-  consuming repos for consistent human and AI contributions.
-- [ci-workflows](https://github.com/melodic-software/ci-workflows) — SHA-pinned,
+  consuming repos and read by people and agents alike.
+- [ci-workflows](https://github.com/melodic-software/ci-workflows): SHA-pinned,
   configurable composite actions (one per code-quality tool) and reusable GitHub
   Actions workflows, aggregated by consumers into a single status gate.
-- [ci-runner](https://github.com/melodic-software/ci-runner) — an official
+- [ci-runner](https://github.com/melodic-software/ci-runner): an official
   Actions runner image plus a native Windows scale-set controller. Each job gets
   a fresh, one-job Docker worker, with GitHub-hosted runners as fallback.
-- Marketplaces of reusable, repo-agnostic agent tooling — skills, agents, hooks,
-  and MCP servers — one per assistant:
+- Reusable, repo-agnostic agent tooling, covering skills, agents, hooks, and MCP
+  servers, published as one marketplace per assistant:
   [claude-code-plugins](https://github.com/melodic-software/claude-code-plugins),
   [codex-plugins](https://github.com/melodic-software/codex-plugins), and
   [cursor-plugins](https://github.com/melodic-software/cursor-plugins).
