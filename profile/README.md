@@ -24,8 +24,10 @@ tooling we develop with.
 
 ## How we work
 
-- Shared standards make the expected quality bar explicit for people and agents.
-- Reusable workflows enforce that bar consistently across repositories.
+- The `standards` repo states the quality bar as configs and conventions that
+  people and agents both read.
+- Repositories enforce that bar by calling the same SHA-pinned `ci-workflows`
+  actions.
 - GitHub governance is managed as infrastructure-as-code so settings are
   reviewable and reproducible.
 - AI assists implementation and review; automated checks and maintainer judgment

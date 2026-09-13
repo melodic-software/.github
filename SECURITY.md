@@ -13,7 +13,7 @@ Report them privately through GitHub's [private vulnerability reporting](https:/
 
 If private reporting is not available for a repository, email **<security@melodicsoftware.com>** instead.
 
-Please include enough detail to reproduce and assess the issue (affected repository and version, impact, and reproduction steps). We will acknowledge your report and keep you informed as we investigate and address it.
+Please include enough detail to reproduce and assess the issue (affected repository and version, impact, and reproduction steps). We will acknowledge your report in the advisory thread, or by reply if you emailed it, and post progress there as we investigate and address it.
 
 ## Supported versions
 

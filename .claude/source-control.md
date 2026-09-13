@@ -1,6 +1,6 @@
 # source-control configuration
 
-Team-tracked layer of the source-control plugin's layered config seam. Key names, valid values, and
+Team-tracked layer of the source-control plugin's layered config. Key names, valid values, and
 resolution order are defined upstream in
 <https://github.com/melodic-software/claude-code-plugins/blob/main/plugins/source-control/reference/config-resolution.md>;
 the merge-rung ladder and the ratification rule that makes this reviewed file the recorded baseline

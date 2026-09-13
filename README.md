@@ -63,13 +63,13 @@ lane.
   [`standards`](https://github.com/melodic-software/standards)
   and extended per-repo by an optional `.claude/cloud-bootstrap.local.sh`.
   `.claude/source-control.md` is the tracked team layer of the source-control
-  convention seam (commit and PR-title pattern, required PR-body sections, merge
+  convention (commit and PR-title pattern, required PR-body sections, merge
   lane); `.work-item-tracker.json` binds the work-items tracker provider and
-  `.github/recurring-schedule.json` holds its recurring-work schedule. The two
-  config surfaces each resolve an optional gitignored `*.local.*` overlay for
-  per-operator deviations. `CLAUDE.md` is the agent-loaded entry point: it
-  routes to this file rather than restating it, and carries only what no other
-  file states.
+  `.github/recurring-schedule.json` holds its recurring-work schedule.
+  `.claude/source-control.md` and `.work-item-tracker.json` each resolve an
+  optional gitignored `*.local.*` overlay for per-operator deviations.
+  `CLAUDE.md` is the agent-loaded entry point: it routes to this file rather
+  than restating it, and carries only what no other file states.
 - **Cloud Agent environment** — `.cursor/environment.json` is the repo-managed
   [Cursor Cloud Agent](https://cursor.com/docs/cloud-agent/setup) config and the
   highest-precedence environment source. Its `install` runs `.cursor/install.sh`,

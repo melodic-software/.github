@@ -27,7 +27,7 @@ exact rule it applied and is authoritative over this comment.
 
 ## Verification
 
-<!-- How this was proven: tests run, commands executed, evidence observed. -->
+<!-- How this was proven: the commands run and what they showed, or the manual check performed. -->
 
 ## Related
 
