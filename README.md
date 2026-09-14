@@ -36,12 +36,8 @@ link lane for the same reason.
   The pull-request contract itself (Conventional Commits title, `do-not-merge`
   label, issue linkage) is the `pr-contract` step inside the `ci-status` job,
   so there are no separate caller workflows for it.
-  `link-check.yml` is a weekly advisory sweep of
-  external links and the one remaining caller of a ci-workflows reusable
-  workflow. `.github/dependabot.yml` keeps the SHA-pinned composite actions
-  current. It does not touch that reusable-workflow pin. The standards
-  runner-policy allowlist admits only independently reviewed refs, so that pin
-  moves through explicit reviewed pull requests. Give every composite-action pin a
+  `.github/dependabot.yml` keeps the SHA-pinned composite actions
+  current. Give every composite-action pin a
   `# vX.Y.Z` tag comment. Standards' pin-comment convention also permits a
   short-sha-and-date fallback, but Dependabot reads the current version out of
   that comment, so the fallback form leaves an action silently un-updated.
