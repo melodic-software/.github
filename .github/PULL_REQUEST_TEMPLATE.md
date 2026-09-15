@@ -6,8 +6,14 @@ merge, one closing keyword per issue (cross-repo:
 `Closes <owner>/<repo>#<issue-number>`). Supported keywords are GitHub's:
 https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue
 
-If this PR closes no issue, replace that line with `No related issue: <reason>`
-for an orphan PR (drift sweep, hotfix, refactor).
+If this PR closes no issue (an orphan PR: drift sweep, hotfix, refactor),
+replace that line with the no-issue escape and its reason, as plain text:
+
+No related issue: <reason>
+
+The reason is required. Write the escape without backticks: the gate masks
+inline code spans before matching, so a backticked escape is invisible to it
+and the PR draws the advisory `needs-issue-linkage` label anyway.
 
 Every `##` section below must be filled with real content. HTML comments like
 this one are stripped before validation, so an untouched template is reported
@@ -33,6 +39,7 @@ exact rule it applied and is authoritative over this comment.
 
 <!--
 Issues, PRs, or decision records this change touches without closing
-(one per line, e.g. `- Refs #<issue-number>`). If nothing applies, state
-`No linked issue` and why.
+(one per line, e.g. `- Refs #<issue-number>`). This section must not be empty:
+if nothing applies, say so in a sentence. The no-issue escape goes on the top
+line of this template, not here.
 -->
