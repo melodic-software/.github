@@ -123,7 +123,13 @@ jobs:
           hidden=()
           while IFS= read -r -d '' path; do
             case "$path" in
-              .*) hidden+=("$path") ;;
+              .*)
+                # Same filter as .cursor/check.sh: ignore an index entry that
+                # is not a file in this checkout.
+                if [[ -f "$path" ]]; then
+                  hidden+=("$path")
+                fi
+                ;;
               *) ;;
             esac
           done < <(git ls-files -z)
