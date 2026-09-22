@@ -131,7 +131,22 @@ markdownlint-cli2 --config .markdownlint-cli2.jsonc "**/*.md"
 record markdown "$?"
 
 heading typos
-typos --config _typos.toml .
+# typos skips hidden paths unless they are named. The synced _typos.toml
+# cannot set ignore-hidden = false; CI's typos job has the same follow-up.
+# Skip index entries that are gone from the worktree: an unstaged deletion is
+# still listed, and typos exits 64 when an explicit path is missing.
+hidden=()
+while IFS= read -r -d '' path; do
+  case "$path" in
+    .*)
+      if [[ -f "$path" ]]; then
+        hidden+=("$path")
+      fi
+      ;;
+    *) ;;
+  esac
+done < <(git ls-files -z)
+typos --config _typos.toml . "${hidden[@]}"
 record typos "$?"
 
 heading editorconfig
