@@ -1,7 +1,7 @@
 name: Feature Request
 description: Propose a new feature or enhancement.
 type: Feature
-labels: ["priority: needs-triage"]
+labels: ["needs-triage"]
 body:
   - type: textarea
     id: user-story
