@@ -19,7 +19,7 @@ on:
     # merge commit the lanes test changes with it, so that runs in full. A fork
     # pull request is never contract-only (its token is read-only on
     # `pull_request` whatever `permissions:` requests, so it cannot record lane
-    # state) and runs the full workflow on every event exactly as before.
+    # state) and runs the full workflow on every event.
     types: [opened, synchronize, reopened, edited, labeled, unlabeled]
 
 permissions:
@@ -43,11 +43,10 @@ permissions:
 # Full branch: `<workflow>-<pr number || run_id>` with cancel-in-progress true,
 # so a `synchronize` still cancels the run it supersedes. Keying PRs on the
 # number (not head_ref) keeps fork PRs that share a branch name from cancelling
-# each other's required runs. The push fallback stays `github.run_id`, the value
-# this repo has always used: every push lands in its own group, so a push run is
-# alone there and has nothing to cancel.
+# each other's required runs. The push fallback is `github.run_id`: every push
+# lands in its own group, so a push run is alone there and has nothing to cancel.
 #
-# The cost of the branch: a contract-only run no longer queues behind the full
+# The cost of the branch: a contract-only run does not queue behind the full
 # run whose `ci-lanes` status it carries forward, so the two race. The
 # `ci-status` composite closes that with a bounded wait on EARLIER incomplete
 # runs on the same head SHA; see `carry-forward-wait-seconds` on the job below.
@@ -80,7 +79,7 @@ concurrency:
 # ignored: `ci-status` stays green while it fails. `pr-section-drift` is the
 # one lane that is a local script rather than a remote action: it fetches the
 # `run.sh` of the pinned `pr-contract` composite and compares this repository's
-# two PR-body mirrors to the sections that gate reports (issue #58). A fetch
+# two PR-body mirrors to the sections that gate reports. A fetch
 # failure is red, never a skip, the same posture as standards'
 # `pr-convention-lockstep`.
 jobs:
@@ -312,7 +311,7 @@ jobs:
   # Compares `.github/PULL_REQUEST_TEMPLATE.md` headings and
   # `.claude/source-control.md`'s `pr_body_required_sections` to the
   # `section_report` calls inside the SHA-pinned `pr-contract` composite's
-  # `run.sh` (issue #58). The comparison target is that pin's bytes, not a
+  # `run.sh`. The comparison target is that pin's bytes, not a
   # third hardcoded copy of the four names. Fetches over the network; a fetch
   # failure is red, never a skip, same posture as standards'
   # `pr-convention-lockstep` (ADR-0008).
