@@ -168,7 +168,7 @@ describe("collectDrift", () => {
     const errors = collectDrift(contract, ["Alpha"], ["Alpha", "Beta"], SHA);
     assert.equal(errors.length, 1);
     assert.match(errors[0], /PULL_REQUEST_TEMPLATE\.md ## headings \[Alpha\]/);
-    assert.match(errors[0], new RegExp(`${sourceOfTruth(SHA).replaceAll(".", "\\.")} \\[Alpha, Beta\\]`));
+    assert.ok(errors[0].includes(`${sourceOfTruth(SHA)} [Alpha, Beta]`));
   });
 
   it("reports an extra template heading", () => {

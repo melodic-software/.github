@@ -61,8 +61,7 @@ lane_jsonschema() {
   done
   if [[ ${#forms[@]} -eq 0 ]]; then
     # Match ci.yml's roster step: an empty set is a failed derivation, not a
-    # skipped validation. Skipping here let a deleted-forms change pass locally
-    # while CI went red.
+    # skipped validation.
     echo "No issue forms (*.yml/*.yaml other than config.yml) found under .github/ISSUE_TEMPLATE/." >&2
     return 1
   fi

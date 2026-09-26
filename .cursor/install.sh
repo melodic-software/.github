@@ -4,7 +4,7 @@
 # This repo ships only community-health files, so its "build" is the same
 # lint/hygiene suite CI runs (see .github/workflows/ci.yml). That suite is a set
 # of standalone tools; this script installs each one pinned to the exact version
-# the CI composite actions use (melodic-software/ci-workflows v0.29.1), so a
+# the CI composite actions use (see Pins below), so a
 # local run of .cursor/check.sh reproduces CI verdicts byte for byte.
 #
 # Idempotent and safe to re-run: every tool is skipped when the pinned version

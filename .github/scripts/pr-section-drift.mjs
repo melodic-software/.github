@@ -32,6 +32,11 @@ const SOURCE_CONTROL_PATH = ".claude/source-control.md";
 const UPSTREAM_REPO = "melodic-software/ci-workflows";
 const UPSTREAM_GATE = ".github/actions/pr-contract/run.sh";
 const SOURCE_CONTROL_HEADING = "pr_body_required_sections";
+const FETCH_ATTEMPTS = 3;
+const CONTRACT_FOOTER =
+  "The pinned composite is the enforcement authority; the fleet convention record is " +
+  "melodic-software/standards components/pr-convention-policy/policy.json (ADR-0008). " +
+  "Change the contract there and bump the pin, then update both local files in the same PR.";
 
 const CALLER_PIN_RE =
   /uses:\s*melodic-software\/ci-workflows\/\.github\/actions\/pr-contract@([0-9a-f]{40})/g;
@@ -125,7 +130,7 @@ export function collectDrift(contract, templateHeadings, sourceControlSections, 
     .map(([label, names]) => `drift: ${label} ${formatList(names)} != ${expected}`);
 }
 
-export function contentsUrl(sha) {
+function contentsUrl(sha) {
   return `https://api.github.com/repos/${UPSTREAM_REPO}/contents/${UPSTREAM_GATE}?ref=${sha}`;
 }
 
@@ -136,7 +141,7 @@ export async function fetchGateSource(sha, fetchImpl = fetch, { backoffMs } = {}
     headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
   }
   let lastError;
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
+  for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt += 1) {
     try {
       const response = await fetchImpl(url, { headers });
       if (response.ok) {
@@ -147,17 +152,12 @@ export async function fetchGateSource(sha, fetchImpl = fetch, { backoffMs } = {}
       lastError = error;
     }
     const delay = backoffMs === undefined ? attempt * 2000 : backoffMs;
-    if (attempt < 3 && delay > 0) {
+    if (attempt < FETCH_ATTEMPTS && delay > 0) {
       await sleep(delay);
     }
   }
   throw new FetchError(`fetch-error: ${url}: ${lastError.message}`);
 }
-
-const CONTRACT_FOOTER =
-  "The pinned composite is the enforcement authority; the fleet convention record is " +
-  "melodic-software/standards components/pr-convention-policy/policy.json (ADR-0008). " +
-  "Change the contract there and bump the pin, then update both local files in the same PR.";
 
 function emitErrors(messages) {
   for (const message of messages) {
@@ -170,7 +170,7 @@ function emitErrors(messages) {
   console.error(CONTRACT_FOOTER);
 }
 
-export async function runLiveCheck(repoRoot, fetchImpl = fetch) {
+async function runLiveCheck(repoRoot, fetchImpl = fetch) {
   const read = (relativePath) => readFile(path.join(repoRoot, relativePath), "utf8");
   const sha = parseCallerPin(await read(CALLER_PATH));
   const contract = parseGateSections(await fetchGateSource(sha, fetchImpl), sourceOfTruth(sha));
