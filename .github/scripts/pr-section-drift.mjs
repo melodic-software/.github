@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 // Local complement to standards' fleet lockstep (ADR-0008): this repository's
-// two PR-body declarations — `.github/PULL_REQUEST_TEMPLATE.md` headings and
-// `.claude/source-control.md`'s `pr_body_required_sections` — are unchecked
+// two PR-body declarations (`.github/PULL_REQUEST_TEMPLATE.md` headings and
+// `.claude/source-control.md`'s `pr_body_required_sections`) are unchecked
 // mirrors of the section list the `pr-contract` composite enforces. ADR-0008
 // fleet-checks the template and the pin from standards CI *after* merge; it
 // deliberately does not check this repository's source-control key. This lane
@@ -23,7 +23,7 @@
 
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import process from "node:process";
+import { setTimeout as sleep } from "node:timers/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const CALLER_PATH = ".github/workflows/ci.yml";
@@ -32,23 +32,22 @@ const SOURCE_CONTROL_PATH = ".claude/source-control.md";
 const UPSTREAM_REPO = "melodic-software/ci-workflows";
 const UPSTREAM_GATE = ".github/actions/pr-contract/run.sh";
 const SOURCE_CONTROL_HEADING = "pr_body_required_sections";
+const FETCH_ATTEMPTS = 3;
+const CONTRACT_FOOTER =
+  "The pinned composite is the enforcement authority; the fleet convention record is " +
+  "melodic-software/standards components/pr-convention-policy/policy.json (ADR-0008). " +
+  "Change the contract there and bump the pin, then update both local files in the same PR.";
 
 const CALLER_PIN_RE =
   /uses:\s*melodic-software\/ci-workflows\/\.github\/actions\/pr-contract@([0-9a-f]{40})/g;
 const SECTION_REPORT_RE = /section_report\("([^"]+)"\)/g;
 
 export class DriftError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "DriftError";
-  }
+  name = "DriftError";
 }
 
 export class FetchError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "FetchError";
-  }
+  name = "FetchError";
 }
 
 export function sourceOfTruth(sha) {
@@ -56,8 +55,7 @@ export function sourceOfTruth(sha) {
 }
 
 export function parseCallerPin(callerText, location = CALLER_PATH) {
-  const shas = [...callerText.matchAll(CALLER_PIN_RE)].map((match) => match[1]);
-  const unique = [...new Set(shas)];
+  const unique = [...new Set([...callerText.matchAll(CALLER_PIN_RE)].map((match) => match[1]))];
   if (unique.length === 0) {
     throw new DriftError(`${location}: no 40-hex pr-contract@ pin found on a uses: line`);
   }
@@ -67,7 +65,6 @@ export function parseCallerPin(callerText, location = CALLER_PATH) {
   return unique[0];
 }
 
-// Same regex as standards lockstep-drift.mjs parseCompositeSections.
 export function parseGateSections(runShText, location) {
   const names = [...runShText.matchAll(SECTION_REPORT_RE)].map((match) => match[1]);
   if (names.length === 0) {
@@ -92,12 +89,7 @@ export function parseTemplateHeadings(markdownText) {
 
 export function parseSourceControlSections(markdownText, location = SOURCE_CONTROL_PATH) {
   const lines = markdownText.split(/\r?\n/);
-  const starts = [];
-  for (let index = 0; index < lines.length; index += 1) {
-    if (lines[index].trim() === `## ${SOURCE_CONTROL_HEADING}`) {
-      starts.push(index);
-    }
-  }
+  const starts = lines.flatMap((line, index) => (line.trim() === `## ${SOURCE_CONTROL_HEADING}` ? [index] : []));
   if (starts.length === 0) {
     throw new DriftError(`${location}: no ## ${SOURCE_CONTROL_HEADING} section found`);
   }
@@ -105,8 +97,7 @@ export function parseSourceControlSections(markdownText, location = SOURCE_CONTR
     throw new DriftError(`${location}: ## ${SOURCE_CONTROL_HEADING} appears more than once`);
   }
   const names = [];
-  for (let index = starts[0] + 1; index < lines.length; index += 1) {
-    const line = lines[index];
+  for (const line of lines.slice(starts[0] + 1)) {
     if (line.startsWith("## ")) {
       break;
     }
@@ -130,21 +121,16 @@ function listsEqual(left, right) {
 }
 
 export function collectDrift(contract, templateHeadings, sourceControlSections, sha) {
-  const errors = [];
-  if (!listsEqual(templateHeadings, contract)) {
-    errors.push(
-      `drift: ${TEMPLATE_PATH} ## headings ${formatList(templateHeadings)} != ${sourceOfTruth(sha)} ${formatList(contract)}`,
-    );
-  }
-  if (!listsEqual(sourceControlSections, contract)) {
-    errors.push(
-      `drift: ${SOURCE_CONTROL_PATH} ${SOURCE_CONTROL_HEADING} ${formatList(sourceControlSections)} != ${sourceOfTruth(sha)} ${formatList(contract)}`,
-    );
-  }
-  return errors;
+  const expected = `${sourceOfTruth(sha)} ${formatList(contract)}`;
+  return [
+    [`${TEMPLATE_PATH} ## headings`, templateHeadings],
+    [`${SOURCE_CONTROL_PATH} ${SOURCE_CONTROL_HEADING}`, sourceControlSections],
+  ]
+    .filter(([, names]) => !listsEqual(names, contract))
+    .map(([label, names]) => `drift: ${label} ${formatList(names)} != ${expected}`);
 }
 
-export function contentsUrl(sha) {
+function contentsUrl(sha) {
   return `https://api.github.com/repos/${UPSTREAM_REPO}/contents/${UPSTREAM_GATE}?ref=${sha}`;
 }
 
@@ -155,7 +141,7 @@ export async function fetchGateSource(sha, fetchImpl = fetch, { backoffMs } = {}
     headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
   }
   let lastError;
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
+  for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt += 1) {
     try {
       const response = await fetchImpl(url, { headers });
       if (response.ok) {
@@ -165,20 +151,13 @@ export async function fetchGateSource(sha, fetchImpl = fetch, { backoffMs } = {}
     } catch (error) {
       lastError = error;
     }
-    if (attempt < 3) {
-      const delay = backoffMs === undefined ? attempt * 2000 : backoffMs;
-      if (delay > 0) {
-        await new Promise((resolve) => setTimeout(resolve, delay));
-      }
+    const delay = backoffMs === undefined ? attempt * 2000 : backoffMs;
+    if (attempt < FETCH_ATTEMPTS && delay > 0) {
+      await sleep(delay);
     }
   }
   throw new FetchError(`fetch-error: ${url}: ${lastError.message}`);
 }
-
-const CONTRACT_FOOTER =
-  "The pinned composite is the enforcement authority; the fleet convention record is " +
-  "melodic-software/standards components/pr-convention-policy/policy.json (ADR-0008). " +
-  "Change the contract there and bump the pin, then update both local files in the same PR.";
 
 function emitErrors(messages) {
   for (const message of messages) {
@@ -191,24 +170,19 @@ function emitErrors(messages) {
   console.error(CONTRACT_FOOTER);
 }
 
-export async function runLiveCheck(repoRoot, fetchImpl = fetch) {
-  const callerText = await readFile(path.join(repoRoot, CALLER_PATH), "utf8");
-  const sha = parseCallerPin(callerText);
-  const runShText = await fetchGateSource(sha, fetchImpl);
-  const contract = parseGateSections(runShText, sourceOfTruth(sha));
-  const templateHeadings = parseTemplateHeadings(
-    await readFile(path.join(repoRoot, TEMPLATE_PATH), "utf8"),
-  );
-  const sourceControlSections = parseSourceControlSections(
-    await readFile(path.join(repoRoot, SOURCE_CONTROL_PATH), "utf8"),
-  );
+async function runLiveCheck(repoRoot, fetchImpl = fetch) {
+  const read = (relativePath) => readFile(path.join(repoRoot, relativePath), "utf8");
+  const sha = parseCallerPin(await read(CALLER_PATH));
+  const contract = parseGateSections(await fetchGateSource(sha, fetchImpl), sourceOfTruth(sha));
+  const templateHeadings = parseTemplateHeadings(await read(TEMPLATE_PATH));
+  const sourceControlSections = parseSourceControlSections(await read(SOURCE_CONTROL_PATH));
   return { sha, contract, errors: collectDrift(contract, templateHeadings, sourceControlSections, sha) };
 }
 
 const invokedDirectly = import.meta.url === pathToFileURL(process.argv[1] ?? "").href;
 
 if (invokedDirectly) {
-  const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+  const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
   try {
     const { sha, contract, errors } = await runLiveCheck(repoRoot);
     if (errors.length > 0) {

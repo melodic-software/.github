@@ -6,9 +6,9 @@ A specific repository may override this org-wide default with its own `SECURITY.
 
 Please do **not** report security vulnerabilities through public GitHub issues, discussions, or pull requests.
 
-Report them privately through GitHub's [private vulnerability reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability):
+Report them privately through GitHub's [private vulnerability reporting](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/report-privately):
 
-1. Open the **Security** tab of the affected repository.
+1. Open the **Security and quality** tab of the affected repository.
 2. Click **Report a vulnerability** and complete the advisory form.
 
 If private reporting is not available for a repository, email **<security@melodicsoftware.com>** instead.

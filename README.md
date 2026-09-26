@@ -29,18 +29,19 @@ link lane for the same reason.
   `ci.yml` runs the SHA-pinned lint and hygiene lanes from
   [`ci-workflows`](https://github.com/melodic-software/ci-workflows) and
   aggregates them into the single `ci-status` check the org ruleset requires.
+  The pull-request contract itself (Conventional Commits title, `do-not-merge`
+  label, issue linkage) is the `pr-contract` step inside the `ci-status` job,
+  so there are no separate caller workflows for it.
   The `pr-section-drift` lane is a local script (`.github/scripts/pr-section-drift.mjs`
   and its tests) that compares `.github/PULL_REQUEST_TEMPLATE.md` and
   `.claude/source-control.md` against the `pr-contract` composite at the
   SHA `.github/workflows/ci.yml` pins.
-  The pull-request contract itself (Conventional Commits title, `do-not-merge`
-  label, issue linkage) is the `pr-contract` step inside the `ci-status` job,
-  so there are no separate caller workflows for it.
   `.github/dependabot.yml` keeps the SHA-pinned composite actions
-  current. Give every composite-action pin a
-  `# vX.Y.Z` tag comment. Standards' pin-comment convention also permits a
-  short-sha-and-date fallback, but Dependabot reads the current version out of
-  that comment, so the fallback form leaves an action silently un-updated.
+  current.
+  - Give every composite-action pin a `# vX.Y.Z` tag comment. Standards'
+    pin-comment convention also permits a short-sha-and-date fallback, but
+    Dependabot reads the current version out of that comment, so the fallback
+    form leaves an action silently un-updated.
 - **Quality configs**: the root dotfiles the CI lanes run against.
   `.editorconfig`, `.gitattributes`, `.markdownlint-cli2.jsonc`, `_typos.toml`,
   `.gitleaks.toml`, `lychee.toml`, and `.editorconfig-checker.json` are synced

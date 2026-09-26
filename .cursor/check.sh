@@ -11,21 +11,25 @@
 # when any lane fails.
 set -uo pipefail
 
-cd -- "$(git rev-parse --show-toplevel 2>/dev/null || echo .)" || exit 1
+top="$(git rev-parse --show-toplevel)" && cd -- "$top" || exit 1
 
 # Fall back onto a per-user bin in case install.sh placed tools there.
 case ":$PATH:" in
   *":$HOME/.local/bin:"*) ;;
   *) PATH="$HOME/.local/bin:$PATH" ;;
 esac
-export PATH
 
 PASSED=()
 FAILED=()
 
-record() {
-  local name="$1" rc="$2"
-  if [[ "$rc" -eq 0 ]]; then
+heading() { printf '\n\033[1m── %s ──\033[0m\n' "$1" >&2; }
+
+# run_lane <name> <cmd...>: run one lane under a heading and record its verdict.
+run_lane() {
+  local name="$1"
+  shift
+  heading "$name"
+  if "$@"; then
     PASSED+=("$name")
     printf '\033[32m✓ %s\033[0m\n' "$name" >&2
   else
@@ -34,23 +38,30 @@ record() {
   fi
 }
 
-heading() { printf '\n\033[1m── %s ──\033[0m\n' "$1" >&2; }
-
 # --- Lanes with multi-step logic --------------------------------------------
+
+# typos skips hidden paths unless they are named. The synced _typos.toml
+# cannot set ignore-hidden = false; CI's typos job has the same follow-up.
+# Skip index entries that are gone from the worktree: an unstaged deletion is
+# still listed, and typos exits 64 when an explicit path is missing.
+lane_typos() {
+  local hidden=() path
+  while IFS= read -r -d '' path; do
+    [[ "$path" == .* && -f "$path" ]] && hidden+=("$path")
+  done < <(git ls-files -z)
+  typos --config _typos.toml . "${hidden[@]}"
+}
 
 lane_jsonschema() {
   local rc=0 forms=() f
   check-jsonschema --builtin-schema vendor.dependabot .github/dependabot.yml || rc=1
   check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/*.yml || rc=1
   for f in .github/ISSUE_TEMPLATE/*.yml .github/ISSUE_TEMPLATE/*.yaml; do
-    [[ -e "$f" ]] || continue
-    [[ "$(basename -- "$f")" == config.yml ]] && continue
-    forms+=("$f")
+    [[ -e "$f" && "$(basename -- "$f")" != config.yml ]] && forms+=("$f")
   done
   if [[ ${#forms[@]} -eq 0 ]]; then
     # Match ci.yml's roster step: an empty set is a failed derivation, not a
-    # skipped validation. Skipping here let a deleted-forms change pass locally
-    # while CI went red.
+    # skipped validation.
     echo "No issue forms (*.yml/*.yaml other than config.yml) found under .github/ISSUE_TEMPLATE/." >&2
     return 1
   fi
@@ -82,39 +93,27 @@ lane_shellcheck() {
 # there, leaving the caller's index and working tree untouched. CI itself
 # runs on a clean checkout, so this extra isolation is local-only.
 lane_eol() {
-  local tmp tmpindex tmpwt gitdir before after drift rc=0
-  gitdir="$(git rev-parse --absolute-git-dir)"
-  tmp="$(mktemp -d)"
-  tmpindex="$tmp/index"
-  tmpwt="$tmp/wt"
-  mkdir -p "$tmpwt"
-  cp -- "$(git rev-parse --git-path index)" "$tmpindex"
-  before="$(GIT_DIR="$gitdir" GIT_INDEX_FILE="$tmpindex" git write-tree)" || {
-    rm -rf "$tmp"
-    return 1
-  }
-  GIT_DIR="$gitdir" GIT_INDEX_FILE="$tmpindex" GIT_WORK_TREE="$tmpwt" git checkout-index --all || {
-    rm -rf "$tmp"
-    return 1
-  }
-  GIT_DIR="$gitdir" GIT_INDEX_FILE="$tmpindex" GIT_WORK_TREE="$tmpwt" git add --renormalize -- . || {
-    rm -rf "$tmp"
-    return 1
-  }
-  after="$(GIT_DIR="$gitdir" GIT_INDEX_FILE="$tmpindex" git write-tree)" || {
-    rm -rf "$tmp"
-    return 1
-  }
+  local tmp gitdir before after drift rc=0
+  tmp="$(mktemp -d)" || return 1
+  gitdir="$(git rev-parse --absolute-git-dir)" &&
+    mkdir -p "$tmp/wt" &&
+    cp -- "$(git rev-parse --git-path index)" "$tmp/index" &&
+    before="$(GIT_DIR="$gitdir" GIT_INDEX_FILE="$tmp/index" git write-tree)" &&
+    GIT_DIR="$gitdir" GIT_INDEX_FILE="$tmp/index" GIT_WORK_TREE="$tmp/wt" git checkout-index --all &&
+    GIT_DIR="$gitdir" GIT_INDEX_FILE="$tmp/index" GIT_WORK_TREE="$tmp/wt" git add --renormalize -- . &&
+    after="$(GIT_DIR="$gitdir" GIT_INDEX_FILE="$tmp/index" git write-tree)" || rc=1
   rm -rf "$tmp"
-  drift="$(git diff --name-only "$before" "$after")"
-  if [[ -z "$drift" ]]; then
-    echo "index EOL clean"
-  else
+  [[ "$rc" -eq 0 ]] || return 1
+  if ! drift="$(git diff --name-only "$before" "$after")"; then
+    echo "eol-renormalize: git diff failed; cannot tell whether the index has EOL drift" >&2
+    return 1
+  fi
+  if [[ -n "$drift" ]]; then
     echo "EOL drift (fix: git add --renormalize . && git commit):" >&2
     printf '%s\n' "$drift" >&2
-    rc=1
+    return 1
   fi
-  return "$rc"
+  echo "index EOL clean"
 }
 
 lane_pr_section_drift() {
@@ -126,65 +125,21 @@ lane_pr_section_drift() {
 
 # --- Run every lane ---------------------------------------------------------
 
-heading markdown
-markdownlint-cli2 --config .markdownlint-cli2.jsonc "**/*.md"
-record markdown "$?"
-
-heading typos
-# typos skips hidden paths unless they are named. The synced _typos.toml
-# cannot set ignore-hidden = false; CI's typos job has the same follow-up.
-# Skip index entries that are gone from the worktree: an unstaged deletion is
-# still listed, and typos exits 64 when an explicit path is missing.
-hidden=()
-while IFS= read -r -d '' path; do
-  case "$path" in
-    .*)
-      if [[ -f "$path" ]]; then
-        hidden+=("$path")
-      fi
-      ;;
-    *) ;;
-  esac
-done < <(git ls-files -z)
-typos --config _typos.toml . "${hidden[@]}"
-record typos "$?"
-
-heading editorconfig
-ec -config .editorconfig-checker.json
-record editorconfig "$?"
-
-heading gitleaks
-gitleaks dir --config .gitleaks.toml --no-banner .
-record gitleaks "$?"
-
-heading links
-lychee --offline --no-progress --config lychee.toml \
+run_lane markdown markdownlint-cli2 --config .markdownlint-cli2.jsonc "**/*.md"
+run_lane typos lane_typos
+run_lane editorconfig ec -config .editorconfig-checker.json
+run_lane gitleaks gitleaks dir --config .gitleaks.toml --no-banner .
+run_lane links lychee --offline --no-progress --config lychee.toml \
   "**/*.md" ".claude/**/*.md" ".github/**/*.md"
-record links "$?"
-
-heading actionlint
-actionlint -color
-record actionlint "$?"
-
-heading jsonschema
-lane_jsonschema
-record jsonschema "$?"
-
-heading shellcheck
-lane_shellcheck
-record shellcheck "$?"
-
-heading eol-renormalize
-lane_eol
-record eol-renormalize "$?"
-
-heading pr-section-drift
-lane_pr_section_drift
-record pr-section-drift "$?"
+run_lane actionlint actionlint -color
+run_lane jsonschema lane_jsonschema
+run_lane shellcheck lane_shellcheck
+run_lane eol-renormalize lane_eol
+run_lane pr-section-drift lane_pr_section_drift
 
 # --- Summary ----------------------------------------------------------------
 
-printf '\n\033[1m── ci-status ──\033[0m\n' >&2
+heading ci-status
 printf 'passed: %d   failed: %d\n' "${#PASSED[@]}" "${#FAILED[@]}" >&2
 if [[ ${#FAILED[@]} -gt 0 ]]; then
   printf 'failing lanes: %s\n' "${FAILED[*]}" >&2
