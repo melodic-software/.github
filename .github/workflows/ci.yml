@@ -17,9 +17,9 @@ on:
     #
     # An `edited` event carrying `changes.base` is a BASE-BRANCH change: the
     # merge commit the lanes test changes with it, so that runs in full. A fork
-    # pull request is never contract-only — its token is read-only on
+    # pull request is never contract-only (its token is read-only on
     # `pull_request` whatever `permissions:` requests, so it cannot record lane
-    # state — and runs the full workflow on every event exactly as before.
+    # state) and runs the full workflow on every event exactly as before.
     types: [opened, synchronize, reopened, edited, labeled, unlabeled]
 
 permissions:
@@ -77,11 +77,11 @@ concurrency:
 # Adding a lane: a new job gates merges once its name appears in the `ci-status`
 # job's `needs:` list. Its `results:` input is derived from that list and needs
 # no edit. Adding the job without the `needs:` entry leaves it running but
-# ignored — `ci-status` stays green while it fails. `pr-section-drift` is the
+# ignored: `ci-status` stays green while it fails. `pr-section-drift` is the
 # one lane that is a local script rather than a remote action: it fetches the
 # `run.sh` of the pinned `pr-contract` composite and compares this repository's
 # two PR-body mirrors to the sections that gate reports (issue #58). A fetch
-# failure is red, never a skip — the same posture as standards'
+# failure is red, never a skip, the same posture as standards'
 # `pr-convention-lockstep`.
 jobs:
   markdown:
@@ -94,7 +94,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint Markdown
-        uses: melodic-software/ci-workflows/.github/actions/markdown@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/markdown@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           config: .markdownlint-cli2.jsonc
 
@@ -108,7 +108,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Spell-check
-        uses: melodic-software/ci-workflows/.github/actions/typos@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/typos@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           config: _typos.toml
       - name: Spell-check hidden tracked paths
@@ -147,7 +147,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Check editorconfig conformance
-        uses: melodic-software/ci-workflows/.github/actions/editorconfig@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/editorconfig@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           config: .editorconfig-checker.json
 
@@ -161,7 +161,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Scan for secrets
-        uses: melodic-software/ci-workflows/.github/actions/gitleaks@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/gitleaks@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           config: .gitleaks.toml
 
@@ -175,13 +175,13 @@ jobs:
         with:
           persist-credentials: false
       - name: Check links and anchors (offline)
-        uses: melodic-software/ci-workflows/.github/actions/lychee-offline@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/lychee-offline@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           config: lychee.toml
           # The action's default `**/*.md` skips hidden directories, so Markdown
-          # under `.claude/` and `.github/` went unchecked — verified against the
+          # under `.claude/` and `.github/` went unchecked (verified against the
           # pinned lychee 0.24.2, where the default glob resolves 7 of this
-          # repo's 9 Markdown files. Dot-prefixed globs are listed explicitly
+          # repo's 9 Markdown files). Dot-prefixed globs are listed explicitly
           # rather than adding `--hidden` because this action exposes no
           # arbitrary-args input; the default glob is repeated, not replaced.
           globs: >-
@@ -199,7 +199,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint workflows
-        uses: melodic-software/ci-workflows/.github/actions/actionlint@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/actionlint@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
 
   jsonschema:
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
@@ -211,17 +211,17 @@ jobs:
         with:
           persist-credentials: false
       - name: Validate dependabot.yml
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           builtin-schema: vendor.dependabot
           files: .github/dependabot.yml
       - name: Validate workflows
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           builtin-schema: vendor.github-workflows
           files: .github/workflows/*.yml
       # Derived from the directory rather than restating it, for the same reason
-      # `ci-status` derives its lane list — a hand-listed roster let a newly
+      # `ci-status` derives its lane list: a hand-listed roster let a newly
       # added issue form go unvalidated with this lane still green, and nothing
       # caught the omission. Unlike `ci-status` this cannot be an expression:
       # Actions expressions have no filesystem access, so the roster is built in
@@ -240,7 +240,7 @@ jobs:
             fi
             # The consuming action word-splits and re-globs whatever it receives,
             # so a name carrying whitespace or a glob metacharacter would be
-            # mangled — and a bracket/star/question pattern that matches nothing
+            # mangled, and a bracket/star/question pattern that matches nothing
             # is dropped outright, leaving that form unvalidated with this step
             # still green. Refusing the name keeps that silent, which is the
             # failure mode deriving this list exists to remove.
@@ -256,28 +256,28 @@ jobs:
           fi
           echo "files=${forms[*]}" >> "$GITHUB_OUTPUT"
       - name: Validate issue forms
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           builtin-schema: vendor.github-issue-forms
           files: ${{ steps.issue-forms.outputs.files }}
       - name: Validate issue-template chooser config
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           builtin-schema: vendor.github-issue-config
           files: .github/ISSUE_TEMPLATE/config.yml
       # No vendored builtin covers Claude Code settings, so this validates
       # against the same schemastore URL the file itself declares in `$schema`.
       # Unlike every other lane this reaches an unpinned remote schema, so a
-      # breaking schemastore change reddens the lane without this repo changing
-      # — swap to a builtin if one ever ships.
+      # breaking schemastore change reddens the lane without this repo changing;
+      # swap to a builtin if one ever ships.
       - name: Validate Claude Code settings
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           schemafile: https://json.schemastore.org/claude-code-settings.json
           files: .claude/settings.json
 
-  # The SessionStart bootstrap is this lane's only input — discovery is tracked
-  # *.sh/*.bash files — and it arrives by standards sync already written against
+  # The SessionStart bootstrap is this lane's only input (discovery is tracked
+  # *.sh/*.bash files), and it arrives by standards sync already written against
   # the canonical .shellcheckrc (it carries `disable=` directives and cites
   # check-set-e-suppressed/SC2310). Nothing was checking that until this lane.
   # The `jsonschema` job's roster step is shell too, but an embedded `run:` block
@@ -293,7 +293,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint shell scripts
-        uses: melodic-software/ci-workflows/.github/actions/shellcheck@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/shellcheck@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           rcfile: .shellcheckrc
 
@@ -307,14 +307,14 @@ jobs:
         with:
           persist-credentials: false
       - name: Check index-level EOL drift
-        uses: melodic-software/ci-workflows/.github/actions/eol-renormalize@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/eol-renormalize@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
 
   # Compares `.github/PULL_REQUEST_TEMPLATE.md` headings and
   # `.claude/source-control.md`'s `pr_body_required_sections` to the
   # `section_report` calls inside the SHA-pinned `pr-contract` composite's
   # `run.sh` (issue #58). The comparison target is that pin's bytes, not a
   # third hardcoded copy of the four names. Fetches over the network; a fetch
-  # failure is red, never a skip — same posture as standards'
+  # failure is red, never a skip, same posture as standards'
   # `pr-convention-lockstep` (ADR-0008).
   pr-section-drift:
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
@@ -351,7 +351,7 @@ jobs:
       statuses: write
     steps:
       - name: Check the pull-request contract
-        uses: melodic-software/ci-workflows/.github/actions/pr-contract@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/pr-contract@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           token: ${{ github.token }}
       - name: Aggregate lane results
@@ -359,10 +359,10 @@ jobs:
         # aggregation: the job still fails on the contract step's exit code, and
         # the `ci-lanes` status is on the SHA for the next contract-only run.
         if: ${{ !cancelled() }}
-        uses: melodic-software/ci-workflows/.github/actions/ci-status@4610c31e92eb1c4b24981e2f200ac87bdb2a1753 # v0.27.1
+        uses: melodic-software/ci-workflows/.github/actions/ci-status@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
         with:
           # Derived from `needs:` rather than restating it. Hand-listing the
-          # results let a lane be dropped from this input alone — still gated via
+          # results let a lane be dropped from this input alone: still gated via
           # `needs:`, but its verdict withheld from the aggregator, so the check
           # went green on that lane's failure with no linter to catch it. `join`
           # over the `needs.*` object filter yields the whitespace-separated form

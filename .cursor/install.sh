@@ -4,7 +4,7 @@
 # This repo ships only community-health files, so its "build" is the same
 # lint/hygiene suite CI runs (see .github/workflows/ci.yml). That suite is a set
 # of standalone tools; this script installs each one pinned to the exact version
-# the CI composite actions use (melodic-software/ci-workflows v0.17.2), so a
+# the CI composite actions use (melodic-software/ci-workflows v0.29.1), so a
 # local run of .cursor/check.sh reproduces CI verdicts byte for byte.
 #
 # Idempotent and safe to re-run: every tool is skipped when the pinned version
@@ -12,12 +12,12 @@
 # SHA-256 the CI action pins before it is trusted (fail closed).
 set -euo pipefail
 
-# --- Pins (authority: melodic-software/ci-workflows v0.17.2 action defaults) --
+# --- Pins (authority: melodic-software/ci-workflows v0.29.1 action defaults) --
 MARKDOWNLINT_VERSION="0.23.2"
-TYPOS_VERSION="1.49.0"
-TYPOS_SHA256="48bd2d58e02ce713b8c0f1aa239e68ee4f7d8c551013135806e6aed3938d9e10"
-EC_VERSION="3.11.1"
-EC_SHA256="5a37922963248451e88149251e49f6ae08f69717a3918202a51fe9945e19691e"
+TYPOS_VERSION="1.50.1"
+TYPOS_SHA256="edf0545109aee6a22751d04ddecb97c45be47d3aa0409564fb895eeeace91b1e"
+EC_VERSION="3.11.2"
+EC_SHA256="bc815e5b3b1891a0ee9e1242fe3475312655f8b0f4c4a79510be0a009294571a"
 GITLEAKS_VERSION="8.30.1"
 GITLEAKS_SHA256="551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
 LYCHEE_VERSION="0.24.2"
@@ -53,7 +53,7 @@ trap 'rm -rf "$WORK"' EXIT
 
 log() { printf 'install: %s\n' "$*" >&2; }
 
-# verify_sha <file> <sha256> — abort the whole install on mismatch. A hygiene
+# verify_sha <file> <sha256>: abort the whole install on mismatch. A hygiene
 # toolchain that silently installed an unverified binary is worse than a hard
 # failure the operator can see and re-run.
 verify_sha() {
@@ -72,100 +72,71 @@ install_bin() {
   log "installed $name -> $BIN_DIR/$name"
 }
 
-install_typos() {
-  local cur
-  cur="$(typos --version 2>/dev/null || true)"
-  if [[ "$cur" == *"$TYPOS_VERSION"* ]]; then
-    log "typos $TYPOS_VERSION present; skipping"
-    return 0
+# ensure <label> <version> <installer> <version-cmd...>: run <installer> unless
+# <version-cmd> already reports the pinned version.
+ensure() {
+  local label="$1" want="$2" installer="$3" cur
+  shift 3
+  cur="$("$@" 2>/dev/null || true)"
+  if [[ "$cur" == *"$want"* ]]; then
+    log "$label $want present; skipping"
+  else
+    "$installer"
   fi
-  local url="https://github.com/crate-ci/typos/releases/download/v${TYPOS_VERSION}/typos-v${TYPOS_VERSION}-x86_64-unknown-linux-musl.tar.gz"
-  curl -fsSL --proto '=https' --retry 3 --retry-delay 3 -o "$WORK/typos.tgz" "$url"
-  verify_sha "$WORK/typos.tgz" "$TYPOS_SHA256"
-  tar -xzf "$WORK/typos.tgz" -C "$WORK" ./typos
-  install_bin "$WORK/typos" typos
+}
+
+# install_release <name> <sha256> <url> <extracted-path> <tar-member-args...>:
+# download a release tarball, verify it, extract the member, and install
+# $WORK/<extracted-path> as <name>.
+install_release() {
+  local name="$1" sha="$2" url="$3" extracted="$4"
+  shift 4
+  curl -fsSL --proto '=https' --retry 3 --retry-delay 3 -o "$WORK/$name.tgz" "$url"
+  verify_sha "$WORK/$name.tgz" "$sha"
+  tar -xzf "$WORK/$name.tgz" -C "$WORK" "$@"
+  install_bin "$WORK/$extracted" "$name"
+}
+
+install_typos() {
+  install_release typos "$TYPOS_SHA256" \
+    "https://github.com/crate-ci/typos/releases/download/v${TYPOS_VERSION}/typos-v${TYPOS_VERSION}-x86_64-unknown-linux-musl.tar.gz" \
+    typos ./typos
 }
 
 install_ec() {
-  local cur
-  cur="$(ec --version 2>/dev/null || true)"
-  if [[ "$cur" == *"$EC_VERSION"* ]]; then
-    log "editorconfig-checker $EC_VERSION present; skipping"
-    return 0
-  fi
-  local url="https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${EC_VERSION}/ec-linux-amd64.tar.gz"
-  curl -fsSL --proto '=https' --retry 3 --retry-delay 3 -o "$WORK/ec.tgz" "$url"
-  verify_sha "$WORK/ec.tgz" "$EC_SHA256"
-  tar -xzf "$WORK/ec.tgz" -C "$WORK" bin/ec-linux-amd64
-  install_bin "$WORK/bin/ec-linux-amd64" ec
+  install_release ec "$EC_SHA256" \
+    "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${EC_VERSION}/ec-linux-amd64.tar.gz" \
+    bin/ec-linux-amd64 bin/ec-linux-amd64
 }
 
 install_gitleaks() {
-  local cur
-  cur="$(gitleaks version 2>/dev/null || true)"
-  if [[ "$cur" == *"$GITLEAKS_VERSION"* ]]; then
-    log "gitleaks $GITLEAKS_VERSION present; skipping"
-    return 0
-  fi
-  local url="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
-  curl -fsSL --proto '=https' --retry 3 --retry-delay 3 -o "$WORK/gitleaks.tgz" "$url"
-  verify_sha "$WORK/gitleaks.tgz" "$GITLEAKS_SHA256"
-  tar -xzf "$WORK/gitleaks.tgz" -C "$WORK" gitleaks
-  install_bin "$WORK/gitleaks" gitleaks
+  install_release gitleaks "$GITLEAKS_SHA256" \
+    "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+    gitleaks gitleaks
 }
 
 install_lychee() {
-  local cur
-  cur="$(lychee --version 2>/dev/null || true)"
-  if [[ "$cur" == *"$LYCHEE_VERSION"* ]]; then
-    log "lychee $LYCHEE_VERSION present; skipping"
-    return 0
-  fi
-  local url="https://github.com/lycheeverse/lychee/releases/download/lychee-v${LYCHEE_VERSION}/lychee-x86_64-unknown-linux-gnu.tar.gz"
-  curl -fsSL --proto '=https' --retry 3 --retry-delay 3 -o "$WORK/lychee.tgz" "$url"
-  verify_sha "$WORK/lychee.tgz" "$LYCHEE_SHA256"
-  tar -xzf "$WORK/lychee.tgz" -C "$WORK" --strip-components=1 lychee-x86_64-unknown-linux-gnu/lychee
-  install_bin "$WORK/lychee" lychee
+  install_release lychee "$LYCHEE_SHA256" \
+    "https://github.com/lycheeverse/lychee/releases/download/lychee-v${LYCHEE_VERSION}/lychee-x86_64-unknown-linux-gnu.tar.gz" \
+    lychee --strip-components=1 lychee-x86_64-unknown-linux-gnu/lychee
 }
 
 install_actionlint() {
-  local cur
-  cur="$(actionlint --version 2>/dev/null || true)"
-  if [[ "$cur" == *"$ACTIONLINT_VERSION"* ]]; then
-    log "actionlint $ACTIONLINT_VERSION present; skipping"
-    return 0
-  fi
-  local url="https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
-  curl -fsSL --proto '=https' --retry 3 --retry-delay 3 -o "$WORK/actionlint.tgz" "$url"
-  verify_sha "$WORK/actionlint.tgz" "$ACTIONLINT_SHA256"
-  tar -xzf "$WORK/actionlint.tgz" -C "$WORK" actionlint
-  install_bin "$WORK/actionlint" actionlint
+  install_release actionlint "$ACTIONLINT_SHA256" \
+    "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" \
+    actionlint actionlint
 }
 
 install_shellcheck() {
-  local cur
-  cur="$(shellcheck --version 2>/dev/null || true)"
-  if [[ "$cur" == *"$SHELLCHECK_VERSION"* ]]; then
-    log "shellcheck $SHELLCHECK_VERSION present; skipping"
-    return 0
-  fi
-  local url="https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.gz"
-  curl -fsSL --proto '=https' --retry 3 --retry-delay 3 -o "$WORK/sc.tgz" "$url"
-  verify_sha "$WORK/sc.tgz" "$SHELLCHECK_SHA256"
-  tar -xzf "$WORK/sc.tgz" -C "$WORK" "shellcheck-v${SHELLCHECK_VERSION}/shellcheck"
-  install_bin "$WORK/shellcheck-v${SHELLCHECK_VERSION}/shellcheck" shellcheck
+  install_release shellcheck "$SHELLCHECK_SHA256" \
+    "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.gz" \
+    "shellcheck-v${SHELLCHECK_VERSION}/shellcheck" "shellcheck-v${SHELLCHECK_VERSION}/shellcheck"
 }
 
 # markdownlint-cli2 ships as an npm package; install it into the same prefix so
 # the `markdownlint-cli2` launcher lands on PATH. Node is provided by the base
 # image / cloud bootstrap.
 install_markdownlint() {
-  local cur
-  cur="$(markdownlint-cli2 --version 2>/dev/null || true)"
-  if [[ "$cur" == *"$MARKDOWNLINT_VERSION"* ]]; then
-    log "markdownlint-cli2 $MARKDOWNLINT_VERSION present; skipping"
-    return 0
-  fi
   if ! command -v npm >/dev/null 2>&1; then
     log "npm not found; cannot install markdownlint-cli2"
     exit 1
@@ -182,12 +153,6 @@ install_markdownlint() {
 # check-jsonschema is a Python tool; install it into a dedicated venv and expose
 # only its launcher on PATH so it never perturbs the system interpreter.
 install_check_jsonschema() {
-  local cur
-  cur="$(check-jsonschema --version 2>/dev/null || true)"
-  if [[ "$cur" == *"$CHECK_JSONSCHEMA_VERSION"* ]]; then
-    log "check-jsonschema $CHECK_JSONSCHEMA_VERSION present; skipping"
-    return 0
-  fi
   if ! command -v python3 >/dev/null 2>&1; then
     log "python3 not found; cannot install check-jsonschema"
     exit 1
@@ -211,12 +176,12 @@ install_check_jsonschema() {
 }
 
 log "installing pinned hygiene toolchain into $BIN_DIR"
-install_typos
-install_ec
-install_gitleaks
-install_lychee
-install_actionlint
-install_shellcheck
-install_markdownlint
-install_check_jsonschema
+ensure typos "$TYPOS_VERSION" install_typos typos --version
+ensure editorconfig-checker "$EC_VERSION" install_ec ec --version
+ensure gitleaks "$GITLEAKS_VERSION" install_gitleaks gitleaks version
+ensure lychee "$LYCHEE_VERSION" install_lychee lychee --version
+ensure actionlint "$ACTIONLINT_VERSION" install_actionlint actionlint --version
+ensure shellcheck "$SHELLCHECK_VERSION" install_shellcheck shellcheck --version
+ensure markdownlint-cli2 "$MARKDOWNLINT_VERSION" install_markdownlint markdownlint-cli2 --version
+ensure check-jsonschema "$CHECK_JSONSCHEMA_VERSION" install_check_jsonschema check-jsonschema --version
 log "toolchain ready"

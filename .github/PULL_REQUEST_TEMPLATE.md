@@ -4,7 +4,7 @@ Closes #
 Complete the `Closes #` line above with the issue number to auto-close it on
 merge, one closing keyword per issue (cross-repo:
 `Closes <owner>/<repo>#<issue-number>`). Supported keywords are GitHub's:
-https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue
+https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue
 
 If this PR closes no issue (an orphan PR: drift sweep, hotfix, refactor),
 replace that line with the no-issue escape and its reason, as plain text:

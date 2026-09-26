@@ -1,5 +1,5 @@
 # Owned by this repository. Git has no include mechanism, so there is no shared
-# .gitignore to inherit from — each repo maintains its own. Sections below cover
+# .gitignore to inherit from; each repo maintains its own. Sections below cover
 # OS/editor noise plus tooling that may run against this checkout locally, even
 # where this repo carries no such source of its own.
 
@@ -15,40 +15,28 @@ Thumbs.db
 # Claude Code worktrees (per-checkout; PR worktree workflow)
 .claude/worktrees/
 
-# Claude Code local settings — the cloud bootstrap script (.claude/cloud-bootstrap.sh)
-# installs plugins at local scope, so this file carries per-machine plugin enablement. Claude Code also
-# ignores it globally, but that is a user-level file this repo cannot assume.
-.claude/settings.local.json
-
-# Layered-config personal overlays. Plugins that ship a tracked team config layer
-# also resolve an optional per-operator overlay beside it — a per-machine deviation
-# from team policy that is never committed. The .claude/ glob is the form the
-# source-control plugin prescribes (reference/config-resolution.md, "Consumer
-# .gitignore"); the work-items tracker overlay sits at the repo root instead, so it
-# needs its own line. The glob also covers overlays of surfaces added later.
+# Per-operator overlays, never committed: .claude/settings.local.json (per-machine
+# plugin enablement written by .claude/cloud-bootstrap.sh) and the layered-config
+# overlays beside tracked team layers. The .claude/ glob is the form the
+# source-control plugin prescribes; the work-items tracker overlay sits at the
+# repo root, so it needs its own line.
 .claude/*.local.*
 .work-item-tracker.local.json
 
-# Exception: cloud-bootstrap.local.sh is a repo-owned, team-shared extension
-# point, not a per-operator overlay — .claude/cloud-bootstrap.sh documents it as
-# "a repo enriches through its own .claude/cloud-bootstrap.local.sh" and invokes
-# it directly. It matches the glob above by name only, so it is re-included:
-# ignoring it would silently drop a tracked file that cloud sessions depend on.
+# Exception: .claude/cloud-bootstrap.local.sh is a team-shared extension point
+# that .claude/cloud-bootstrap.sh invokes, not a per-operator overlay.
 !.claude/cloud-bootstrap.local.sh
 
-# Claude Code observability telemetry — per-checkout JSONL written by the
-# observability plugin. Previously ignored only via .git/info/exclude, which is
-# per-clone and does not travel, so a fresh checkout showed a dirty tree as soon
-# as the plugin wrote to it.
+# Claude Code observability telemetry (per-checkout JSONL)
 .claude/observability/
 
 # Node
 node_modules/
 
-# Lefthook — per-developer override config and local-only scripts dir
+# Lefthook: per-developer override config and local-only scripts dir
 lefthook-local.yml
 .lefthook-local/
 
-# .NET — build output
+# .NET build output
 bin/
 obj/

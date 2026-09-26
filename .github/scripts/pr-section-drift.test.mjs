@@ -94,16 +94,12 @@ describe("parseCallerPin", () => {
 });
 
 describe("parseGateSections", () => {
-  it("parses a run.sh fixture shaped like the real awk END block", () => {
+  it("parses the quoted calls and ignores the unquoted function definition", () => {
     assert.deepEqual(parseGateSections(runSh("Alpha", "Beta", "Gamma"), "fixture"), [
       "Alpha",
       "Beta",
       "Gamma",
     ]);
-  });
-
-  it("ignores the unquoted function definition", () => {
-    assert.deepEqual(parseGateSections(runSh("Alpha"), "fixture"), ["Alpha"]);
   });
 
   it("fails loud when no section_report call is present", () => {
