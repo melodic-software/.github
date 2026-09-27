@@ -10,6 +10,17 @@
     }
   },
   "enabledPlugins": {},
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./.claude/settings.local.json)",
+      "Read(**/*.key)",
+      "Read(**/*.pem)",
+      "Read(**/id_rsa)"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {
