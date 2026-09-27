@@ -71,11 +71,10 @@ link lane for the same reason.
 - **Cloud Agent environment**: `.cursor/environment.json` is the repo-managed
   [Cursor Cloud Agent](https://cursor.com/docs/cloud-agent/setup) config and the
   highest-precedence environment source. Its `install` runs `.cursor/install.sh`,
-  which installs the same lint/hygiene tools `.github/workflows/ci.yml` runs
-  (`markdownlint-cli2`, `typos`, `editorconfig-checker`, `gitleaks`, `lychee`,
-  `actionlint`, `check-jsonschema`, `shellcheck`), each pinned to the version the
-  SHA-pinned `ci-workflows` action uses, so `.cursor/check.sh` reproduces the CI
-  lanes, `pr-section-drift` included, and their `ci-status` aggregate locally.
+  which installs the same lint/hygiene tools `.github/workflows/ci.yml` runs,
+  each pinned to the version the SHA-pinned `ci-workflows` action uses, so
+  `.cursor/check.sh` reproduces the CI lanes, `pr-section-drift` included, and
+  their `ci-status` aggregate locally.
 
 The inventory above covers every tracked file, and no check enforces that. When
 a file is added or removed, update this section in the same change.
