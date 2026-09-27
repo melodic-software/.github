@@ -30,12 +30,14 @@ The wiring rule sits in `.github/workflows/ci.yml`'s header comment, above `jobs
 A gating lane is done when the `ci-status` job's `needs:` roster names it and
 a PR run shows `ci-status` waiting on it.
 
+## Checks
+
+`bash .cursor/check.sh` runs every CI lane locally, with the tools `.cursor/install.sh`
+pins, and exits non-zero when any lane fails.
+
 ## Opening a PR here
 
-`ci-status` is the single required check, and its `pr-contract` step runs the
-pull-request contract.
 [`.claude/rules/pr-body-contract.md`](.claude/rules/pr-body-contract.md) states the rule
 and what is gating versus advisory;
 [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) carries the layout
-and [`.claude/source-control.md`](.claude/source-control.md) the section list. The step's
-own output is authoritative on the accepted forms.
+and [`.claude/source-control.md`](.claude/source-control.md) the section list.
