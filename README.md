@@ -55,14 +55,12 @@ link lane for the same reason.
   Adopting the component upstream is the durable fix; until then the copy drifts
   silently.
 - **Agent config**: `.claude/settings.json` declares the `melodic-software`
-  plugin marketplace, the plugins enabled for this project, and the SessionStart
-  hook that runs `.claude/cloud-bootstrap.sh`, itself synced from
+  plugin marketplace and the SessionStart hook that runs `.claude/cloud-bootstrap.sh`, itself synced from
   [`standards`](https://github.com/melodic-software/standards)
   and extended per-repo by an optional `.claude/cloud-bootstrap.local.sh`.
   `.claude/source-control.md` is the tracked team layer of the source-control
   convention (commit and PR-title pattern, required PR-body sections, merge
-  lane); `.work-item-tracker.json` binds the work-items tracker provider and
-  `.github/recurring-schedule.json` holds its recurring-work schedule.
+  lane); `.work-item-tracker.json` binds the work-items tracker provider.
   `.claude/source-control.md` and `.work-item-tracker.json` each resolve an
   optional gitignored `*.local.*` overlay for per-operator deviations.
   `.claude/rules/pr-body-contract.md`, synced from `standards`, states the
