@@ -179,8 +179,7 @@ jobs:
           config: lychee.toml
           # The action's default `**/*.md` skips hidden directories, so Markdown
           # under `.claude/` and `.github/` went unchecked (verified against the
-          # pinned lychee 0.24.2, where the default glob resolves 7 of this
-          # repo's 9 Markdown files). Dot-prefixed globs are listed explicitly
+          # pinned lychee 0.24.2). Dot-prefixed globs are listed explicitly
           # rather than adding `--hidden` because this action exposes no
           # arbitrary-args input; the default glob is repeated, not replaced.
           globs: >-
@@ -277,7 +276,7 @@ jobs:
 
   # The SessionStart bootstrap is this lane's only input (discovery is tracked
   # *.sh/*.bash files), and it arrives by standards sync already written against
-  # the canonical .shellcheckrc (it carries `disable=` directives and cites
+  # the canonical .shellcheckrc (it carries `enable=` directives and cites
   # check-set-e-suppressed/SC2310). Nothing was checking that until this lane.
   # The `jsonschema` job's roster step is shell too, but an embedded `run:` block
   # is not a file this discovery sees; the `actionlint` lane covers it instead,

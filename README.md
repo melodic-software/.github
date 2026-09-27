@@ -36,9 +36,9 @@ link lane for the same reason.
   and its tests) that compares `.github/PULL_REQUEST_TEMPLATE.md` and
   `.claude/source-control.md` against the `pr-contract` composite at the
   SHA `.github/workflows/ci.yml` pins.
-  `.github/dependabot.yml` keeps the SHA-pinned composite actions
-  current.
-  - Give every composite-action pin a `# vX.Y.Z` tag comment. Standards'
+  `.github/dependabot.yml` keeps `actions/checkout` current; the `ci-workflows`
+  pins move by hand (see its `ignore` block).
+  - Give every action pin a `# vX.Y.Z` tag comment. Standards'
     pin-comment convention also permits a short-sha-and-date fallback, but
     Dependabot reads the current version out of that comment, so the fallback
     form leaves an action silently un-updated.
@@ -65,6 +65,9 @@ link lane for the same reason.
   `.github/recurring-schedule.json` holds its recurring-work schedule.
   `.claude/source-control.md` and `.work-item-tracker.json` each resolve an
   optional gitignored `*.local.*` overlay for per-operator deviations.
+  `.claude/rules/pr-body-contract.md`, synced from `standards`, states the
+  pull-request body contract; `.claude/ai-slop.json` configures the AI-writing
+  audit for this repository.
   `CLAUDE.md` is the agent-loaded entry point: it routes to this file rather
   than restating it, and carries only what no other file states.
 - **Cloud Agent environment**: `.cursor/environment.json` is the repo-managed

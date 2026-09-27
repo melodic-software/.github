@@ -26,8 +26,8 @@ where it does. Go there when a change fits none of the files already in this rep
 
 ## Adding or renaming a CI lane
 
-The wiring rule sits in `.github/workflows/ci.yml`'s header comment, beside the
-`ci-status` job it governs. The lane is done when that job's `needs:` roster names it and
+The wiring rule sits in `.github/workflows/ci.yml`'s header comment, above `jobs:`.
+The lane is done when that job's `needs:` roster names it and
 a PR run shows `ci-status` waiting on it.
 
 ## Opening a PR here
