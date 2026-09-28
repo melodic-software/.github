@@ -116,6 +116,12 @@ lane_eol() {
   echo "index EOL clean"
 }
 
+# Tracked files only, as on CI's clean checkout; a "**/*.md" glob also lints
+# gitignored scratch files.
+lane_markdown() {
+  git ls-files -z -- '*.md' | xargs -0 markdownlint-cli2 --config .markdownlint-cli2.jsonc
+}
+
 lane_pr_section_drift() {
   local rc=0
   node --test .github/scripts/pr-section-drift.test.mjs || rc=1
@@ -125,7 +131,7 @@ lane_pr_section_drift() {
 
 # --- Run every lane ---------------------------------------------------------
 
-run_lane markdown markdownlint-cli2 --config .markdownlint-cli2.jsonc "**/*.md"
+run_lane markdown lane_markdown
 run_lane typos lane_typos
 run_lane editorconfig ec -config .editorconfig-checker.json
 run_lane gitleaks gitleaks dir --config .gitleaks.toml --no-banner .
