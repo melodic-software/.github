@@ -1,6 +1,6 @@
 # Security Policy
 
-A specific repository may override this org-wide default with its own `SECURITY.md` documenting a different disclosure process; where it does, that file takes precedence.
+A repository's own `SECURITY.md` overrides this org-wide default when its disclosure process differs.
 
 ## Reporting a vulnerability
 

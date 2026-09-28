@@ -1,6 +1,6 @@
 # Support
 
-A specific repository may override this org-wide default with its own `SUPPORT.md` or README documenting additional support channels; where it does, that file takes precedence.
+A repository's own `SUPPORT.md` or README, listing additional support channels, overrides this org-wide default.
 
 Need help with a melodic-software project?
 

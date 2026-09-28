@@ -3,16 +3,14 @@
 Organization-wide community-health defaults for the
 [`melodic-software`](https://github.com/melodic-software) GitHub organization.
 
-GitHub falls back to the files in this special repository for any repository
-that does not provide its own, so they all inherit the same contribution and
-disclosure workflow without redefining it.
+GitHub falls back to these files for any repository without its own, so every
+repository inherits one contribution and disclosure workflow.
 
-These are the file-based governance defaults that GitHub's API cannot express.
-Everything the Pulumi GitHub provider *can* express is managed as
-infrastructure-as-code in the private `github-iac` repository, not here:
-repository settings, custom properties, rulesets, and labels. That name is
-deliberately not a link. The repository is private, so a link 404s for every
-reader outside the organization, and `lychee.toml` excludes it from the online
+They are the file-based governance defaults GitHub's API cannot express.
+Everything the Pulumi GitHub provider *can* express (repository settings, custom
+properties, rulesets, and labels) is infrastructure-as-code in the private
+`github-iac` repository. That name is deliberately not a link: it 404s for
+readers outside the organization, and `lychee.toml` excludes it from the online
 link lane for the same reason.
 
 ## What's here
@@ -49,11 +47,10 @@ link lane for the same reason.
   `.gitignore` is owned by this repository. Change a lint or hygiene rule in
   `standards` and let the sync land it here. An edit made directly to one of
   these files survives only until the next sync commit overwrites it.
-  `.shellcheckrc` is the exception. It is a byte-identical copy of the same
-  canonical file, but this repository is not on the `shellcheck` component's
-  managed list, so nothing syncs it and nothing overwrites a local edit either.
-  Adopting the component upstream is the durable fix; until then the copy drifts
-  silently.
+  `.shellcheckrc` is the exception: a byte-identical copy of the canonical file,
+  but this repository is not on the `shellcheck` component's managed list, so
+  nothing syncs or overwrites it. It drifts silently until the component is
+  adopted upstream.
 - **Agent config**: `.claude/settings.json` declares the `melodic-software`
   plugin marketplace and the SessionStart hook that runs `.claude/cloud-bootstrap.sh`, itself synced from
   [`standards`](https://github.com/melodic-software/standards)
