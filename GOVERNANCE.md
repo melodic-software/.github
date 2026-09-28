@@ -1,6 +1,6 @@
 # Governance
 
-A repository's own `GOVERNANCE.md` overrides this org-wide default when its governance differs.
+A repository with different governance can ship its own `GOVERNANCE.md`, which overrides this org-wide default.
 
 ## Roles
 
