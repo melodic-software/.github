@@ -4,7 +4,7 @@
 # This repo ships only community-health files, so its "build" is the same
 # lint/hygiene suite CI runs (see .github/workflows/ci.yml). That suite is a set
 # of standalone tools; this script installs each one pinned to the exact version
-# the CI composite actions use (melodic-software/ci-workflows v0.17.2), so a
+# the CI composite actions use (melodic-software/ci-workflows v0.27.1), so a
 # local run of .cursor/check.sh reproduces CI verdicts byte for byte.
 #
 # Idempotent and safe to re-run: every tool is skipped when the pinned version
@@ -12,12 +12,12 @@
 # SHA-256 the CI action pins before it is trusted (fail closed).
 set -euo pipefail
 
-# --- Pins (authority: melodic-software/ci-workflows v0.17.2 action defaults) --
+# --- Pins (authority: melodic-software/ci-workflows v0.27.1 action defaults) --
 MARKDOWNLINT_VERSION="0.23.2"
-TYPOS_VERSION="1.49.0"
-TYPOS_SHA256="48bd2d58e02ce713b8c0f1aa239e68ee4f7d8c551013135806e6aed3938d9e10"
-EC_VERSION="3.11.1"
-EC_SHA256="5a37922963248451e88149251e49f6ae08f69717a3918202a51fe9945e19691e"
+TYPOS_VERSION="1.50.1"
+TYPOS_SHA256="edf0545109aee6a22751d04ddecb97c45be47d3aa0409564fb895eeeace91b1e"
+EC_VERSION="3.11.2"
+EC_SHA256="bc815e5b3b1891a0ee9e1242fe3475312655f8b0f4c4a79510be0a009294571a"
 GITLEAKS_VERSION="8.30.1"
 GITLEAKS_SHA256="551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
 LYCHEE_VERSION="0.24.2"
