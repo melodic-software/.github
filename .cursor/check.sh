@@ -8,7 +8,7 @@
 # (CONTRIBUTING step 3: "Ensure the project builds and its checks pass locally").
 #
 # Not set -e: lanes are collected, not short-circuited. Exit status is non-zero
-# when any lane fails.
+# when any gating lane fails.
 set -uo pipefail
 
 top="$(git rev-parse --show-toplevel)" && cd -- "$top" || exit 1
@@ -135,7 +135,10 @@ run_lane actionlint actionlint -color
 run_lane jsonschema lane_jsonschema
 run_lane shellcheck lane_shellcheck
 run_lane eol-renormalize lane_eol
-run_lane pr-section-drift lane_pr_section_drift
+
+# Advisory, as in CI: reported, never counted toward the ci-status verdict.
+heading pr-section-drift
+lane_pr_section_drift || printf '\033[33m! pr-section-drift (advisory)\033[0m\n' >&2
 
 # --- Summary ----------------------------------------------------------------
 
