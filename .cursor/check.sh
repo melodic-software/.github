@@ -122,6 +122,10 @@ lane_markdown() {
   git ls-files -z -- '*.md' | xargs -0 markdownlint-cli2 --config .markdownlint-cli2.jsonc
 }
 
+lane_links() {
+  git ls-files -z -- '*.md' | xargs -0 lychee --offline --no-progress --config lychee.toml
+}
+
 lane_pr_section_drift() {
   local rc=0
   node --test .github/scripts/pr-section-drift.test.mjs || rc=1
@@ -135,8 +139,7 @@ run_lane markdown lane_markdown
 run_lane typos lane_typos
 run_lane editorconfig ec -config .editorconfig-checker.json
 run_lane gitleaks gitleaks dir --config .gitleaks.toml --no-banner .
-run_lane links lychee --offline --no-progress --config lychee.toml \
-  "**/*.md" ".claude/**/*.md" ".github/**/*.md"
+run_lane links lane_links
 run_lane actionlint actionlint -color
 run_lane jsonschema lane_jsonschema
 run_lane shellcheck lane_shellcheck
