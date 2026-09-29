@@ -33,7 +33,7 @@ a PR run shows `ci-status` waiting on it.
 ## Checks
 
 `bash .cursor/check.sh` runs every CI lane locally, with the tools `.cursor/install.sh`
-pins, and exits non-zero when any lane fails.
+pins, and exits non-zero when any gating lane fails.
 
 ## Opening a PR here
 

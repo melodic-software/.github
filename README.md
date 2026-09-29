@@ -55,6 +55,7 @@ link lane for the same reason.
   plugin marketplace and the SessionStart hook that runs `.claude/cloud-bootstrap.sh`, itself synced from
   [`standards`](https://github.com/melodic-software/standards)
   and extended per-repo by an optional `.claude/cloud-bootstrap.local.sh`.
+  It also denies Read on secret files (`.env*`, `secrets/`, keys).
   `.claude/source-control.md` is the tracked team layer of the source-control
   convention (commit and PR-title pattern, required PR-body sections, merge
   lane); `.work-item-tracker.json` binds the work-items tracker provider.
@@ -70,8 +71,8 @@ link lane for the same reason.
   highest-precedence environment source. Its `install` runs `.cursor/install.sh`,
   which installs the same lint/hygiene tools `.github/workflows/ci.yml` runs,
   each pinned to the version the SHA-pinned `ci-workflows` action uses, so
-  `.cursor/check.sh` reproduces the CI lanes, `pr-section-drift` included, and
-  their `ci-status` aggregate locally.
+  `.cursor/check.sh` reproduces the gating CI lanes and
+  their `ci-status` aggregate locally, plus the advisory `pr-section-drift`.
 
 The inventory above covers every tracked file, and no check enforces that. When
 a file is added or removed, update this section in the same change.
