@@ -94,16 +94,12 @@ describe("parseCallerPin", () => {
 });
 
 describe("parseGateSections", () => {
-  it("parses a run.sh fixture shaped like the real awk END block", () => {
+  it("parses the quoted calls and ignores the unquoted function definition", () => {
     assert.deepEqual(parseGateSections(runSh("Alpha", "Beta", "Gamma"), "fixture"), [
       "Alpha",
       "Beta",
       "Gamma",
     ]);
-  });
-
-  it("ignores the unquoted function definition", () => {
-    assert.deepEqual(parseGateSections(runSh("Alpha"), "fixture"), ["Alpha"]);
   });
 
   it("fails loud when no section_report call is present", () => {
@@ -172,7 +168,7 @@ describe("collectDrift", () => {
     const errors = collectDrift(contract, ["Alpha"], ["Alpha", "Beta"], SHA);
     assert.equal(errors.length, 1);
     assert.match(errors[0], /PULL_REQUEST_TEMPLATE\.md ## headings \[Alpha\]/);
-    assert.match(errors[0], new RegExp(`${sourceOfTruth(SHA).replaceAll(".", "\\.")} \\[Alpha, Beta\\]`));
+    assert.ok(errors[0].includes(`${sourceOfTruth(SHA)} [Alpha, Beta]`));
   });
 
   it("reports an extra template heading", () => {
