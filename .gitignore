@@ -30,6 +30,9 @@ Thumbs.db
 # Claude Code observability telemetry (per-checkout JSONL)
 .claude/observability/
 
+# Local scratch: backups, drafts, and working notes that never ship
+.work/
+
 # Node
 node_modules/
 
