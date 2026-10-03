@@ -66,6 +66,9 @@ link lane for the same reason.
   audit for this repository.
   `CLAUDE.md` is the agent-loaded entry point: it routes to this file rather
   than restating it, and carries only what no other file states.
+  `AGENTS.md` holds the `## Code Review Rules` section the Codex pull-request
+  reviewer reads, in the shape `standards` defines in
+  [`components/code-review-rules/`](https://github.com/melodic-software/standards/blob/main/components/code-review-rules/README.md).
 - **Cloud Agent environment**: `.cursor/environment.json` is the repo-managed
   [Cursor Cloud Agent](https://cursor.com/docs/cloud-agent/setup) config and the
   highest-precedence environment source. Its `install` runs `.cursor/install.sh`,
