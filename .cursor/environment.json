@@ -1,5 +1,5 @@
 {
   "name": ".github community-health",
   "user": "ubuntu",
-  "install": "bash .cursor/install.sh"
+  "install": "MELODIC_HYGIENE_SYSTEM=1 bash .cursor/install.sh"
 }

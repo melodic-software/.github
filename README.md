@@ -71,11 +71,15 @@ link lane for the same reason.
   [`components/code-review-rules/`](https://github.com/melodic-software/standards/blob/main/components/code-review-rules/README.md).
 - **Cloud Agent environment**: `.cursor/environment.json` is the repo-managed
   [Cursor Cloud Agent](https://cursor.com/docs/cloud-agent/setup) config and the
-  highest-precedence environment source. Its `install` runs `.cursor/install.sh`,
-  which installs the same lint/hygiene tools `.github/workflows/ci.yml` runs,
+  highest-precedence environment source. Its `install` runs `.cursor/install.sh`
+  with `MELODIC_HYGIENE_SYSTEM=1`, which installs the same lint/hygiene tools
+  `.github/workflows/ci.yml` runs into `/usr/local/bin`,
   each pinned to the version the SHA-pinned `ci-workflows` action uses, so
   `.cursor/check.sh` reproduces the gating CI lanes and
   their `ci-status` aggregate locally, plus the advisory `pr-section-drift`.
+  A direct run of `.cursor/install.sh` installs into `~/.local/bin` and does not
+  write outside the home directory, even when passwordless sudo is available.
+  `.cursor/install-prefix.test.sh` locks that placement rule.
 
 The inventory above covers every tracked file, and no check enforces that. When
 a file is added or removed, update this section in the same change.

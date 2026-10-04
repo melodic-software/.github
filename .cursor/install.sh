@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
-# Cloud Agent install step for the melodic-software/.github repository.
+# Install the pinned hygiene toolchain for the melodic-software/.github repository.
+#
+# Two call sites:
+# - Cloud Agent: .cursor/environment.json runs this with MELODIC_HYGIENE_SYSTEM=1
+#   so tools land in /usr/local/bin, which is already on the agent shell PATH.
+# - Developer machine: a direct run installs into ~/.local/bin and never uses
+#   sudo, even when passwordless sudo would succeed. .cursor/check.sh prepends
+#   ~/.local/bin to PATH.
 #
 # This repo ships only community-health files, so its "build" is the same
 # lint/hygiene suite CI runs (see .github/workflows/ci.yml). That suite is a set
@@ -10,6 +17,9 @@
 # Idempotent and safe to re-run: every tool is skipped when the pinned version
 # is already present, and each release asset is verified against the same
 # SHA-256 the CI action pins before it is trusted (fail closed).
+#
+# Sourced by .cursor/install-prefix.test.sh. The installer runs only when this
+# file is executed, not when it is sourced.
 set -euo pipefail
 
 # --- Pins (authority: melodic-software/ci-workflows v0.29.1 action defaults) --
@@ -28,30 +38,52 @@ SHELLCHECK_VERSION="0.11.0"
 SHELLCHECK_SHA256="b7af85e41cc99489dcc21d66c6d5f3685138f06d34651e6d34b42ec6d54fe6f6"
 CHECK_JSONSCHEMA_VERSION="0.38.0"
 
-# --- Placement ---------------------------------------------------------------
-# /usr/local/bin is already on PATH for the agent shell, so binaries dropped
-# there are usable immediately with no profile edits. Fall back to a per-user
-# bin only when the system prefix is neither writable nor sudo-reachable.
-BIN_DIR="/usr/local/bin"
-VENV_DIR="/usr/local/lib/melodic-hygiene/venv"
+# External so the Cloud Agent install command can opt into the system prefix.
+# The default assignment keeps ShellCheck's check-unassigned-uppercase quiet.
+MELODIC_HYGIENE_SYSTEM="${MELODIC_HYGIENE_SYSTEM:-}"
+
+# Set by resolve_install_prefix before any installer runs.
+BIN_DIR=""
+VENV_DIR=""
 # Command prefix kept as an array so an empty (no-sudo) value expands to nothing
 # and a populated one word-splits safely (.shellcheckrc keeps SC2086 on).
 SUDO=()
-if [[ ! -w "$BIN_DIR" ]]; then
-  if command -v sudo >/dev/null 2>&1 && sudo -n true >/dev/null 2>&1; then
-    SUDO=(sudo)
-  else
-    BIN_DIR="$HOME/.local/bin"
-    VENV_DIR="$HOME/.local/lib/melodic-hygiene/venv"
-    echo "install: no sudo; using $BIN_DIR (ensure it is on PATH)" >&2
-  fi
-fi
-"${SUDO[@]}" mkdir -p "$BIN_DIR"
-
-WORK="$(mktemp -d)"
-trap 'rm -rf "$WORK"' EXIT
+WORK=""
 
 log() { printf 'install: %s\n' "$*" >&2; }
+
+# prefix_is_writable <dir>: whether the system prefix can be written without
+# sudo. Tests redefine this after sourcing so they can force either branch
+# while BIN_DIR stays /usr/local/bin.
+prefix_is_writable() {
+  [[ -w "$1" ]]
+}
+
+# resolve_install_prefix: set BIN_DIR, VENV_DIR, and SUDO.
+# Workstation mode never consults sudo. System mode uses /usr/local/bin and
+# passwordless sudo only when that prefix is not writable.
+resolve_install_prefix() {
+  SUDO=()
+  if [[ "$MELODIC_HYGIENE_SYSTEM" == 1 ]]; then
+    BIN_DIR="/usr/local/bin"
+    VENV_DIR="/usr/local/lib/melodic-hygiene/venv"
+    # Predicate: non-zero means "not writable", not a command failure. set -e
+    # has to stay suppressed so that status can select the sudo branch.
+    # shellcheck disable=SC2310
+    if prefix_is_writable "$BIN_DIR"; then
+      return 0
+    fi
+    if command -v sudo >/dev/null 2>&1 && sudo -n true >/dev/null 2>&1; then
+      SUDO=(sudo)
+      return 0
+    fi
+    log "MELODIC_HYGIENE_SYSTEM=1 but $BIN_DIR is not writable and passwordless sudo is unavailable"
+    exit 1
+  fi
+  BIN_DIR="${HOME}/.local/bin"
+  VENV_DIR="${HOME}/.local/lib/melodic-hygiene/venv"
+  log "workstation mode; using $BIN_DIR (no files outside $HOME). Set MELODIC_HYGIENE_SYSTEM=1 to install into /usr/local/bin."
+}
 
 # verify_sha <file> <sha256>: abort the whole install on mismatch. A hygiene
 # toolchain that silently installed an unverified binary is worse than a hard
@@ -158,13 +190,20 @@ install_check_jsonschema() {
     exit 1
   fi
   # The default image ships python3 without the venv/ensurepip module; add it
-  # once (idempotent) so the isolated tool environment can be created.
+  # once (idempotent) so the isolated tool environment can be created. Outside
+  # system mode, refuse rather than apt-get: a workstation run must not write
+  # outside the home directory or use sudo.
   if ! python3 -c 'import ensurepip' >/dev/null 2>&1; then
-    if [[ ${#SUDO[@]} -gt 0 ]] && command -v apt-get >/dev/null 2>&1; then
-      log "installing python3-venv (ensurepip missing)"
-      "${SUDO[@]}" env DEBIAN_FRONTEND=noninteractive apt-get install -y python3-venv >/dev/null 2>&1 ||
-        { "${SUDO[@]}" apt-get update >/dev/null 2>&1 &&
-          "${SUDO[@]}" env DEBIAN_FRONTEND=noninteractive apt-get install -y python3-venv >/dev/null 2>&1; }
+    if [[ "$MELODIC_HYGIENE_SYSTEM" == 1 ]]; then
+      if [[ ${#SUDO[@]} -gt 0 ]] && command -v apt-get >/dev/null 2>&1; then
+        log "installing python3-venv (ensurepip missing)"
+        "${SUDO[@]}" env DEBIAN_FRONTEND=noninteractive apt-get install -y python3-venv >/dev/null 2>&1 ||
+          { "${SUDO[@]}" apt-get update >/dev/null 2>&1 &&
+            "${SUDO[@]}" env DEBIAN_FRONTEND=noninteractive apt-get install -y python3-venv >/dev/null 2>&1; }
+      fi
+    else
+      log "python3-venv is missing (ensurepip unavailable); install it and re-run"
+      exit 1
     fi
   fi
   "${SUDO[@]}" mkdir -p "$(dirname "$VENV_DIR")"
@@ -175,13 +214,25 @@ install_check_jsonschema() {
   log "installed check-jsonschema -> $BIN_DIR/check-jsonschema"
 }
 
-log "installing pinned hygiene toolchain into $BIN_DIR"
-ensure typos "$TYPOS_VERSION" install_typos typos --version
-ensure editorconfig-checker "$EC_VERSION" install_ec ec --version
-ensure gitleaks "$GITLEAKS_VERSION" install_gitleaks gitleaks version
-ensure lychee "$LYCHEE_VERSION" install_lychee lychee --version
-ensure actionlint "$ACTIONLINT_VERSION" install_actionlint actionlint --version
-ensure shellcheck "$SHELLCHECK_VERSION" install_shellcheck shellcheck --version
-ensure markdownlint-cli2 "$MARKDOWNLINT_VERSION" install_markdownlint markdownlint-cli2 --version
-ensure check-jsonschema "$CHECK_JSONSCHEMA_VERSION" install_check_jsonschema check-jsonschema --version
-log "toolchain ready"
+main() {
+  resolve_install_prefix
+  "${SUDO[@]}" mkdir -p "$BIN_DIR"
+
+  WORK="$(mktemp -d)"
+  trap 'rm -rf "$WORK"' EXIT
+
+  log "installing pinned hygiene toolchain into $BIN_DIR"
+  ensure typos "$TYPOS_VERSION" install_typos typos --version
+  ensure editorconfig-checker "$EC_VERSION" install_ec ec --version
+  ensure gitleaks "$GITLEAKS_VERSION" install_gitleaks gitleaks version
+  ensure lychee "$LYCHEE_VERSION" install_lychee lychee --version
+  ensure actionlint "$ACTIONLINT_VERSION" install_actionlint actionlint --version
+  ensure shellcheck "$SHELLCHECK_VERSION" install_shellcheck shellcheck --version
+  ensure markdownlint-cli2 "$MARKDOWNLINT_VERSION" install_markdownlint markdownlint-cli2 --version
+  ensure check-jsonschema "$CHECK_JSONSCHEMA_VERSION" install_check_jsonschema check-jsonschema --version
+  log "toolchain ready"
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  main "$@"
+fi
