@@ -3,14 +3,14 @@
 // Local complement to standards' fleet lockstep (ADR-0008): this repository's
 // two PR-body declarations (`.github/PULL_REQUEST_TEMPLATE.md` headings and
 // `.claude/source-control.md`'s `pr_body_required_sections`) are unchecked
-// mirrors of the section list the `pr-contract` composite enforces. ADR-0008
+// mirrors of the section list the `check-contract` composite enforces. ADR-0008
 // fleet-checks the template and the pin from standards CI *after* merge; it
 // deliberately does not check this repository's source-control key. This lane
 // fails the PR that introduces either drift, comparing both mirrors to the
 // exact composite bytes this repository's gate already executes.
 //
-// Comparison target is derived: the 40-hex `pr-contract` pin in
-// `.github/workflows/ci.yml`, then that ref's `run.sh`. The four section names
+// Comparison target is derived: the 40-hex `check-contract` pin in
+// `.github/workflows/pr-require-checks.yml`, then that ref's `run.sh`. The four section names
 // are not hardcoded here. Fetch failures are `fetch-error` (never a skip),
 // matching standards' `lockstep-drift.mjs` posture.
 //
@@ -26,11 +26,11 @@ import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const CALLER_PATH = ".github/workflows/ci.yml";
+const CALLER_PATH = ".github/workflows/pr-require-checks.yml";
 const TEMPLATE_PATH = ".github/PULL_REQUEST_TEMPLATE.md";
 const SOURCE_CONTROL_PATH = ".claude/source-control.md";
 const UPSTREAM_REPO = "melodic-software/ci-workflows";
-const UPSTREAM_GATE = ".github/actions/pr-contract/run.sh";
+const UPSTREAM_GATE = ".github/actions/pr-require-checks/check-contract/run.sh";
 const SOURCE_CONTROL_HEADING = "pr_body_required_sections";
 const FETCH_ATTEMPTS = 3;
 const CONTRACT_FOOTER =
@@ -39,7 +39,7 @@ const CONTRACT_FOOTER =
   "Change the contract there and bump the pin, then update both local files in the same PR.";
 
 const CALLER_PIN_RE =
-  /uses:\s*melodic-software\/ci-workflows\/\.github\/actions\/pr-contract@([0-9a-f]{40})/g;
+  /uses:\s*melodic-software\/ci-workflows\/\.github\/actions\/pr-require-checks\/check-contract@([0-9a-f]{40})/g;
 const SECTION_REPORT_RE = /section_report\("([^"]+)"\)/g;
 
 export class DriftError extends Error {
@@ -57,10 +57,10 @@ export function sourceOfTruth(sha) {
 export function parseCallerPin(callerText, location = CALLER_PATH) {
   const unique = [...new Set([...callerText.matchAll(CALLER_PIN_RE)].map((match) => match[1]))];
   if (unique.length === 0) {
-    throw new DriftError(`${location}: no 40-hex pr-contract@ pin found on a uses: line`);
+    throw new DriftError(`${location}: no 40-hex check-contract@ pin found on a uses: line`);
   }
   if (unique.length > 1) {
-    throw new DriftError(`${location}: multiple distinct pr-contract pins: ${unique.join(", ")}`);
+    throw new DriftError(`${location}: multiple distinct check-contract pins: ${unique.join(", ")}`);
   }
   return unique[0];
 }

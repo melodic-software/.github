@@ -9,7 +9,7 @@
 #   ~/.local/bin to PATH.
 #
 # This repo ships only community-health files, so its "build" is the same
-# lint/hygiene suite CI runs (see .github/workflows/ci.yml). That suite is a set
+# lint/hygiene suite CI runs (see .github/workflows/pr-require-checks.yml). That suite is a set
 # of standalone tools; this script installs each one pinned to the exact version
 # the CI composite actions use (see Pins below), so a
 # local run of .cursor/check.sh reproduces CI verdicts byte for byte.

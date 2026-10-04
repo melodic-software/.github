@@ -14,7 +14,7 @@ No related issue: <reason>
 The reason is required. Write the escape without backticks: the gate masks
 inline code spans before matching, so a backticked escape is invisible to it
 and the PR draws the advisory `needs-issue-linkage` label anyway. The linkage
-rule is advisory: the `pr-contract` step inside `ci-status` leaves a comment and
+rule is advisory: the `check-contract` step inside `ci-status` leaves a comment and
 the `needs-issue-linkage` label instead of failing. That step's output reports
 the exact rule it applied and is authoritative over this comment.
 

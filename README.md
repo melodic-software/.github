@@ -24,16 +24,16 @@ link lane for the same reason.
 - **Profile**: `profile/README.md` renders as the organization's public profile
   page. Other repositories do not inherit it.
 - **This repository's own CI**: `.github/workflows/` and `.github/scripts/`.
-  `ci.yml` runs the SHA-pinned lint and hygiene lanes from
+  `pr-require-checks.yml` runs the SHA-pinned lint and hygiene lanes from
   [`ci-workflows`](https://github.com/melodic-software/ci-workflows) and
   aggregates them into the single `ci-status` check the org ruleset requires.
   The pull-request contract itself (Conventional Commits title, `do-not-merge`
-  label, issue linkage) is the `pr-contract` step inside the `ci-status` job,
+  label, issue linkage) is the `check-contract` step inside the `ci-status` job,
   so there are no separate caller workflows for it.
-  The `pr-section-drift` lane is a local script (`.github/scripts/pr-section-drift.mjs`
+  The `check-pr-sections` lane is a local script (`.github/scripts/pr-section-drift.mjs`
   and its tests) that compares `.github/PULL_REQUEST_TEMPLATE.md` and
-  `.claude/source-control.md` against the `pr-contract` composite at the
-  SHA `.github/workflows/ci.yml` pins.
+  `.claude/source-control.md` against the `check-contract` composite at the
+  SHA `.github/workflows/pr-require-checks.yml` pins.
   `.github/dependabot.yml` keeps `actions/checkout` current; the `ci-workflows`
   pins move by hand (see its `ignore` block).
   - Give every action pin a `# vX.Y.Z` tag comment. Standards'
@@ -73,10 +73,10 @@ link lane for the same reason.
   [Cursor Cloud Agent](https://cursor.com/docs/cloud-agent/setup) config and the
   highest-precedence environment source. Its `install` runs `.cursor/install.sh`
   with `MELODIC_HYGIENE_SYSTEM=1`, which installs the same lint/hygiene tools
-  `.github/workflows/ci.yml` runs into `/usr/local/bin`,
+  `.github/workflows/pr-require-checks.yml` runs into `/usr/local/bin`,
   each pinned to the version the SHA-pinned `ci-workflows` action uses, so
   `.cursor/check.sh` reproduces the gating CI lanes and
-  their `ci-status` aggregate locally, plus the advisory `pr-section-drift`.
+  their `ci-status` aggregate locally, plus the advisory `check-pr-sections`.
   A direct run of `.cursor/install.sh` installs into `~/.local/bin` and does not
   write outside the home directory, even when passwordless sudo is available.
   `.cursor/install-prefix.test.sh` locks that placement rule.
