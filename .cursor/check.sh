@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Local mirror of the CI hygiene suite for melodic-software/.github.
 #
-# Runs the same lanes as .github/workflows/ci.yml against the same vendored
+# Runs the same lanes as .github/workflows/pr-require-checks.yml against the same vendored
 # configs, using the tools .cursor/install.sh pins to the CI versions. Every
 # lane runs even if an earlier one fails, and a summary is printed at the end so
 # a single invocation reproduces the aggregate `ci-status` verdict locally
@@ -60,7 +60,7 @@ lane_jsonschema() {
     [[ -e "$f" && "$(basename -- "$f")" != config.yml ]] && forms+=("$f")
   done
   if [[ ${#forms[@]} -eq 0 ]]; then
-    # Match ci.yml's roster step: an empty set is a failed derivation, not a
+    # Match pr-require-checks.yml's roster step: an empty set is a failed derivation, not a
     # skipped validation.
     echo "No issue forms (*.yml/*.yaml other than config.yml) found under .github/ISSUE_TEMPLATE/." >&2
     return 1
@@ -105,7 +105,7 @@ lane_eol() {
   rm -rf "$tmp"
   [[ "$rc" -eq 0 ]] || return 1
   if ! drift="$(git diff --name-only "$before" "$after")"; then
-    echo "eol-renormalize: git diff failed; cannot tell whether the index has EOL drift" >&2
+    echo "check-line-endings: git diff failed; cannot tell whether the index has EOL drift" >&2
     return 1
   fi
   if [[ -n "$drift" ]]; then
@@ -135,19 +135,19 @@ lane_pr_section_drift() {
 
 # --- Run every lane ---------------------------------------------------------
 
-run_lane markdown lane_markdown
+run_lane markdownlint lane_markdown
 run_lane typos lane_typos
-run_lane editorconfig ec -config .editorconfig-checker.json
+run_lane editorconfig-checker ec -config .editorconfig-checker.json
 run_lane gitleaks gitleaks dir --config .gitleaks.toml --no-banner .
-run_lane links lane_links
+run_lane check-links lane_links
 run_lane actionlint actionlint -color
 run_lane jsonschema lane_jsonschema
 run_lane shellcheck lane_shellcheck
-run_lane eol-renormalize lane_eol
+run_lane check-line-endings lane_eol
 
 # Advisory, as in CI: reported, never counted toward the ci-status verdict.
-heading pr-section-drift
-lane_pr_section_drift || printf '\033[33m! pr-section-drift (advisory)\033[0m\n' >&2
+heading check-pr-sections
+lane_pr_section_drift || printf '\033[33m! check-pr-sections (advisory)\033[0m\n' >&2
 
 # --- Summary ----------------------------------------------------------------
 

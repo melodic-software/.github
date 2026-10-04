@@ -23,7 +23,7 @@ function callerYaml(sha) {
     "jobs:",
     "  ci-status:",
     "    steps:",
-    `      - uses: melodic-software/ci-workflows/.github/actions/pr-contract@${sha} # v9.9.9`,
+    `      - uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/check-contract@${sha} # v9.9.9`,
     "",
   ].join("\n");
 }
@@ -73,10 +73,10 @@ describe("parseCallerPin", () => {
     assert.throws(() => parseCallerPin("uses: actions/checkout@v4\n"), /no 40-hex/);
   });
 
-  it("ignores the sibling ci-status composite pinned in the same job", () => {
+  it("ignores the sibling aggregate-results composite pinned in the same job", () => {
     const text = [
       callerYaml(SHA),
-      `      - uses: melodic-software/ci-workflows/.github/actions/ci-status@${OTHER_SHA} # v9.9.9`,
+      `      - uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/aggregate-results@${OTHER_SHA} # v9.9.9`,
       "",
     ].join("\n");
     assert.equal(parseCallerPin(text), SHA);
@@ -198,7 +198,7 @@ describe("collectDrift", () => {
 
   it("names the pinned composite as the source of truth", () => {
     const errors = collectDrift(contract, ["Alpha"], ["Alpha", "Beta"], SHA);
-    assert.match(errors[0], /melodic-software\/ci-workflows\/\.github\/actions\/pr-contract\/run\.sh@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa section_report calls/);
+    assert.match(errors[0], /melodic-software\/ci-workflows\/\.github\/actions\/pr-require-checks\/check-contract\/run\.sh@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa section_report calls/);
   });
 });
 

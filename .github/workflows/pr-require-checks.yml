@@ -1,4 +1,4 @@
-name: ci
+name: pr-require-checks
 
 on:
   push:
@@ -48,7 +48,7 @@ permissions:
 #
 # The cost of the branch: a contract-only run does not queue behind the full
 # run whose `ci-lanes` status it carries forward, so the two race. The
-# `ci-status` composite closes that with a bounded wait on EARLIER incomplete
+# `aggregate-results` composite closes that with a bounded wait on EARLIER incomplete
 # runs on the same head SHA; see `carry-forward-wait-seconds` on the job below.
 #
 # One hazard the branch does not remove, because no concurrency setting both
@@ -71,19 +71,19 @@ concurrency:
 # ci-workflows (pinned by SHA) against the vendored standards configs at the repo
 # root, then aggregates them into the single `ci-status` check the org `ci-gate`
 # ruleset requires. Each hygiene lane checks out this repo, then runs one remote
-# action; `pr-section-drift` is the local-script exception noted below.
+# action; `check-pr-sections` is the local-script exception noted below.
 #
 # Adding a lane: a new job gates merges once its name appears in the `ci-status`
 # job's `needs:` list. Its `results:` input is derived from that list and needs
 # no edit. Adding the job without the `needs:` entry leaves it running but
-# ignored: `ci-status` stays green while it fails. `pr-section-drift` is the
+# ignored: `ci-status` stays green while it fails. `check-pr-sections` is the
 # one lane that is a local script rather than a remote action, and the one lane
 # deliberately left out of `needs:`: it reports drift but does not gate, because
 # the PR-body contract it guards is itself advisory. It fetches the `run.sh` of
-# the pinned `pr-contract` composite and compares this repository's two PR-body
+# the pinned `check-contract` composite and compares this repository's two PR-body
 # mirrors to the sections that gate reports.
 jobs:
-  markdown:
+  markdownlint:
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -93,7 +93,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint Markdown
-        uses: melodic-software/ci-workflows/.github/actions/markdown@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/markdownlint@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           config: .markdownlint-cli2.jsonc
 
@@ -107,7 +107,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Spell-check
-        uses: melodic-software/ci-workflows/.github/actions/typos@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/typos@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           config: _typos.toml
       - name: Spell-check hidden tracked paths
@@ -136,7 +136,7 @@ jobs:
             typos --config _typos.toml "${hidden[@]}"
           fi
 
-  editorconfig:
+  editorconfig-checker:
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -146,7 +146,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Check editorconfig conformance
-        uses: melodic-software/ci-workflows/.github/actions/editorconfig@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/editorconfig-checker@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           config: .editorconfig-checker.json
 
@@ -160,11 +160,11 @@ jobs:
         with:
           persist-credentials: false
       - name: Scan for secrets
-        uses: melodic-software/ci-workflows/.github/actions/gitleaks@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/gitleaks@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           config: .gitleaks.toml
 
-  links:
+  check-links:
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -174,7 +174,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Check links and anchors (offline)
-        uses: melodic-software/ci-workflows/.github/actions/lychee-offline@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/lychee-offline@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           config: lychee.toml
           # The action's default `**/*.md` skips hidden directories, so Markdown
@@ -197,7 +197,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint workflows
-        uses: melodic-software/ci-workflows/.github/actions/actionlint@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/actionlint@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
 
   jsonschema:
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
@@ -209,12 +209,12 @@ jobs:
         with:
           persist-credentials: false
       - name: Validate dependabot.yml
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           builtin-schema: vendor.dependabot
           files: .github/dependabot.yml
       - name: Validate workflows
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           builtin-schema: vendor.github-workflows
           files: .github/workflows/*.yml
@@ -254,12 +254,12 @@ jobs:
           fi
           echo "files=${forms[*]}" >> "$GITHUB_OUTPUT"
       - name: Validate issue forms
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           builtin-schema: vendor.github-issue-forms
           files: ${{ steps.issue-forms.outputs.files }}
       - name: Validate issue-template chooser config
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           builtin-schema: vendor.github-issue-config
           files: .github/ISSUE_TEMPLATE/config.yml
@@ -269,7 +269,7 @@ jobs:
       # breaking schemastore change reddens the lane without this repo changing;
       # swap to a builtin if one ever ships.
       - name: Validate Claude Code settings
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           schemafile: https://json.schemastore.org/claude-code-settings.json
           files: .claude/settings.json
@@ -291,11 +291,11 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint shell scripts
-        uses: melodic-software/ci-workflows/.github/actions/shellcheck@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/shellcheck@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           rcfile: .shellcheckrc
 
-  eol-renormalize:
+  check-line-endings:
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -305,16 +305,16 @@ jobs:
         with:
           persist-credentials: false
       - name: Check index-level EOL drift
-        uses: melodic-software/ci-workflows/.github/actions/eol-renormalize@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/check-line-endings@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
 
   # Compares `.github/PULL_REQUEST_TEMPLATE.md` headings and
   # `.claude/source-control.md`'s `pr_body_required_sections` to the
-  # `section_report` calls inside the SHA-pinned `pr-contract` composite's
+  # `section_report` calls inside the SHA-pinned `check-contract` composite's
   # `run.sh`. The comparison target is that pin's bytes, not a
   # third hardcoded copy of the four names. Fetches over the network; a fetch
   # failure is red, never a skip, same posture as standards'
   # `pr-convention-lockstep` (ADR-0008). Advisory: not in `ci-status` `needs:`.
-  pr-section-drift:
+  check-pr-sections:
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -332,7 +332,7 @@ jobs:
 
   ci-status:
     if: always()
-    needs: [markdown, typos, editorconfig, gitleaks, links, actionlint, jsonschema, shellcheck, eol-renormalize]
+    needs: [markdownlint, typos, editorconfig-checker, gitleaks, check-links, actionlint, jsonschema, shellcheck, check-line-endings]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -342,22 +342,22 @@ jobs:
       # Actions calls 403 and the composite degrades to the status read alone.
       actions: read
       contents: read
-      # pr-contract upserts the advisory linkage comment and moves the linkage
+      # check-contract upserts the advisory linkage comment and moves the linkage
       # label; ci-status records the `ci-lanes` commit status the carry-forward
       # branch reads back on the next contract-only event.
       pull-requests: write
       statuses: write
     steps:
       - name: Check the pull-request contract
-        uses: melodic-software/ci-workflows/.github/actions/pr-contract@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/check-contract@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           token: ${{ github.token }}
       - name: Aggregate lane results
-        # `!cancelled()` so a failing pr-contract step does not skip the
+        # `!cancelled()` so a failing check-contract step does not skip the
         # aggregation: the job still fails on the contract step's exit code, and
         # the `ci-lanes` status is on the SHA for the next contract-only run.
         if: ${{ !cancelled() }}
-        uses: melodic-software/ci-workflows/.github/actions/ci-status@0d3e6a6f3851cf678f82fa9a8a17f10faa909ac9 # v0.29.1
+        uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/aggregate-results@7446b5165511796b7b0d30b68d341689ebb8de61 # v0.34.0
         with:
           # Derived from `needs:` rather than restating it. Hand-listing the
           # results let a lane be dropped from this input alone: still gated via

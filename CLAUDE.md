@@ -26,7 +26,7 @@ where it does. Go there when a change fits none of the files already in this rep
 
 ## Adding or renaming a CI lane
 
-The wiring rule sits in `.github/workflows/ci.yml`'s header comment, above `jobs:`.
+The wiring rule sits in `.github/workflows/pr-require-checks.yml`'s header comment, above `jobs:`.
 A gating lane is done when the `ci-status` job's `needs:` roster names it and
 a PR run shows `ci-status` waiting on it.
 
