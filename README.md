@@ -69,6 +69,12 @@ link lane for the same reason.
   `AGENTS.md` holds the `## Code Review Rules` section the Codex pull-request
   reviewer reads, in the shape `standards` defines in
   [`components/code-review-rules/`](https://github.com/melodic-software/standards/blob/main/components/code-review-rules/README.md).
+- **Git hooks**: `lefthook.yml` holds one `remotes:` entry that runs the
+  guardrails plugin's commit-msg, pre-commit and pre-push hooks from
+  [`claude-code-plugins`](https://github.com/melodic-software/claude-code-plugins)
+  (`plugins/guardrails/git-hooks/lefthook-remote.yml`) once a clone runs
+  `lefthook install`. The hook scripts are owned there; change them in that
+  repository.
 - **Cloud Agent environment**: `.cursor/environment.json` is the repo-managed
   [Cursor Cloud Agent](https://cursor.com/docs/cloud-agent/setup) config and the
   highest-precedence environment source. Its `install` runs `.cursor/install.sh`
