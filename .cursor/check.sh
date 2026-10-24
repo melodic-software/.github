@@ -77,7 +77,7 @@ lane_shellcheck() {
   local files=() f
   while IFS= read -r -d '' f; do
     files+=("$f")
-  done < <(git ls-files -z -- '*.sh' '*.bash' ':(exclude).githooks/guardrails/**')
+  done < <(git ls-files -z -- '*.sh' '*.bash')
   if [[ ${#files[@]} -eq 0 ]]; then
     echo "no tracked shell scripts to lint"
     return 0

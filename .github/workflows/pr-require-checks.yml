@@ -278,8 +278,7 @@ jobs:
   # Discovery is tracked *.sh/*.bash files: the SessionStart bootstrap, which
   # arrives by standards sync already written against the canonical .shellcheckrc
   # (it carries `enable=` directives and cites check-set-e-suppressed/SC2310),
-  # and the `.cursor/` environment scripts. The guardrails hook copies under
-# `.githooks/guardrails/` are excluded: plugin-owned, overwritten on refresh.
+  # and the `.cursor/` environment scripts.
   # The `jsonschema` job's roster step is shell too, but an embedded `run:` block
   # is not a file this discovery sees; the `actionlint` lane covers it instead,
   # via its own bundled ShellCheck, which does not read .shellcheckrc.
@@ -296,8 +295,6 @@ jobs:
         uses: melodic-software/ci-workflows/.github/actions/shellcheck@594987abe8657a40bccc13d301f1f0d5cccb5348 # v0.39.8
         with:
           rcfile: .shellcheckrc
-          # Plugin-owned copies the guardrails installer writes; linted upstream.
-          exclude: .githooks/guardrails/
 
   check-line-endings:
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}

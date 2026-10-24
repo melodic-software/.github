@@ -9,7 +9,7 @@ are defined in
 
 ## subject_pattern
 
-^((build|chore|ci|docs|feat|fix|perf|refactor|revert|security|style|test)(\(.+\))?!?: .+|Merge .+|Revert ".+)
+Conventional Commits
 
 ## pr_title_pattern
 
