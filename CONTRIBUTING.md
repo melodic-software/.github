@@ -10,7 +10,7 @@ A repository's own `CONTRIBUTING.md`, with project-specific details, overrides t
 
 ## Workflow
 
-1. Branch from the default branch as `<type>/<short-description>` (for example, `feat/add-widget`), per the org's [branch-naming convention](https://github.com/melodic-software/standards/blob/main/conventions/engineering/naming.md#branch-names-type-prefix-then-a-behavior-naming-slug). It is a convention, not a requirement: no check enforces it by default, though a repository may gate it locally.
+1. Branch from the default branch as `<type>/<short-description>` (for example, `feat/add-widget`), per the org's [branch-naming convention](https://github.com/melodic-software/standards/blob/main/standards/engineering/naming.md#branch-names-type-prefix-then-a-behavior-naming-slug). It is a convention, not a requirement: no check enforces it by default, though a repository may gate it locally.
 2. Make your change, with tests where applicable.
 3. Ensure the project builds and its checks pass locally.
 4. Open a pull request, fill out the template, and link the related issue.
