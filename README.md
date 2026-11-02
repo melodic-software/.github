@@ -32,7 +32,7 @@ link lane for the same reason.
   so there are no separate caller workflows for it.
   The `check-pr-sections` lane is a local script (`.github/scripts/pr-section-drift.mjs`
   and its tests) that compares `.github/PULL_REQUEST_TEMPLATE.md` and
-  `.claude/source-control.md` against the `check-contract` composite at the
+  `docs/conventions/source-control.yaml` against the `check-contract` composite at the
   SHA `.github/workflows/pr-require-checks.yml` pins.
   `.github/dependabot.yml` keeps `actions/checkout` current; the `ci-workflows`
   pins move by hand (see its `ignore` block).
@@ -56,11 +56,11 @@ link lane for the same reason.
   [`standards`](https://github.com/melodic-software/standards)
   and extended per-repo by an optional `.claude/cloud-bootstrap.local.sh`.
   It also denies Read on secret files (`.env*`, `secrets/`, keys).
-  `.claude/source-control.md` is the tracked team layer of the source-control
-  convention (commit and PR-title pattern, required PR-body sections, merge
-  lane); `.work-item-tracker.json` binds the work-items tracker provider.
-  `.claude/source-control.md` and `.work-item-tracker.json` each resolve an
-  optional gitignored `*.local.*` overlay for per-operator deviations.
+  `docs/conventions/source-control.yaml` is the tracked team layer of the
+  source-control convention (commit and PR-title pattern, required PR-body
+  sections, merge lane); `.work-item-tracker.json` binds the work-items tracker
+  provider. The source-control settings and `.work-item-tracker.json` each
+  resolve an optional gitignored `*.local.*` overlay for per-operator deviations.
   `.claude/rules/pr-body-contract.md`, synced from `standards`, states the
   pull-request body contract; `.claude/ai-slop.json` configures the AI-writing
   audit for this repository.

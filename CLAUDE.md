@@ -40,4 +40,4 @@ pins, and exits non-zero when any gating lane fails.
 [`.claude/rules/pr-body-contract.md`](.claude/rules/pr-body-contract.md) states the rule
 and what is gating versus advisory;
 [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) carries the layout
-and [`.claude/source-control.md`](.claude/source-control.md) the section list.
+and [`docs/conventions/source-control.yaml`](docs/conventions/source-control.yaml) the section list.

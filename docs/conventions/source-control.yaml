@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/melodic-software/claude-code-plugins/main/plugins/source-control/schemas/source-control.schema.json
+# Team layer of the source-control plugin's settings. Keys, values and resolution:
+# https://github.com/melodic-software/claude-code-plugins/blob/main/plugins/source-control/reference/config-resolution.md
+# The merge-rung ladder and the ratification rule that makes this reviewed file the recorded
+# baseline: https://github.com/melodic-software/claude-code-plugins/blob/main/docs/contracts/loop-lane/README.md
+#
+# pr_body_required_sections mirrors the section list the pinned `check-contract` composite enforces;
+# .github/scripts/pr-section-drift.mjs fails a PR that lets it drift.
+subject_pattern: Conventional Commits
+pr_title_pattern: "Same as `subject_pattern`."
+pr_body_required_sections:
+  - Summary
+  - Fix
+  - Verification
+  - Related
+babysit_loop_merge: c3-autonomous
