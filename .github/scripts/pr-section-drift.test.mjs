@@ -44,17 +44,12 @@ function runSh(...names) {
 
 function sourceControl(...names) {
   return [
-    "## subject_pattern",
-    "",
-    "Conventional Commits",
-    "",
-    "## pr_body_required_sections",
-    "",
-    ...names.map((name) => `- ${name}`),
-    "",
-    "## babysit_loop_merge",
-    "",
-    "c3-autonomous",
+    "# team layer",
+    "subject_pattern: Conventional Commits",
+    "pr_body_required_sections:",
+    "  # closed list",
+    ...names.map((name) => `  - ${name}`),
+    "babysit_loop_merge: c3-autonomous",
     "",
   ].join("\n");
 }
@@ -136,23 +131,32 @@ describe("parseTemplateHeadings", () => {
 });
 
 describe("parseSourceControlSections", () => {
-  it("reads the closed bullet list under pr_body_required_sections", () => {
+  it("reads the block sequence under pr_body_required_sections and stops at the next key", () => {
     assert.deepEqual(parseSourceControlSections(sourceControl("Alpha", "Beta")), ["Alpha", "Beta"]);
   });
 
-  it("fails when the section is missing", () => {
-    assert.throws(() => parseSourceControlSections("## other\n\n- Alpha\n"), /no ## pr_body_required_sections/);
+  it("reads quoted and unindented items", () => {
+    const text = "pr_body_required_sections:\n- \"Alpha\"\n- 'Test plan'\nnext: x\n";
+    assert.deepEqual(parseSourceControlSections(text), ["Alpha", "Test plan"]);
   });
 
-  it("fails when the list is empty", () => {
+  it("fails when the key is missing", () => {
+    assert.throws(() => parseSourceControlSections("other:\n  - Alpha\n"), /no top-level pr_body_required_sections/);
+  });
+
+  it("ignores a nested key of the same name", () => {
     assert.throws(
-      () => parseSourceControlSections("## pr_body_required_sections\n\n## next\n"),
-      /carries no list items/,
+      () => parseSourceControlSections("other:\n  pr_body_required_sections:\n    - Alpha\n"),
+      /no top-level pr_body_required_sections/,
     );
   });
 
-  it("fails when the heading appears twice", () => {
-    const text = `${sourceControl("Alpha")}\n## pr_body_required_sections\n\n- Beta\n`;
+  it("fails when the list is empty", () => {
+    assert.throws(() => parseSourceControlSections("pr_body_required_sections:\nnext: x\n"), /carries no list items/);
+  });
+
+  it("fails when the key appears twice", () => {
+    const text = `${sourceControl("Alpha")}pr_body_required_sections:\n  - Beta\n`;
     assert.throws(() => parseSourceControlSections(text), /appears more than once/);
   });
 });
@@ -180,7 +184,7 @@ describe("collectDrift", () => {
   it("reports a reordered source-control list", () => {
     const errors = collectDrift(contract, ["Alpha", "Beta"], ["Beta", "Alpha"], SHA);
     assert.equal(errors.length, 1);
-    assert.match(errors[0], /source-control\.md pr_body_required_sections \[Beta, Alpha\]/);
+    assert.match(errors[0], /source-control\.yaml pr_body_required_sections \[Beta, Alpha\]/);
   });
 
   it("reports a missing source-control bullet", () => {

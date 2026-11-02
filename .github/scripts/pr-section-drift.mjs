@@ -2,7 +2,7 @@
 
 // Local complement to standards' fleet lockstep (ADR-0008): this repository's
 // two PR-body declarations (`.github/PULL_REQUEST_TEMPLATE.md` headings and
-// `.claude/source-control.md`'s `pr_body_required_sections`) are unchecked
+// `docs/conventions/source-control.yaml`'s `pr_body_required_sections`) are unchecked
 // mirrors of the section list the `check-contract` composite enforces. ADR-0008
 // fleet-checks the template and the pin from standards CI *after* merge; it
 // deliberately does not check this repository's source-control key. This lane
@@ -28,7 +28,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const CALLER_PATH = ".github/workflows/pr-require-checks.yml";
 const TEMPLATE_PATH = ".github/PULL_REQUEST_TEMPLATE.md";
-const SOURCE_CONTROL_PATH = ".claude/source-control.md";
+const SOURCE_CONTROL_PATH = "docs/conventions/source-control.yaml";
 const UPSTREAM_REPO = "melodic-software/ci-workflows";
 const UPSTREAM_GATE = ".github/actions/pr-require-checks/check-contract/run.sh";
 const SOURCE_CONTROL_HEADING = "pr_body_required_sections";
@@ -87,27 +87,33 @@ export function parseTemplateHeadings(markdownText) {
   return [...stripHtmlComments(markdownText).matchAll(/^## (.+)$/gm)].map((match) => match[1].trim());
 }
 
-export function parseSourceControlSections(markdownText, location = SOURCE_CONTROL_PATH) {
-  const lines = markdownText.split(/\r?\n/);
-  const starts = lines.flatMap((line, index) => (line.trim() === `## ${SOURCE_CONTROL_HEADING}` ? [index] : []));
+// Reads the top-level block sequence `pr_body_required_sections:` from the YAML:
+// its `- <name>` items, plain or quoted, up to the next top-level line.
+export function parseSourceControlSections(yamlText, location = SOURCE_CONTROL_PATH) {
+  const lines = yamlText.split(/\r?\n/);
+  const keyRe = new RegExp(`^${SOURCE_CONTROL_HEADING}:\\s*(#.*)?$`);
+  const starts = lines.flatMap((line, index) => (keyRe.test(line) ? [index] : []));
   if (starts.length === 0) {
-    throw new DriftError(`${location}: no ## ${SOURCE_CONTROL_HEADING} section found`);
+    throw new DriftError(`${location}: no top-level ${SOURCE_CONTROL_HEADING} list found`);
   }
   if (starts.length > 1) {
-    throw new DriftError(`${location}: ## ${SOURCE_CONTROL_HEADING} appears more than once`);
+    throw new DriftError(`${location}: ${SOURCE_CONTROL_HEADING} appears more than once`);
   }
   const names = [];
   for (const line of lines.slice(starts[0] + 1)) {
-    if (line.startsWith("## ")) {
+    if (line.trim() === "" || /^\s*#/.test(line)) {
+      continue;
+    }
+    if (!/^\s/.test(line) && !line.startsWith("- ")) {
       break;
     }
-    const bullet = line.match(/^- (.+)$/);
-    if (bullet) {
-      names.push(bullet[1].trim());
+    const item = line.match(/^\s*- (.+?)\s*$/);
+    if (item) {
+      names.push(item[1].replace(/^(["'])(.*)\1$/, "$2"));
     }
   }
   if (names.length === 0) {
-    throw new DriftError(`${location}: ## ${SOURCE_CONTROL_HEADING} carries no list items`);
+    throw new DriftError(`${location}: ${SOURCE_CONTROL_HEADING} carries no list items`);
   }
   return names;
 }

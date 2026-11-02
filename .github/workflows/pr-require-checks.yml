@@ -309,7 +309,7 @@ jobs:
         uses: melodic-software/ci-workflows/.github/actions/check-line-endings@594987abe8657a40bccc13d301f1f0d5cccb5348 # v0.39.8
 
   # Compares `.github/PULL_REQUEST_TEMPLATE.md` headings and
-  # `.claude/source-control.md`'s `pr_body_required_sections` to the
+  # `docs/conventions/source-control.yaml`'s `pr_body_required_sections` to the
   # `section_report` calls inside the SHA-pinned `check-contract` composite's
   # `run.sh`. The comparison target is that pin's bytes, not a
   # third hardcoded copy of the four names. Fetches over the network; a fetch
