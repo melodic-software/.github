@@ -133,6 +133,13 @@ lane_pr_section_drift() {
   return "$rc"
 }
 
+lane_issue_form_drift() {
+  local rc=0
+  node --test .github/scripts/issue-form-drift.test.mjs || rc=1
+  node .github/scripts/issue-form-drift.mjs || rc=1
+  return "$rc"
+}
+
 # --- Run every lane ---------------------------------------------------------
 
 run_lane markdownlint lane_markdown
@@ -148,6 +155,8 @@ run_lane check-line-endings lane_eol
 # Advisory, as in CI: reported, never counted toward the ci-status verdict.
 heading check-pr-sections
 lane_pr_section_drift || printf '\033[33m! check-pr-sections (advisory)\033[0m\n' >&2
+heading check-issue-forms
+lane_issue_form_drift || printf '\033[33m! check-issue-forms (advisory)\033[0m\n' >&2
 
 # --- Summary ----------------------------------------------------------------
 

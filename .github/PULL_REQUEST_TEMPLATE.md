@@ -39,7 +39,7 @@ as missing every section rather than passing vacuously.
 
 <!--
 Issues, PRs, or decision records this change touches without closing
-(one per line, e.g. `- Refs #<issue-number>`). This section must not be empty:
+(one per line, e.g. `Refs: #<issue-number>`). This section must not be empty:
 if nothing applies, say so in a sentence. The no-issue escape goes on the top
 line of this template, not here.
 -->
