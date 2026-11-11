@@ -19,8 +19,12 @@ link lane for the same reason.
   `SECURITY.md`, and `SUPPORT.md`. A repository that ships its own copy
   overrides the default; everything else inherits these.
 - **Templates**: `.github/ISSUE_TEMPLATE/` (bug report, feature request, task,
-  and the chooser config that disables blank issues) and
-  `.github/PULL_REQUEST_TEMPLATE.md`.
+  agent-ready work item, and the chooser config that disables blank issues) and
+  `.github/PULL_REQUEST_TEMPLATE.md`. The four forms are generated in
+  [`standards`](https://github.com/melodic-software/standards/blob/main/components/issue-body-contract/README.md)
+  from the issue-body contract and synced here with it
+  (`.github/standards/issue-body-contract/contract.json`); edit the contract
+  there, never a form here. `config.yml` is this repository's own.
 - **Profile**: `profile/README.md` renders as the organization's public profile
   page. Other repositories do not inherit it.
 - **This repository's own CI**: `.github/workflows/` and `.github/scripts/`.
@@ -34,6 +38,8 @@ link lane for the same reason.
   and its tests) that compares `.github/PULL_REQUEST_TEMPLATE.md` and
   `docs/conventions/source-control.yaml` against the `check-contract` composite at the
   SHA `.github/workflows/pr-require-checks.yml` pins.
+  The `check-issue-forms` lane (`.github/scripts/issue-form-drift.mjs` and its
+  tests) compares the issue forms to the synced contract.
   `.github/dependabot.yml` keeps `actions/checkout` current; the `ci-workflows`
   pins move by hand (see its `ignore` block).
   - Give every action pin a `# vX.Y.Z` tag comment. Standards'

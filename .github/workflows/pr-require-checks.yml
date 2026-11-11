@@ -331,6 +331,25 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: node .github/scripts/pr-section-drift.mjs
 
+  # Compares the issue forms in `.github/ISSUE_TEMPLATE/` to the issue-body
+  # contract the standards sync delivers at
+  # `.github/standards/issue-body-contract/contract.json`: names, native types,
+  # labels, and each field's id, kind, heading and required flag. Local files
+  # only, no network. Advisory, like check-pr-sections: not in `ci-status` `needs:`.
+  check-issue-forms:
+    if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Test the drift checker
+        run: node --test .github/scripts/issue-form-drift.test.mjs
+      - name: Compare the issue forms to the contract
+        run: node .github/scripts/issue-form-drift.mjs
+
   ci-status:
     if: always()
     needs: [markdownlint, typos, editorconfig-checker, gitleaks, check-links, actionlint, jsonschema, shellcheck, check-line-endings]
