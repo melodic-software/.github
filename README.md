@@ -64,9 +64,11 @@ link lane for the same reason.
   It also denies Read on secret files (`.env*`, `secrets/`, keys).
   `docs/conventions/source-control.yaml` is the tracked team layer of the
   source-control convention (commit and PR-title pattern, required PR-body
-  sections, merge lane); `.work-item-tracker.json` binds the work-items tracker
-  provider. The source-control settings and `.work-item-tracker.json` each
-  resolve an optional gitignored `*.local.*` overlay for per-operator deviations.
+  sections, merge lane); the `tracker` key of `docs/conventions/work-items.yaml`
+  binds the work-items tracker provider. The source-control settings and the
+  tracker binding each resolve an optional gitignored `*.local.*` overlay for
+  per-operator deviations; the binding's overlay is
+  `docs/conventions/work-items.local.yaml`.
   `.claude/rules/pr-body-contract.md`, synced from `standards`, states the
   pull-request body contract; `.claude/ai-slop.json` configures the AI-writing
   audit for this repository.

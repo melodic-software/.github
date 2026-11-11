@@ -18,9 +18,11 @@ Thumbs.db
 # Per-operator overlays, never committed: .claude/settings.local.json (per-machine
 # plugin enablement written by .claude/cloud-bootstrap.sh) and the layered-config
 # overlays beside tracked team layers. The .claude/ glob is the form the
-# source-control plugin prescribes; the work-items tracker overlay sits at the
-# repo root, so it needs its own line.
+# source-control plugin prescribes; the work-items tracker overlay sits beside
+# its binding in docs/conventions/, and the legacy root overlay stays ignored
+# until no reader uses it.
 .claude/*.local.*
+docs/conventions/**/*.local.*
 .work-item-tracker.local.json
 
 # Exception: .claude/cloud-bootstrap.local.sh is a team-shared extension point
