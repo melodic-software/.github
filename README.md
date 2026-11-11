@@ -88,7 +88,8 @@ link lane for the same reason.
   `.github/workflows/pr-require-checks.yml` runs into `/usr/local/bin`,
   each pinned to the version the SHA-pinned `ci-workflows` action uses, so
   `.cursor/check.sh` reproduces the gating CI lanes and
-  their `ci-status` aggregate locally, plus the advisory `check-pr-sections`.
+  their `ci-status` aggregate locally, plus the advisory `check-pr-sections`
+  and `check-issue-forms`.
   A direct run of `.cursor/install.sh` installs into `~/.local/bin` and does not
   write outside the home directory, even when passwordless sudo is available.
   `.cursor/install-prefix.test.sh` locks that placement rule.
