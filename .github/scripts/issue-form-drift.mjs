@@ -101,7 +101,12 @@ export function compareForm(fileName, actual, expected) {
 }
 
 export function collectDrift(contract, forms) {
-  const byFile = new Map(Object.values(contract.types).map((type) => [type.form, type]));
+  // A type with `form: null` is a body shape only (no public form), so it has no file here.
+  const byFile = new Map(
+    Object.values(contract.types)
+      .filter((type) => type.form !== null)
+      .map((type) => [type.form, type]),
+  );
   const drift = [];
   for (const name of Object.keys(forms)) {
     if (!byFile.has(name)) drift.push(`${name}: no contract type declares this form`);
@@ -128,7 +133,8 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
   try {
     const contract = JSON.parse(await readFile(path.join(repoRoot, CONTRACT_PATH), "utf8"));
-    const drift = collectDrift(contract, await readForms(repoRoot));
+    const forms = await readForms(repoRoot);
+    const drift = collectDrift(contract, forms);
     if (drift.length > 0) {
       for (const line of drift) {
         process.stderr.write(`::error file=${FORMS_DIR}/${line.split(":")[0]}::drift: ${line}\n`);
@@ -136,7 +142,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
       process.stderr.write(`${CONTRACT_FOOTER}\n`);
       process.exit(1);
     }
-    process.stdout.write(`issue-form-drift: ${Object.keys(contract.types).length} forms match ${CONTRACT_PATH}\n`);
+    process.stdout.write(`issue-form-drift: ${Object.keys(forms).length} forms match ${CONTRACT_PATH}\n`);
   } catch (error) {
     process.stderr.write(`issue-form-drift: ${error.message}\n`);
     process.exit(1);

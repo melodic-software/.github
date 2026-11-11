@@ -25,6 +25,14 @@ const contract = {
       labels: ["needs-triage"],
       fields: [{ id: "summary", heading: "Summary", kind: "input", required: true }],
     },
+    "decomposed-item": {
+      form: null,
+      name: "Decomposed work item",
+      description: "A body shape with no public form.",
+      nativeType: null,
+      labels: [],
+      fields: [{ id: "outcome", heading: "Outcome", kind: "textarea", required: true }],
+    },
   },
 };
 
