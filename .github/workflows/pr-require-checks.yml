@@ -353,6 +353,7 @@ jobs:
         run: node .github/scripts/issue-form-drift.mjs
 
   ci-status:
+    name: CI Status
     if: always()
     needs: [markdownlint, typos, editorconfig-checker, gitleaks, check-links, actionlint, jsonschema, shellcheck, check-line-endings]
     runs-on: ubuntu-latest
@@ -382,8 +383,11 @@ jobs:
         # aggregation: the job still fails on the contract step's exit code, and
         # the `ci-lanes` status is on the SHA for the next contract-only run.
         if: ${{ !cancelled() }}
-        uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/aggregate-results@594987abe8657a40bccc13d301f1f0d5cccb5348 # v0.39.8
+        uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/aggregate-results@ac4d8780de793b20e60a66890e767df579c80d83 # ac4d878 2026-11-11
         with:
+          # report-ci-status mirrors this gate under `ci-status` and runs on
+          # contract-only events too; the run-shape reads must ignore it.
+          alias-jobs: ci-status
           # Derived from `needs:` rather than restating it. Hand-listing the
           # results let a lane be dropped from this input alone: still gated via
           # `needs:`, but its verdict withheld from the aggregator, so the check
@@ -400,3 +404,18 @@ jobs:
           rerun-contract-only-siblings: 'true'
           carry-forward-wait-seconds: '0'
           token: ${{ github.token }}
+
+  report-ci-status:
+    name: ci-status
+    needs: [ci-status]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions: {}
+    steps:
+      - name: Report the conclusion of `CI Status`
+        env:
+          RESULT: ${{ needs.ci-status.result }}
+        run: |
+          echo "CI Status: $RESULT"
+          [ "$RESULT" = success ]
