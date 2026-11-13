@@ -28,7 +28,7 @@ where it does. Go there when a change fits none of the files already in this rep
 
 The wiring rule sits in `.github/workflows/pr-require-checks.yml`'s header comment, above `jobs:`.
 A gating lane is done when the `ci-status` job's `needs:` roster names it and
-a PR run shows `ci-status` waiting on it.
+a PR run shows `CI Status` waiting on it.
 
 ## Checks
 

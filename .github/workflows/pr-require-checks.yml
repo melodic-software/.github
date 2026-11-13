@@ -35,7 +35,7 @@ permissions:
 # ("any existing pending job or workflow in the same concurrency group will be
 # canceled") and is NOT governed by `cancel-in-progress`, so the old shared
 # group let one contract-only event evict another and leave a check suite on the
-# current head with no `ci-status` check run at all, a required check that stops
+# current head with no `CI Status` check run at all, a required check that stops
 # reporting until someone re-runs that specific run (dotfiles#647, 2h14m
 # silent). Uniqueness costs a burst of one-job runs when labels flip repeatedly,
 # seconds each, writing nothing.
@@ -70,10 +70,10 @@ concurrency:
 # This repo holds only community-health files (Markdown + issue/PR templates and
 # config), so it consumes the org's reusable lint/hygiene actions from
 # ci-workflows (pinned by SHA) against the vendored standards configs at the repo
-# root, then aggregates them into the single `ci-status` check the org `ci-gate`
-# ruleset requires. Each hygiene lane checks out this repo, then runs one remote
-# action; `check-pr-sections` and `check-issue-forms` are the local-script
-# exceptions noted below.
+# root, then aggregates them in job `ci-status` into the single `CI Status`
+# check the org `ci-gate` ruleset requires. Each hygiene lane checks out this
+# repo, then runs one remote action; `check-pr-sections` and
+# `check-issue-forms` are the local-script exceptions noted below.
 #
 # Adding a lane: a new job gates merges once its name appears in the `ci-status`
 # job's `needs:` list. Its `results:` input is derived from that list and needs
@@ -385,9 +385,6 @@ jobs:
         if: ${{ !cancelled() }}
         uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/aggregate-results@ac4d8780de793b20e60a66890e767df579c80d83 # ac4d878 2026-11-11
         with:
-          # report-ci-status mirrors this gate under `ci-status` and runs on
-          # contract-only events too; the run-shape reads must ignore it.
-          alias-jobs: ci-status
           # Derived from `needs:` rather than restating it. Hand-listing the
           # results let a lane be dropped from this input alone: still gated via
           # `needs:`, but its verdict withheld from the aggregator, so the check
@@ -404,18 +401,3 @@ jobs:
           rerun-contract-only-siblings: 'true'
           carry-forward-wait-seconds: '0'
           token: ${{ github.token }}
-
-  report-ci-status:
-    name: ci-status
-    needs: [ci-status]
-    if: ${{ always() }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    permissions: {}
-    steps:
-      - name: Report the conclusion of `CI Status`
-        env:
-          RESULT: ${{ needs.ci-status.result }}
-        run: |
-          echo "CI Status: $RESULT"
-          [ "$RESULT" = success ]

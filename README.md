@@ -30,7 +30,7 @@ link lane for the same reason.
 - **This repository's own CI**: `.github/workflows/` and `.github/scripts/`.
   `pr-require-checks.yml` runs the SHA-pinned lint and hygiene lanes from
   [`ci-workflows`](https://github.com/melodic-software/ci-workflows) and
-  aggregates them into the single `ci-status` check the org ruleset requires.
+  aggregates them into the single `CI Status` check the org ruleset requires.
   The pull-request contract itself (Conventional Commits title, `do-not-merge`
   label, issue linkage) is the `check-contract` step inside the `ci-status` job,
   so there are no separate caller workflows for it.
