@@ -15,7 +15,7 @@ A repository's own `CONTRIBUTING.md`, with project-specific details, overrides t
 3. Ensure the project builds and its checks pass locally.
 4. Open a pull request, fill out the template, and link the related issue.
    - Title it in [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) form with a standard type, `<type>[optional scope]: <description>`, for example `feat(api): add pagination`. The title becomes the squash-merge commit subject on the default branch.
-   - Where the repository enforces this, the `ci-status` check reports on your pull request and must pass before merge.
+   - Where the repository enforces this, the `CI Status` check reports on your pull request and must pass before merge.
 5. Address review feedback. Pull requests are squash-merged once every review thread is resolved and any required checks pass.
 
 ## Reporting security issues
