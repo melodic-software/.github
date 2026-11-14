@@ -87,6 +87,7 @@ concurrency:
 # issue forms to the synced issue-body contract.
 jobs:
   markdownlint:
+    name: markdownlint
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -101,6 +102,7 @@ jobs:
           config: .markdownlint-cli2.jsonc
 
   typos:
+    name: Typos
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -140,6 +142,7 @@ jobs:
           fi
 
   editorconfig-checker:
+    name: EditorConfig Checker
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -154,6 +157,7 @@ jobs:
           config: .editorconfig-checker.json
 
   gitleaks:
+    name: Gitleaks
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -168,6 +172,7 @@ jobs:
           config: .gitleaks.toml
 
   check-links:
+    name: Check Links
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -191,6 +196,7 @@ jobs:
             .github/**/*.md
 
   actionlint:
+    name: Actionlint
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -203,6 +209,7 @@ jobs:
         uses: melodic-software/ci-workflows/.github/actions/actionlint@594987abe8657a40bccc13d301f1f0d5cccb5348 # v0.39.8
 
   jsonschema:
+    name: Jsonschema
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -285,6 +292,7 @@ jobs:
   # is not a file this discovery sees; the `actionlint` lane covers it instead,
   # via its own bundled ShellCheck, which does not read .shellcheckrc.
   shellcheck:
+    name: Shellcheck
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -299,6 +307,7 @@ jobs:
           rcfile: .shellcheckrc
 
   check-line-endings:
+    name: Check Line Endings
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -318,6 +327,7 @@ jobs:
   # failure is red, never a skip, same posture as standards'
   # `pr-convention-lockstep` (ADR-0008). Advisory: not in `ci-status` `needs:`.
   check-pr-sections:
+    name: Check PR Sections
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -339,6 +349,7 @@ jobs:
   # labels, and each field's id, kind, heading and required flag. Local files
   # only, no network. Advisory, like check-pr-sections: not in `ci-status` `needs:`.
   check-issue-forms:
+    name: Check Issue Forms
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
