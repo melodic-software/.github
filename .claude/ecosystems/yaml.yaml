@@ -26,10 +26,10 @@ fix-cmd: null
 code-fix-cmd: null
 opt-in: "GitHub Actions workflows present"
 install-hint: |
-  actionlint: rhysd/actionlint 1.7.12 from https://github.com/rhysd/actionlint/releases (the release CI's actionlint composite installs)
+  actionlint: kjanat/actionlint 1.17.0 from https://github.com/kjanat/actionlint/releases (the fork and release CI's actionlint composite installs; its version numbers overlap rhysd/actionlint's, so take it from that fork)
   check-jsonschema: uv tool install check-jsonschema==0.38.2
 tool-pin:
-  actionlint: "1.7.12"
+  actionlint: "1.17.0"
   check-jsonschema: "0.38.2"
 gates: []
-notes: "Lint-only: owned by /toolchain:lint. Pins are the ci-workflows composite defaults at the SHA CI calls, 594987a (actions/actionlint/action.yml:20, actions/check-jsonschema/action.yml:39). The Claude settings check fetches its schema from json.schemastore.org, as CI does, so it needs the network. CI also runs two advisory drift lanes, check-pr-sections and check-issue-forms (pr-require-checks.yml:329-364); their tests are typescript.yaml's test-cmd, and their comparison scripts are not run here because CI does not gate on them."
+notes: "Lint-only: owned by /toolchain:lint. Pins are the ci-workflows composite defaults at the release CI calls, v0.74.0 (actions/actionlint/action.yml:25 with :67 for the kjanat/actionlint download, actions/check-jsonschema/action.yml:39). The kjanat fork accepts `$/` refs and `concurrency.queue`, which rhysd/actionlint 1.7.12 rejects (actions/actionlint/action.yml:18-19). The Claude settings check fetches its schema from json.schemastore.org, as CI does, so it needs the network. CI also runs two advisory drift lanes, check-pr-sections and check-issue-forms (pr-require-checks.yml:329-364); their tests are typescript.yaml's test-cmd, and their comparison scripts are not run here because CI does not gate on them."

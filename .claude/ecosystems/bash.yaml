@@ -2,7 +2,7 @@
 # https://github.com/melodic-software/claude-code-plugins/tree/main/docs/contracts/ecosystem-commands
 # shellcheck with the root .shellcheckrc and no severity filter, as CI's
 # shellcheck lane runs it (.github/workflows/pr-require-checks.yml:294-307 calls
-# the ci-workflows shellcheck composite @594987a, whose run.sh passes
+# the ci-workflows shellcheck composite at v0.74.0, whose run.sh:172-175 passes
 # --rcfile and leaves --severity unset). Commands run from the repository root.
 enabled: true
 globs: ["*.sh", "*.bash"]

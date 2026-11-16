@@ -1,9 +1,12 @@
 version: 2
 updates:
-  # Keep the SHA-pinned actions in this repo's workflows current. Merge lanes
-  # follow the standards dependabot-policy component: the `vendor-actions`
-  # group (non-major only) is the auto-merge lane armed by
-  # pr-automerge-dependabot.yml; every other PR is reviewed by hand. This repo
+  # Keep the SHA-pinned actions in this repo's workflows current, the
+  # melodic-software/ci-workflows composite-action pins included. Merge lanes
+  # follow the standards dependabot-policy component: pr-automerge-dependabot.yml
+  # arms auto-merge on minor and patch bumps in the `vendor-actions` group and,
+  # once the synced policy copy is at
+  # .github/standards/dependabot-policy/policy.json, on minor and patch bumps of
+  # `melodic-software/*`; every other bump takes the review tier. This repo
   # carries no composite actions of its own, so the single "/" target (which
   # scans .github/workflows) is sufficient.
   - package-ecosystem: github-actions
@@ -19,7 +22,21 @@ updates:
     # SHA-rewrite supply-chain risk that motivates SHA-pinning.
     cooldown:
       default-days: 3
+      # First-party releases take no soak (the synced Dependabot policy's
+      # `fastTrack.own`).
+      exclude:
+        - "melodic-software/ci-workflows/*"
+    # The one first-party pin Dependabot leaves alone sits in the sync-managed
+    # pr-check-managed-files-hosted.yml, which the standards sync owns.
+    ignore:
+      - dependency-name: "melodic-software/ci-workflows/.github/actions/check-managed-files"
     groups:
+      # Every ci-workflows composite-action pin moves in one pull request, so
+      # the repository stays on one ci-workflows release.
+      first-party-actions:
+        patterns:
+          - melodic-software/*
+      # Listed before the catch-all group so it wins.
       vendor-actions:
         patterns:
           - actions/*
@@ -29,8 +46,3 @@ updates:
       github-actions:
         patterns:
           - '*'
-    # ci-workflows composites move by hand so the fleet stays on one
-    # ci-workflows SHA; a bump to an unreviewed SHA fails the Runner policy
-    # contract fleet-wide. See melodic-software/github-iac#378.
-    ignore:
-      - dependency-name: "melodic-software/ci-workflows/*"

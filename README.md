@@ -40,8 +40,9 @@ link lane for the same reason.
   SHA `.github/workflows/pr-require-checks.yml` pins.
   The `check-issue-forms` lane (`.github/scripts/issue-form-drift.mjs` and its
   tests) compares the issue forms to the synced contract.
-  `.github/dependabot.yml` keeps `actions/checkout` current; the `ci-workflows`
-  pins move by hand (see its `ignore` block).
+  `.github/dependabot.yml` keeps the action pins current, the `ci-workflows`
+  composite-action pins included, all in one `first-party-actions` group; it
+  ignores only the `check-managed-files` pin, which the standards sync owns.
   - Give every action pin a `# vX.Y.Z` tag comment. Standards'
     pin-comment convention also permits a short-sha-and-date fallback, but
     Dependabot reads the current version out of that comment, so the fallback
