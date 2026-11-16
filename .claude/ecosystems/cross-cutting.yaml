@@ -1,0 +1,40 @@
+# Repository-wide text checks in this repository. Contract and schema:
+# https://github.com/melodic-software/claude-code-plugins/tree/main/docs/contracts/ecosystem-commands
+# Lint-only: /toolchain:lint runs it, /toolchain:check does not. CI's typos,
+# editorconfig-checker, gitleaks and check-links lanes
+# (.github/workflows/pr-require-checks.yml:104-196), each with its root config
+# as the ci-workflows composites @594987a pass it. typos checks "." and then the
+# hidden tracked files by name, as the typos lane's second step does (:118-141).
+# lychee gets CI's three globs (:193-196). Every check runs and any failure
+# fails the command, as CI's ci-status gate fails on any lane. Commands run
+# from the repository root.
+enabled: true
+globs: ["**"]
+project-discovery: []
+build-cmd: null
+test-cmd: null
+check-cmd: |
+  rc=0
+  typos --config _typos.toml . || rc=1
+  git ls-files | grep '^\.' | while IFS= read -r p; do if [ -f "$p" ]; then printf '%s\n' "$p"; fi; done | xargs typos --config _typos.toml || rc=1
+  gitleaks dir . --config .gitleaks.toml --no-banner --redact || rc=1
+  # editorconfig-checker: binary name varies by install method (ec / editorconfig-checker / ec-windows-amd64)
+  if [ -n "$EC_BIN" ]; then "$EC_BIN" -config .editorconfig-checker.json || rc=1; else echo 'editorconfig-checker: no binary resolved (EC_BIN is empty)' >&2; rc=1; fi
+  # lychee-offline: on-disk link and anchor integrity, no network
+  lychee --offline --no-progress --config lychee.toml '**/*.md' '.claude/**/*.md' '.github/**/*.md' || rc=1
+  test "$rc" -eq 0
+fix-cmd: null
+code-fix-cmd: null
+opt-in: "each tool's own config at the repository root (_typos.toml, .gitleaks.toml, .editorconfig-checker.json, lychee.toml)"
+install-hint: |
+  typos: winget install Crate-CI.Typos | brew install typos-cli
+  gitleaks: winget install Gitleaks.Gitleaks | brew install gitleaks
+  editorconfig-checker: winget install EditorConfig-Checker.EditorConfig-Checker | brew install editorconfig-checker
+  lychee: winget install lycheeverse.lychee | brew install lychee
+tool-pin:
+  typos: "1.50.3"
+  gitleaks: "8.30.1"
+  editorconfig-checker: "4.0.2"
+  lychee: "0.24.2"
+gates: []
+notes: "Lint-only: owned by /toolchain:lint. Pins are the composite defaults at 594987a (actions/typos/action.yml:46, actions/gitleaks/action.yml:50 with scan.sh:136 for the dir-mode flags, actions/editorconfig-checker/action.yml:35, actions/lychee-offline/action.yml:19). .cursor/install.sh pins older versions of typos, editorconfig-checker and check-jsonschema; these pins follow CI. CI's check-line-endings lane (pr-require-checks.yml:309-320) re-stages the whole index with git add --renormalize, so it has no read-only local command here; bash .cursor/check.sh runs a safe copy of it."

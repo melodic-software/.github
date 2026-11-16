@@ -72,6 +72,10 @@ link lane for the same reason.
   `.claude/rules/pr-body-contract.md`, synced from `standards`, states the
   pull-request body contract; `.claude/ai-slop.json` configures the AI-writing
   audit for this repository.
+  `.claude/ecosystems/*.yaml` (bash, markdown, yaml, typescript, cross-cutting)
+  are owned here: each replaces the toolchain plugin's bundled build, test and
+  lint commands for its ecosystem with the ones
+  `.github/workflows/pr-require-checks.yml` runs.
   `CLAUDE.md` is the agent-loaded entry point: it routes to this file rather
   than restating it, and carries only what no other file states.
   `AGENTS.md` holds the `## Code Review Rules` section the Codex pull-request
