@@ -3,7 +3,7 @@
 # Lint-only: /toolchain:lint runs it, /toolchain:check does not. CI's typos,
 # editorconfig-checker, gitleaks and check-links lanes
 # (.github/workflows/pr-require-checks.yml:104-196), each with its root config
-# as the ci-workflows composites @594987a pass it. typos checks "." and then the
+# as the ci-workflows composites at v0.74.0 pass it. typos checks "." and then the
 # hidden tracked files by name, as the typos lane's second step does (:118-141).
 # lychee gets CI's three globs (:193-196). Every check runs and any failure
 # fails the command, as CI's ci-status gate fails on any lane. Commands run
@@ -37,4 +37,4 @@ tool-pin:
   editorconfig-checker: "4.0.2"
   lychee: "0.24.2"
 gates: []
-notes: "Lint-only: owned by /toolchain:lint. Pins are the composite defaults at 594987a (actions/typos/action.yml:46, actions/gitleaks/action.yml:50 with scan.sh:136 for the dir-mode flags, actions/editorconfig-checker/action.yml:35, actions/lychee-offline/action.yml:19). .cursor/install.sh pins older versions of typos, editorconfig-checker and check-jsonschema; these pins follow CI. CI's check-line-endings lane (pr-require-checks.yml:309-320) re-stages the whole index with git add --renormalize, so it has no read-only local command here; bash .cursor/check.sh runs a safe copy of it."
+notes: "Lint-only: owned by /toolchain:lint. Pins are the composite defaults at v0.74.0 (actions/typos/action.yml:46, actions/gitleaks/action.yml:52 with scan.sh:136 for the dir-mode flags, actions/editorconfig-checker/action.yml:35, actions/lychee-offline/action.yml:22). .cursor/install.sh pins older versions of typos, editorconfig-checker, check-jsonschema and markdownlint-cli2, and rhysd/actionlint where CI installs the kjanat/actionlint fork; these pins follow CI. CI's check-line-endings lane (pr-require-checks.yml:309-320) re-stages the whole index with git add --renormalize, so it has no read-only local command here; bash .cursor/check.sh runs a safe copy of it."
