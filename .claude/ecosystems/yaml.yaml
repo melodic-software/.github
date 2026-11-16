@@ -1,0 +1,35 @@
+# GitHub workflow, issue-form, Dependabot and Claude settings files in this
+# repository. Contract and schema:
+# https://github.com/melodic-software/claude-code-plugins/tree/main/docs/contracts/ecosystem-commands
+# Lint-only: /toolchain:lint runs it, /toolchain:check does not. CI's actionlint
+# lane (.github/workflows/pr-require-checks.yml:198-209; actionlint auto-discovers
+# the workflows) and its jsonschema lane (:211-285), each check-jsonschema call
+# with the builtin schema or schemafile CI passes. Issue forms are every
+# .github/ISSUE_TEMPLATE/*.yml or *.yaml except config.yml, the roster CI derives
+# (:238-265). Every check runs and any failure fails the command, as CI's
+# ci-status gate fails on any lane. Commands run from the repository root.
+enabled: true
+globs: [".github/**/*.yml", ".github/**/*.yaml", ".claude/settings.json"]
+project-discovery: []
+build-cmd: null
+test-cmd: null
+check-cmd: |
+  rc=0
+  actionlint || rc=1
+  check-jsonschema --builtin-schema vendor.dependabot .github/dependabot.yml || rc=1
+  check-jsonschema --builtin-schema vendor.github-workflows $(git ls-files '.github/workflows/*.yml') || rc=1
+  check-jsonschema --builtin-schema vendor.github-issue-forms $(git ls-files '.github/ISSUE_TEMPLATE/*.yml' '.github/ISSUE_TEMPLATE/*.yaml' | grep -v '/config\.yml$') || rc=1
+  check-jsonschema --builtin-schema vendor.github-issue-config .github/ISSUE_TEMPLATE/config.yml || rc=1
+  check-jsonschema --schemafile https://json.schemastore.org/claude-code-settings.json .claude/settings.json || rc=1
+  test "$rc" -eq 0
+fix-cmd: null
+code-fix-cmd: null
+opt-in: "GitHub Actions workflows present"
+install-hint: |
+  actionlint: rhysd/actionlint 1.7.12 from https://github.com/rhysd/actionlint/releases (the release CI's actionlint composite installs)
+  check-jsonschema: uv tool install check-jsonschema==0.38.2
+tool-pin:
+  actionlint: "1.7.12"
+  check-jsonschema: "0.38.2"
+gates: []
+notes: "Lint-only: owned by /toolchain:lint. Pins are the ci-workflows composite defaults at the SHA CI calls, 594987a (actions/actionlint/action.yml:20, actions/check-jsonschema/action.yml:39). The Claude settings check fetches its schema from json.schemastore.org, as CI does, so it needs the network. CI also runs two advisory drift lanes, check-pr-sections and check-issue-forms (pr-require-checks.yml:329-364); their tests are typescript.yaml's test-cmd, and their comparison scripts are not run here because CI does not gate on them."

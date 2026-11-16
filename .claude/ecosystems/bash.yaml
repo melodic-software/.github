@@ -1,0 +1,20 @@
+# Shell in this repository. Contract and schema:
+# https://github.com/melodic-software/claude-code-plugins/tree/main/docs/contracts/ecosystem-commands
+# shellcheck with the root .shellcheckrc and no severity filter, as CI's
+# shellcheck lane runs it (.github/workflows/pr-require-checks.yml:294-307 calls
+# the ci-workflows shellcheck composite @594987a, whose run.sh passes
+# --rcfile and leaves --severity unset). Commands run from the repository root.
+enabled: true
+globs: ["*.sh", "*.bash"]
+project-discovery: []
+build-cmd: null
+test-cmd: null
+check-cmd: 'shellcheck --rcfile="$REPO_ROOT/.shellcheckrc" <files>'
+fix-cmd: "shfmt -w <files>"
+code-fix-cmd: null
+opt-in: "shellcheck always applies to shell files"
+install-hint: "winget install ShellCheck.ShellCheck mvdan.shfmt | brew install shellcheck shfmt"
+tool-pin:
+  shellcheck: "0.11.0"
+gates: []
+notes: "CI runs no shell tests: .cursor/install-prefix.test.sh exists but no CI lane or hook runs it, so test-cmd is null. No CI lane runs shfmt; fix-cmd follows the shfmt style .editorconfig declares for shell files and can reformat lines beyond the change. Shell embedded in workflow run: blocks is linted by actionlint (yaml.yaml), not here."

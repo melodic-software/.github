@@ -1,0 +1,18 @@
+# JavaScript in this repository: the two drift checkers under .github/scripts/,
+# plain Node ES modules with node:test suites. Contract and schema:
+# https://github.com/melodic-software/claude-code-plugins/tree/main/docs/contracts/ecosystem-commands
+# The test calls CI makes (.github/workflows/pr-require-checks.yml:340 and :362,
+# "Test the drift checker"). No package.json, tsconfig or linter config is
+# tracked and CI lints no JavaScript, so there is no build or check command.
+# Commands run from the repository root.
+enabled: true
+globs: ["*.mjs", "*.js"]
+project-discovery: []
+build-cmd: null
+test-cmd: "node --test .github/scripts/pr-section-drift.test.mjs .github/scripts/issue-form-drift.test.mjs"
+check-cmd: null
+fix-cmd: null
+code-fix-cmd: null
+install-hint: "Node.js 24 (node --test is built in); no npm install is needed"
+gates: []
+notes: "CI runs each test file in its own lane and both lanes are advisory, outside ci-status needs:; one call here runs both. CI's node is the ubuntu-latest image's, which this repository does not pin, so the record sets no tool-pin."
