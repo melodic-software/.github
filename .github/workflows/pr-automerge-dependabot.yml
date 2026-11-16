@@ -6,8 +6,8 @@ name: PR Automerge Dependabot
 # the base commit holds the synced standards Dependabot policy copy at
 # `.github/standards/dependabot-policy/policy.json`, the reusable reads its
 # allowlist from that copy, which also arms the organization's own releases
-# (`melodic-software/*`). Arming never merges: GitHub merges once every required check, `CI Status` included,
-# passes. The caller owns the trigger, concurrency and the permission grant; a
+# (`melodic-software/*`). Arming never merges: GitHub merges once every
+# required check, `CI Status` included, passes. The caller owns the trigger, concurrency and the permission grant; a
 # called workflow can only downgrade the caller's grant. Runs on the
 # GitHub-hosted `ubuntu-24.04` runner, which the runner-policy admits on a
 # public repository.
