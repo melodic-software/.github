@@ -77,6 +77,20 @@ describe("parseCallerPin", () => {
     assert.equal(parseCallerPin(text), SHA);
   });
 
+  it("returns the report-ci-status pin, which runs check-contract at that commit", () => {
+    const text = `      - uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/report-ci-status@${SHA} # v9.9.9\n`;
+    assert.equal(parseCallerPin(text), SHA);
+  });
+
+  it("fails when check-contract and report-ci-status are pinned at different SHAs", () => {
+    const text = [
+      callerYaml(SHA),
+      `      - uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/report-ci-status@${OTHER_SHA} # v9.9.9`,
+      "",
+    ].join("\n");
+    assert.throws(() => parseCallerPin(text), /multiple distinct/);
+  });
+
   it("fails when two distinct pins are present", () => {
     const text = `${callerYaml(SHA)}\n${callerYaml(OTHER_SHA)}`;
     assert.throws(() => parseCallerPin(text), /multiple distinct/);

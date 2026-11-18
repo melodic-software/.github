@@ -9,8 +9,10 @@
 // fails the PR that introduces either drift, comparing both mirrors to the
 // exact composite bytes this repository's gate already executes.
 //
-// Comparison target is derived: the 40-hex `check-contract` pin in
-// `.github/workflows/pr-require-checks.yml`, then that ref's `run.sh`. The four section names
+// Comparison target is derived: the 40-hex `check-contract` or
+// `report-ci-status` pin in `.github/workflows/pr-require-checks.yml` (the
+// latter runs `check-contract` through `$/` at its own commit), then that
+// ref's `check-contract/run.sh`. The four section names
 // are not hardcoded here. Fetch failures are `fetch-error` (never a skip),
 // matching standards' `lockstep-drift.mjs` posture.
 //
@@ -39,7 +41,7 @@ const CONTRACT_FOOTER =
   "Change the contract there and bump the pin, then update both local files in the same PR.";
 
 const CALLER_PIN_RE =
-  /uses:\s*melodic-software\/ci-workflows\/\.github\/actions\/pr-require-checks\/check-contract@([0-9a-f]{40})/g;
+  /uses:\s*melodic-software\/ci-workflows\/\.github\/actions\/pr-require-checks\/(?:check-contract|report-ci-status)@([0-9a-f]{40})/g;
 const SECTION_REPORT_RE = /section_report\("([^"]+)"\)/g;
 
 export class DriftError extends Error {
@@ -57,10 +59,14 @@ export function sourceOfTruth(sha) {
 export function parseCallerPin(callerText, location = CALLER_PATH) {
   const unique = [...new Set([...callerText.matchAll(CALLER_PIN_RE)].map((match) => match[1]))];
   if (unique.length === 0) {
-    throw new DriftError(`${location}: no 40-hex check-contract@ pin found on a uses: line`);
+    throw new DriftError(
+      `${location}: no 40-hex check-contract@ or report-ci-status@ pin found on a uses: line`,
+    );
   }
   if (unique.length > 1) {
-    throw new DriftError(`${location}: multiple distinct check-contract pins: ${unique.join(", ")}`);
+    throw new DriftError(
+      `${location}: multiple distinct check-contract or report-ci-status pins: ${unique.join(", ")}`,
+    );
   }
   return unique[0];
 }
