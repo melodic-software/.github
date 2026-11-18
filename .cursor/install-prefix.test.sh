@@ -15,7 +15,7 @@ fail() {
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
-cat > "$tmp/sudo" <<'EOF'
+cat >"$tmp/sudo" <<'EOF'
 #!/usr/bin/env bash
 if [[ -n "${SUDO_LOG:-}" ]]; then
   printf '%s\n' "$*" >> "$SUDO_LOG"
@@ -122,7 +122,7 @@ base_home="$HOME"
 home="$(mktemp -d "$tmp/home.XXXXXX")"
 
 log="$tmp/sudo-workstation.log"
-: > "$log"
+: >"$log"
 unset MELODIC_HYGIENE_SYSTEM
 HOME="$home"
 PATH="$tmp:$base_path"
@@ -131,7 +131,7 @@ export HOME PATH SUDO_LOG
 run_case assert_workstation
 
 log="$tmp/sudo-unwritable.log"
-: > "$log"
+: >"$log"
 MELODIC_HYGIENE_SYSTEM=1
 PATH="$tmp:$base_path"
 SUDO_LOG="$log"
@@ -139,7 +139,7 @@ export MELODIC_HYGIENE_SYSTEM PATH SUDO_LOG
 run_case assert_system_unwritable
 
 log="$tmp/sudo-writable.log"
-: > "$log"
+: >"$log"
 MELODIC_HYGIENE_SYSTEM=1
 PATH="$tmp:$base_path"
 SUDO_LOG="$log"
