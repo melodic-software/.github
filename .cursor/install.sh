@@ -22,21 +22,21 @@
 # file is executed, not when it is sourced.
 set -euo pipefail
 
-# --- Pins (authority: melodic-software/ci-workflows v0.29.1 action defaults) --
-MARKDOWNLINT_VERSION="0.23.2"
-TYPOS_VERSION="1.50.1"
-TYPOS_SHA256="edf0545109aee6a22751d04ddecb97c45be47d3aa0409564fb895eeeace91b1e"
-EC_VERSION="3.11.2"
-EC_SHA256="bc815e5b3b1891a0ee9e1242fe3475312655f8b0f4c4a79510be0a009294571a"
+# --- Pins (authority: melodic-software/ci-workflows v0.76.0 action defaults) --
+MARKDOWNLINT_VERSION="0.23.3"
+TYPOS_VERSION="1.50.3"
+TYPOS_SHA256="aca6b5d546307092b8d0a8e0a89dd80f9da51f2f7617c5e45c5607c1684ffbf2"
+EC_VERSION="4.0.2"
+EC_SHA256="44efaef3ed14c6ab52eb87481d78e5e5c204796dccf26e2f4598a61ba17f8003"
 GITLEAKS_VERSION="8.30.1"
 GITLEAKS_SHA256="551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
 LYCHEE_VERSION="0.24.2"
 LYCHEE_SHA256="1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a"
-ACTIONLINT_VERSION="1.7.12"
-ACTIONLINT_SHA256="8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8"
+ACTIONLINT_VERSION="1.17.0"
+ACTIONLINT_SHA256="620abd485a12b6ab1125b844a876414e1d5bd2af8a3125b27f82b01d0d9d6e5a"
 SHELLCHECK_VERSION="0.11.0"
 SHELLCHECK_SHA256="b7af85e41cc99489dcc21d66c6d5f3685138f06d34651e6d34b42ec6d54fe6f6"
-CHECK_JSONSCHEMA_VERSION="0.38.0"
+CHECK_JSONSCHEMA_VERSION="0.38.2"
 
 # External so the Cloud Agent install command can opt into the system prefix.
 # The default assignment keeps ShellCheck's check-unassigned-uppercase quiet.
@@ -137,8 +137,8 @@ install_typos() {
 
 install_ec() {
   install_release ec "$EC_SHA256" \
-    "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${EC_VERSION}/ec-linux-amd64.tar.gz" \
-    bin/ec-linux-amd64 bin/ec-linux-amd64
+    "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${EC_VERSION}/editorconfig-checker-linux-amd64.tar.gz" \
+    editorconfig-checker editorconfig-checker
 }
 
 install_gitleaks() {
@@ -155,7 +155,7 @@ install_lychee() {
 
 install_actionlint() {
   install_release actionlint "$ACTIONLINT_SHA256" \
-    "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" \
+    "https://github.com/kjanat/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" \
     actionlint actionlint
 }
 
