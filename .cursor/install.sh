@@ -60,6 +60,9 @@ resolve_install_prefix() {
   log "workstation mode; using $BIN_DIR (no files outside $HOME). Set MELODIC_HYGIENE_SYSTEM=1 to install into /usr/local/bin."
 }
 
+# Abort the whole install on mismatch: a hygiene toolchain that silently
+# installed an unverified binary is worse than a hard failure the operator can
+# see and re-run.
 verify_sha() {
   local file="$1" want="$2" got
   got="$(sha256sum "$file" | awk '{print $1}')"
