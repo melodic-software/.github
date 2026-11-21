@@ -1,12 +1,5 @@
 #!/usr/bin/env node
 
-// Compares the org issue forms in `.github/ISSUE_TEMPLATE/` to the issue-body contract the
-// standards sync delivers beside them (`.github/standards/issue-body-contract/contract.json`,
-// generated from melodic-software/standards components/issue-body-contract/contract.json). A
-// form that drifts from the contract (a hand edit, a stale sync, a form the contract does not
-// declare) fails the PR that introduces it, with the field that differs named. `config.yml` is
-// this repository's own and is not compared.
-//
 // The forms are the generator's YAML subset (no anchors, flow maps or multi-document streams), so
 // a line reader covers them; a shape it cannot read is reported as drift, never skipped.
 
@@ -28,7 +21,6 @@ function scalar(raw) {
   return value;
 }
 
-// Returns { name, description, type, labels, fields: [{ id, kind, heading, required }] }.
 export function parseForm(text) {
   const form = { type: null, labels: [], fields: [] };
   let list = null;
