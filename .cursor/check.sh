@@ -1,19 +1,10 @@
 #!/usr/bin/env bash
-# Local mirror of the CI hygiene suite for melodic-software/.github.
-#
-# Runs the same lanes as .github/workflows/pr-require-checks.yml against the same vendored
-# configs, using the tools .cursor/install.sh pins to the CI versions. Every
-# lane runs even if an earlier one fails, and a summary is printed at the end so
-# a single invocation reproduces the aggregate `ci-status` verdict locally
-# (CONTRIBUTING step 3: "Ensure the project builds and its checks pass locally").
-#
 # Not set -e: lanes are collected, not short-circuited. Exit status is non-zero
 # when any gating lane fails.
 set -uo pipefail
 
 top="$(git rev-parse --show-toplevel)" && cd -- "$top" || exit 1
 
-# Fall back onto a per-user bin in case install.sh placed tools there.
 case ":$PATH:" in
   *":$HOME/.local/bin:"*) ;;
   *) PATH="$HOME/.local/bin:$PATH" ;;
@@ -24,7 +15,6 @@ FAILED=()
 
 heading() { printf '\n\033[1m── %s ──\033[0m\n' "$1" >&2; }
 
-# run_lane <name> <cmd...>: run one lane under a heading and record its verdict.
 run_lane() {
   local name="$1"
   shift
@@ -37,8 +27,6 @@ run_lane() {
     printf '\033[31m✗ %s\033[0m\n' "$name" >&2
   fi
 }
-
-# --- Lanes with multi-step logic --------------------------------------------
 
 # typos skips hidden paths unless they are named. The synced _typos.toml
 # cannot set ignore-hidden = false; CI's typos job has the same follow-up.
@@ -140,8 +128,6 @@ lane_issue_form_drift() {
   return "$rc"
 }
 
-# --- Run every lane ---------------------------------------------------------
-
 run_lane markdownlint lane_markdown
 run_lane typos lane_typos
 run_lane editorconfig-checker ec -config .editorconfig-checker.json
@@ -157,8 +143,6 @@ heading check-pr-sections
 lane_pr_section_drift || printf '\033[33m! check-pr-sections (advisory)\033[0m\n' >&2
 heading check-issue-forms
 lane_issue_form_drift || printf '\033[33m! check-issue-forms (advisory)\033[0m\n' >&2
-
-# --- Summary ----------------------------------------------------------------
 
 heading ci-status
 printf 'passed: %d   failed: %d\n' "${#PASSED[@]}" "${#FAILED[@]}" >&2

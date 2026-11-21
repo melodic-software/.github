@@ -93,8 +93,6 @@ export function parseTemplateHeadings(markdownText) {
   return [...stripHtmlComments(markdownText).matchAll(/^## (.+)$/gm)].map((match) => match[1].trim());
 }
 
-// Reads the top-level block sequence `pr_body_required_sections:` from the YAML:
-// its `- <name>` items, plain or quoted, up to the next top-level line.
 export function parseSourceControlSections(yamlText, location = SOURCE_CONTROL_PATH) {
   const lines = yamlText.split(/\r?\n/);
   const keyRe = new RegExp(`^${SOURCE_CONTROL_HEADING}:\\s*(#.*)?$`);

@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# Placement contract for .cursor/install.sh.
-#
-# Sources the resolver only. Does not download tools or write a prefix.
 set -euo pipefail
 
 here="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -50,7 +47,6 @@ assert_workstation() {
 }
 
 assert_system_unwritable() {
-  # Stand in for a /usr/local/bin the current user cannot write.
   prefix_is_writable() { return 1; }
   resolve_install_prefix
   if [[ "$BIN_DIR" != /usr/local/bin ]]; then

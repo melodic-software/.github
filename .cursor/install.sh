@@ -1,25 +1,4 @@
 #!/usr/bin/env bash
-# Install the pinned hygiene toolchain for the melodic-software/.github repository.
-#
-# Two call sites:
-# - Cloud Agent: .cursor/environment.json runs this with MELODIC_HYGIENE_SYSTEM=1
-#   so tools land in /usr/local/bin, which is already on the agent shell PATH.
-# - Developer machine: a direct run installs into ~/.local/bin and never uses
-#   sudo, even when passwordless sudo would succeed. .cursor/check.sh prepends
-#   ~/.local/bin to PATH.
-#
-# This repo ships only community-health files, so its "build" is the same
-# lint/hygiene suite CI runs (see .github/workflows/pr-require-checks.yml). That suite is a set
-# of standalone tools; this script installs each one pinned to the exact version
-# the CI composite actions use (see Pins below), so a
-# local run of .cursor/check.sh reproduces CI verdicts byte for byte.
-#
-# Idempotent and safe to re-run: every tool is skipped when the pinned version
-# is already present, and each release asset is verified against the same
-# SHA-256 the CI action pins before it is trusted (fail closed).
-#
-# Sourced by .cursor/install-prefix.test.sh. The installer runs only when this
-# file is executed, not when it is sourced.
 set -euo pipefail
 
 # --- Pins (authority: melodic-software/ci-workflows v0.76.0 action defaults) --
@@ -42,7 +21,6 @@ CHECK_JSONSCHEMA_VERSION="0.38.2"
 # The default assignment keeps ShellCheck's check-unassigned-uppercase quiet.
 MELODIC_HYGIENE_SYSTEM="${MELODIC_HYGIENE_SYSTEM:-}"
 
-# Set by resolve_install_prefix before any installer runs.
 BIN_DIR=""
 VENV_DIR=""
 # Command prefix kept as an array so an empty (no-sudo) value expands to nothing
@@ -59,9 +37,6 @@ prefix_is_writable() {
   [[ -w "$1" ]]
 }
 
-# resolve_install_prefix: set BIN_DIR, VENV_DIR, and SUDO.
-# Workstation mode never consults sudo. System mode uses /usr/local/bin and
-# passwordless sudo only when that prefix is not writable.
 resolve_install_prefix() {
   SUDO=()
   if [[ "$MELODIC_HYGIENE_SYSTEM" == 1 ]]; then
@@ -85,9 +60,6 @@ resolve_install_prefix() {
   log "workstation mode; using $BIN_DIR (no files outside $HOME). Set MELODIC_HYGIENE_SYSTEM=1 to install into /usr/local/bin."
 }
 
-# verify_sha <file> <sha256>: abort the whole install on mismatch. A hygiene
-# toolchain that silently installed an unverified binary is worse than a hard
-# failure the operator can see and re-run.
 verify_sha() {
   local file="$1" want="$2" got
   got="$(sha256sum "$file" | awk '{print $1}')"
@@ -104,8 +76,6 @@ install_bin() {
   log "installed $name -> $BIN_DIR/$name"
 }
 
-# ensure <label> <version> <installer> <version-cmd...>: run <installer> unless
-# <version-cmd> already reports the pinned version.
 ensure() {
   local label="$1" want="$2" installer="$3" cur
   shift 3
@@ -117,9 +87,6 @@ ensure() {
   fi
 }
 
-# install_release <name> <sha256> <url> <extracted-path> <tar-member-args...>:
-# download a release tarball, verify it, extract the member, and install
-# $WORK/<extracted-path> as <name>.
 install_release() {
   local name="$1" sha="$2" url="$3" extracted="$4"
   shift 4
