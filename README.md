@@ -73,7 +73,7 @@ link lane for the same reason.
   `.claude/rules/pr-body-contract.md`, synced from `standards`, states the
   pull-request body contract; `.claude/ai-slop.json` configures the AI-writing
   audit for this repository.
-  `.claude/ecosystems/*.yaml` (bash, markdown, yaml, typescript, cross-cutting)
+  `docs/conventions/ecosystems/*.yaml` (bash, markdown, yaml, typescript, cross-cutting)
   are owned here: each replaces the toolchain plugin's bundled build, test and
   lint commands for its ecosystem with the ones
   `.github/workflows/pr-require-checks.yml` runs.
