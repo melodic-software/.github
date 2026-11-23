@@ -364,10 +364,22 @@ jobs:
       - name: Compare the issue forms to the contract
         run: node .github/scripts/issue-form-drift.mjs
 
+  pr-audit-workflows:
+    name: PR Audit Workflows
+    if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
+    permissions:
+      contents: read
+      security-events: write
+    uses: melodic-software/ci-workflows/.github/workflows/pr-audit-workflows.yml@main
+    with:
+      runner: ubuntu-24.04
+      paths: .
+      fail-on-severity: low
+
   ci-status:
     name: CI Status
     if: always()
-    needs: [markdownlint, typos, editorconfig-checker, gitleaks, check-links, actionlint, jsonschema, shellcheck, check-line-endings]
+    needs: [markdownlint, typos, editorconfig-checker, gitleaks, check-links, actionlint, jsonschema, shellcheck, check-line-endings, pr-audit-workflows]
     runs-on: ubuntu-latest
     # No run waits for another: a contract-only run lists in-flight runs once
     # and reads the status once, and a full run's ci-status runs after its
