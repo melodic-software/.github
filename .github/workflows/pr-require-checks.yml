@@ -69,7 +69,7 @@ concurrency:
 
 # This repo holds only community-health files (Markdown + issue/PR templates and
 # config), so it consumes the org's reusable lint/hygiene actions from
-# ci-workflows (pinned by SHA) against the vendored standards configs at the repo
+# ci-workflows (at `@main`) against the vendored standards configs at the repo
 # root, then aggregates them in job `ci-status` into the single `CI Status`
 # check the org `ci-gate` ruleset requires. Each hygiene lane checks out this
 # repo, then runs one remote action; `check-pr-sections` and
@@ -82,7 +82,7 @@ concurrency:
 # rather than remote actions, and both are deliberately left out of `needs:`:
 # they report drift but do not gate. `check-pr-sections` guards the PR-body
 # contract, itself advisory: it fetches the `check-contract` `run.sh` at the
-# commit `report-ci-status` is pinned to and compares this repository's two PR-body mirrors
+# ref `report-ci-status` uses and compares this repository's two PR-body mirrors
 # to the sections that gate reports. `check-issue-forms` compares the synced
 # issue forms to the synced issue-body contract.
 jobs:
@@ -97,7 +97,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint Markdown
-        uses: melodic-software/ci-workflows/.github/actions/markdownlint@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/markdownlint@main
         with:
           config: .markdownlint-cli2.jsonc
 
@@ -112,7 +112,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Spell-check
-        uses: melodic-software/ci-workflows/.github/actions/typos@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/typos@main
         with:
           config: _typos.toml
       - name: Spell-check hidden tracked paths
@@ -152,7 +152,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Check editorconfig conformance
-        uses: melodic-software/ci-workflows/.github/actions/editorconfig-checker@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/editorconfig-checker@main
         with:
           config: .editorconfig-checker.json
 
@@ -167,7 +167,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Scan for secrets
-        uses: melodic-software/ci-workflows/.github/actions/gitleaks@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/gitleaks@main
         with:
           config: .gitleaks.toml
 
@@ -182,7 +182,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Check links and anchors (offline)
-        uses: melodic-software/ci-workflows/.github/actions/lychee-offline@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/lychee-offline@main
         with:
           config: lychee.toml
           # The action's default `**/*.md` skips hidden directories, so Markdown
@@ -206,7 +206,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint workflows
-        uses: melodic-software/ci-workflows/.github/actions/actionlint@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/actionlint@main
 
   jsonschema:
     name: Jsonschema
@@ -219,12 +219,12 @@ jobs:
         with:
           persist-credentials: false
       - name: Validate dependabot.yml
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@main
         with:
           builtin-schema: vendor.dependabot
           files: .github/dependabot.yml
       - name: Validate workflows
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@main
         with:
           builtin-schema: vendor.github-workflows
           files: .github/workflows/*.yml
@@ -264,12 +264,12 @@ jobs:
           fi
           echo "files=${forms[*]}" >> "$GITHUB_OUTPUT"
       - name: Validate issue forms
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@main
         with:
           builtin-schema: vendor.github-issue-forms
           files: ${{ steps.issue-forms.outputs.files }}
       - name: Validate issue-template chooser config
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@main
         with:
           builtin-schema: vendor.github-issue-config
           files: .github/ISSUE_TEMPLATE/config.yml
@@ -279,7 +279,7 @@ jobs:
       # breaking schemastore change reddens the lane without this repo changing;
       # swap to a builtin if one ever ships.
       - name: Validate Claude Code settings
-        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@main
         with:
           schemafile: https://json.schemastore.org/claude-code-settings.json
           files: .claude/settings.json
@@ -302,7 +302,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Lint shell scripts
-        uses: melodic-software/ci-workflows/.github/actions/shellcheck@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/shellcheck@main
         with:
           rcfile: .shellcheckrc
 
@@ -317,13 +317,13 @@ jobs:
         with:
           persist-credentials: false
       - name: Check index-level EOL drift
-        uses: melodic-software/ci-workflows/.github/actions/check-line-endings@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/check-line-endings@main
 
   # Compares `.github/PULL_REQUEST_TEMPLATE.md` headings and
   # `docs/conventions/source-control.yaml`'s `pr_body_required_sections` to the
   # `section_report` calls inside the `check-contract` composite's `run.sh` at
-  # the SHA `report-ci-status` is pinned to, which runs that `check-contract`.
-  # The comparison target is that pin's bytes, not a
+  # the ref `report-ci-status` uses, which runs that `check-contract`.
+  # The comparison target is that ref's bytes, not a
   # third hardcoded copy of the four names. Fetches over the network; a fetch
   # failure is red, never a skip, same posture as standards'
   # `pr-convention-lockstep` (ADR-0008). Advisory: not in `ci-status` `needs:`.
@@ -339,7 +339,7 @@ jobs:
           persist-credentials: false
       - name: Test the drift checker
         run: node --test .github/scripts/pr-section-drift.test.mjs
-      - name: Compare local mirrors to the pinned composite
+      - name: Compare local mirrors to the composite
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node .github/scripts/pr-section-drift.mjs
@@ -411,7 +411,7 @@ jobs:
       # (`rerun-contract-only-siblings`, default `true`).
       - name: Aggregate lane results
         id: report
-        uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/report-ci-status@c77590135e3a9b059f01f5fa744088bd6af7fcfe # v0.82.1
+        uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/report-ci-status@main
         with:
           step-name: Aggregate lane results
           # This workflow is not draft-gated (no `ready_for_review` trigger), so a draft passes.

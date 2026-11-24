@@ -10,7 +10,7 @@ tooling we develop with.
 - [standards](https://github.com/melodic-software/standards): shared
   repository-quality configs and engineering/review conventions, distributed to
   consuming repos and read by people and agents alike.
-- [ci-workflows](https://github.com/melodic-software/ci-workflows): SHA-pinned,
+- [ci-workflows](https://github.com/melodic-software/ci-workflows):
   configurable composite actions (one per code-quality tool) and reusable GitHub
   Actions workflows, aggregated by consumers into a single status gate.
 - [ci-runner](https://github.com/melodic-software/ci-runner): an official
@@ -26,8 +26,8 @@ tooling we develop with.
 
 - The `standards` repo states the quality bar as configs and conventions that
   people and agents both read.
-- Repositories enforce that bar by calling the same SHA-pinned `ci-workflows`
-  actions.
+- Repositories enforce that bar by calling the same `ci-workflows`
+  actions at `@main`.
 - GitHub governance is managed as infrastructure-as-code so settings are
   reviewable and reproducible.
 - AI assists implementation and review; automated checks and maintainer judgment

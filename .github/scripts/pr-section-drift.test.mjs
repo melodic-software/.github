@@ -64,8 +64,23 @@ describe("parseCallerPin", () => {
     assert.equal(parseCallerPin(text), SHA);
   });
 
-  it("fails when no pin is present", () => {
-    assert.throws(() => parseCallerPin("uses: actions/checkout@v4\n"), /no 40-hex/);
+  it("returns main when the composite tracks @main", () => {
+    const text = "      - uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/report-ci-status@main\n";
+    assert.equal(parseCallerPin(text), "main");
+  });
+
+  it("rejects a branch ref other than main", () => {
+    const text = "      - uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/report-ci-status@mainline\n";
+    assert.throws(() => parseCallerPin(text), /\(40-hex or main\)/);
+  });
+
+  it("fails when main and a SHA pin are both present", () => {
+    const text = `${callerYaml("main")}\n${callerYaml(SHA)}`;
+    assert.throws(() => parseCallerPin(text), /multiple distinct/);
+  });
+
+  it("fails when no ref is present", () => {
+    assert.throws(() => parseCallerPin("uses: actions/checkout@v4\n"), /\(40-hex or main\)/);
   });
 
   it("ignores the sibling aggregate-results composite pinned in the same job", () => {
