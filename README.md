@@ -10,8 +10,8 @@ They are the file-based governance defaults GitHub's API cannot express.
 Everything the Pulumi GitHub provider *can* express (repository settings, custom
 properties, rulesets, and labels) is infrastructure-as-code in the private
 `github-iac` repository. That name is deliberately not a link: it 404s for
-readers outside the organization, and `lychee.toml` excludes it from the online
-link lane for the same reason.
+readers outside the organization, and the `standards` `lychee.toml` excludes it
+from the online link lane for the same reason.
 
 ## What's here
 
@@ -48,7 +48,7 @@ link lane for the same reason.
     form leaves an action silently un-updated.
 - **Quality configs**: the root dotfiles the CI lanes run against.
   `.editorconfig`, `.gitattributes`, `.markdownlint-cli2.jsonc`, `_typos.toml`,
-  `.gitleaks.toml`, `lychee.toml`, and `.editorconfig-checker.json` are synced
+  `.gitleaks.toml`, and `.editorconfig-checker.json` are synced
   from [`standards`](https://github.com/melodic-software/standards);
   `.gitignore` is owned by this repository. Change a lint or hygiene rule in
   `standards` and let the sync land it here. An edit made directly to one of

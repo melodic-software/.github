@@ -110,8 +110,10 @@ lane_markdown() {
   git ls-files -z -- '*.md' | xargs -0 markdownlint-cli2 --config .markdownlint-cli2.jsonc
 }
 
+# lychee-offline with the standards lychee.toml CI falls back to: STANDARDS_DIR
+# names a standards checkout, else the ghq root (ghq.root, default ~/ghq).
 lane_links() {
-  git ls-files -z -- '*.md' | xargs -0 lychee --offline --no-progress --config lychee.toml
+  git ls-files -z -- '*.md' | xargs -0 lychee --offline --no-progress --config "${STANDARDS_DIR:-$(git config --path --get ghq.root || printf '%s' "$HOME/ghq")/github.com/melodic-software/standards}/lychee.toml"
 }
 
 lane_pr_section_drift() {
