@@ -21,7 +21,7 @@ Repository settings, rulesets, labels, and custom properties are Pulumi IaC in t
 private `github-iac` repository (unlinked here and in `README.md` because `github-iac`
 404s for readers outside the org); what a CI lane actually
 runs lives in [`ci-workflows`](https://github.com/melodic-software/ci-workflows), which
-`.github/workflows/` only pins by SHA and calls. `README.md` covers why the split falls
+`.github/workflows/` only calls at `@main`. `README.md` covers why the split falls
 where it does. Go there when a change fits none of the files already in this repo.
 
 ## Adding or renaming a CI lane

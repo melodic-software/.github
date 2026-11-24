@@ -9,8 +9,9 @@
 // fails the PR that introduces either drift, comparing both mirrors to the
 // exact composite bytes this repository's gate already executes.
 //
-// Comparison target is derived: the 40-hex `check-contract` or
-// `report-ci-status` pin in `.github/workflows/pr-require-checks.yml` (the
+// Comparison target is derived: the `check-contract` or
+// `report-ci-status` ref (40-hex SHA or `main`, the same refs standards'
+// `lockstep-drift.mjs` accepts) in `.github/workflows/pr-require-checks.yml` (the
 // latter runs `check-contract` through `$/` at its own commit), then that
 // ref's `check-contract/run.sh`. The four section names
 // are not hardcoded here. Fetch failures are `fetch-error` (never a skip),
@@ -36,12 +37,12 @@ const UPSTREAM_GATE = ".github/actions/pr-require-checks/check-contract/run.sh";
 const SOURCE_CONTROL_HEADING = "pr_body_required_sections";
 const FETCH_ATTEMPTS = 3;
 const CONTRACT_FOOTER =
-  "The pinned composite is the enforcement authority; the fleet convention record is " +
+  "The composite at that ref is the enforcement authority; the fleet convention record is " +
   "melodic-software/standards components/pr-convention-policy/policy.json (ADR-0008). " +
-  "Change the contract there and bump the pin, then update both local files in the same PR.";
+  "Change the contract there, then update both local files in the same PR.";
 
 const CALLER_PIN_RE =
-  /uses:\s*melodic-software\/ci-workflows\/\.github\/actions\/pr-require-checks\/(?:check-contract|report-ci-status)@([0-9a-f]{40})/g;
+  /uses:\s*melodic-software\/ci-workflows\/\.github\/actions\/pr-require-checks\/(?:check-contract|report-ci-status)@([0-9a-f]{40}|main)(?=[\s"']|$)/gm;
 const SECTION_REPORT_RE = /section_report\("([^"]+)"\)/g;
 
 export class DriftError extends Error {
@@ -60,12 +61,12 @@ export function parseCallerPin(callerText, location = CALLER_PATH) {
   const unique = [...new Set([...callerText.matchAll(CALLER_PIN_RE)].map((match) => match[1]))];
   if (unique.length === 0) {
     throw new DriftError(
-      `${location}: no 40-hex check-contract@ or report-ci-status@ pin found on a uses: line`,
+      `${location}: no check-contract@ or report-ci-status@ ref (40-hex or main) found on a uses: line`,
     );
   }
   if (unique.length > 1) {
     throw new DriftError(
-      `${location}: multiple distinct check-contract or report-ci-status pins: ${unique.join(", ")}`,
+      `${location}: multiple distinct check-contract or report-ci-status refs: ${unique.join(", ")}`,
     );
   }
   return unique[0];

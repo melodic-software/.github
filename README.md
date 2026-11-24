@@ -28,7 +28,7 @@ link lane for the same reason.
 - **Profile**: `profile/README.md` renders as the organization's public profile
   page. Other repositories do not inherit it.
 - **This repository's own CI**: `.github/workflows/` and `.github/scripts/`.
-  `pr-require-checks.yml` runs the SHA-pinned lint and hygiene lanes from
+  `pr-require-checks.yml` runs the lint and hygiene lanes, at `@main`, from
   [`ci-workflows`](https://github.com/melodic-software/ci-workflows) and
   aggregates them into the single `CI Status` check the org ruleset requires.
   The pull-request contract itself (Conventional Commits title, `do-not-merge`
@@ -37,13 +37,12 @@ link lane for the same reason.
   The `check-pr-sections` lane is a local script (`.github/scripts/pr-section-drift.mjs`
   and its tests) that compares `.github/PULL_REQUEST_TEMPLATE.md` and
   `docs/conventions/source-control.yaml` against the `check-contract` composite at the
-  SHA `.github/workflows/pr-require-checks.yml` pins.
+  ref `.github/workflows/pr-require-checks.yml` uses.
   The `check-issue-forms` lane (`.github/scripts/issue-form-drift.mjs` and its
   tests) compares the issue forms to the synced contract.
-  `.github/dependabot.yml` keeps the action pins current, the `ci-workflows`
-  composite-action pins included, all in one `first-party-actions` group; it
-  ignores only the `check-managed-files` pin, which the standards sync owns.
-  - Give every action pin a `# vX.Y.Z` tag comment. Standards'
+  First-party `melodic-software/*` refs track `@main`; `.github/dependabot.yml`
+  keeps the hash-pinned vendor and third-party actions current.
+  - Give every hash pin a `# vX.Y.Z` tag comment. Standards'
     pin-comment convention also permits a short-sha-and-date fallback, but
     Dependabot reads the current version out of that comment, so the fallback
     form leaves an action silently un-updated.
@@ -93,7 +92,7 @@ link lane for the same reason.
   highest-precedence environment source. Its `install` runs `.cursor/install.sh`
   with `MELODIC_HYGIENE_SYSTEM=1`, which installs the same lint/hygiene tools
   `.github/workflows/pr-require-checks.yml` runs into `/usr/local/bin`,
-  each pinned to the version the SHA-pinned `ci-workflows` action uses, so
+  each pinned to the version the `ci-workflows` action at `main` uses, so
   `.cursor/check.sh` reproduces the gating CI lanes and
   their `ci-status` aggregate locally, plus the advisory `check-pr-sections`
   and `check-issue-forms`.
