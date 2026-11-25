@@ -4,11 +4,10 @@ updates:
   # `melodic-software/*` refs track `@main`, vendor actions (`actions/*`,
   # `github/*`, `anthropics/*`) use major tags, and other third-party actions
   # stay hash-pinned and move by Dependabot. Merge lanes
-  # follow the standards dependabot-policy component: pr-automerge-dependabot.yml
-  # arms auto-merge on minor and patch bumps in the `vendor-actions` group and,
-  # once the synced policy copy is at
-  # .github/standards/dependabot-policy/policy.json, on minor and patch bumps of
-  # `melodic-software/*`; every other bump takes the review tier. This repo
+  # follow the standards dependabot-policy component, which the reusable reads
+  # from melodic-software/standards `main`: pr-automerge-dependabot-hosted.yml
+  # arms auto-merge on minor and patch bumps in the `vendor-actions` group and
+  # of `melodic-software/*`; every other bump takes the review tier. This repo
   # carries no composite actions of its own, so the single "/" target (which
   # scans .github/workflows) is sufficient.
   - package-ecosystem: github-actions
