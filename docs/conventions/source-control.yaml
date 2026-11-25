@@ -14,3 +14,4 @@ pr_body_required_sections:
   - Verification
   - Related
 babysit_loop_merge: c3-autonomous
+standards_repository: melodic-software/standards
