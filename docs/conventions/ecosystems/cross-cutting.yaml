@@ -5,7 +5,7 @@
 # (.github/workflows/pr-require-checks.yml:104-175), each with the standards
 # config the ci-workflows composites read when the repository has none. typos
 # checks "." and then the hidden tracked files by name, as the typos lane's
-# hidden input does (:117-120). lychee gets CI's three globs (:172-175). Every check runs and any failure
+# hidden input does (:117-121). lychee gets CI's three globs (:172-175). Every check runs and any failure
 # fails the command, as CI's ci-status gate fails on any lane. Commands run
 # from the repository root.
 enabled: true
