@@ -2,10 +2,10 @@
 # https://github.com/melodic-software/claude-code-plugins/tree/main/docs/contracts/ecosystem-commands
 # Lint-only: /toolchain:lint runs it, /toolchain:check does not. CI's typos,
 # editorconfig-checker, gitleaks and check-links lanes
-# (.github/workflows/pr-require-checks.yml:104-196), each with its root config
-# as the ci-workflows composites at v0.74.0 pass it. typos checks "." and then the
-# hidden tracked files by name, as the typos lane's second step does (:118-141).
-# lychee gets CI's three globs (:193-196). Every check runs and any failure
+# (.github/workflows/pr-require-checks.yml:104-175), each with the standards
+# config the ci-workflows composites read when the repository has none. typos
+# checks "." and then the hidden tracked files by name, as the typos lane's
+# hidden input does (:117-120). lychee gets CI's three globs (:172-175). Every check runs and any failure
 # fails the command, as CI's ci-status gate fails on any lane. Commands run
 # from the repository root.
 enabled: true
@@ -15,18 +15,19 @@ build-cmd: null
 test-cmd: null
 check-cmd: |
   rc=0
-  typos --config _typos.toml . || rc=1
-  git ls-files | grep '^\.' | while IFS= read -r p; do if [ -f "$p" ]; then printf '%s\n' "$p"; fi; done | xargs typos --config _typos.toml || rc=1
-  gitleaks dir . --config .gitleaks.toml --no-banner --redact || rc=1
+  # The standards configs CI reads: STANDARDS_DIR names a standards checkout, else the ghq root (ghq.root, default ~/ghq)
+  std="${STANDARDS_DIR:-$(git config --path --get ghq.root || printf '%s' "$HOME/ghq")/github.com/melodic-software/standards}"
+  typos --config "$std/_typos.toml" . || rc=1
+  git ls-files | grep '^\.' | while IFS= read -r p; do if [ -f "$p" ]; then printf '%s\n' "$p"; fi; done | xargs typos --config "$std/_typos.toml" || rc=1
+  gitleaks dir . --config "$std/.gitleaks.toml" --no-banner --redact || rc=1
   # editorconfig-checker: binary name varies by install method (ec / editorconfig-checker / ec-windows-amd64)
-  if [ -n "$EC_BIN" ]; then "$EC_BIN" -config .editorconfig-checker.json || rc=1; else echo 'editorconfig-checker: no binary resolved (EC_BIN is empty)' >&2; rc=1; fi
-  # lychee-offline: on-disk link and anchor integrity, no network, with the standards
-  # lychee.toml CI falls back to: STANDARDS_DIR names a standards checkout, else the ghq root (ghq.root, default ~/ghq)
-  lychee --offline --no-progress --config "${STANDARDS_DIR:-$(git config --path --get ghq.root || printf '%s' "$HOME/ghq")/github.com/melodic-software/standards}/lychee.toml" '**/*.md' '.claude/**/*.md' '.github/**/*.md' || rc=1
+  if [ -n "$EC_BIN" ]; then "$EC_BIN" -config "$std/.editorconfig-checker.json" || rc=1; else echo 'editorconfig-checker: no binary resolved (EC_BIN is empty)' >&2; rc=1; fi
+  # lychee-offline: on-disk link and anchor integrity, no network
+  lychee --offline --no-progress --config "$std/lychee.toml" '**/*.md' '.claude/**/*.md' '.github/**/*.md' || rc=1
   test "$rc" -eq 0
 fix-cmd: null
 code-fix-cmd: null
-opt-in: "each tool's own config at the repository root (_typos.toml, .gitleaks.toml, .editorconfig-checker.json); lychee reads standards' lychee.toml"
+opt-in: "a melodic-software/standards checkout (STANDARDS_DIR, else under the ghq root) for the typos, gitleaks, editorconfig-checker and lychee configs"
 install-hint: |
   typos: winget install Crate-CI.Typos | brew install typos-cli
   gitleaks: winget install Gitleaks.Gitleaks | brew install gitleaks
@@ -38,4 +39,4 @@ tool-pin:
   editorconfig-checker: "4.0.2"
   lychee: "0.24.2"
 gates: []
-notes: "Lint-only: owned by /toolchain:lint. Pins are the composite defaults at v0.74.0 (actions/typos/action.yml:46, actions/gitleaks/action.yml:52 with scan.sh:136 for the dir-mode flags, actions/editorconfig-checker/action.yml:35, actions/lychee-offline/action.yml:22). .cursor/install.sh pins older versions of typos, editorconfig-checker, check-jsonschema and markdownlint-cli2, and rhysd/actionlint where CI installs the kjanat/actionlint fork; these pins follow CI. CI's check-line-endings lane (pr-require-checks.yml:309-320) re-stages the whole index with git add --renormalize, so it has no read-only local command here; bash .cursor/check.sh runs a safe copy of it."
+notes: "Lint-only: owned by /toolchain:lint. Pins are the composite defaults at v0.74.0 (actions/typos/action.yml:46, actions/gitleaks/action.yml:52 with scan.sh:136 for the dir-mode flags, actions/editorconfig-checker/action.yml:35, actions/lychee-offline/action.yml:22). .cursor/install.sh pins older versions of typos, editorconfig-checker, check-jsonschema and markdownlint-cli2, and rhysd/actionlint where CI installs the kjanat/actionlint fork; these pins follow CI. CI's check-line-endings lane (pr-require-checks.yml:288-299) re-stages the whole index with git add --renormalize, so it has no read-only local command here; bash .cursor/check.sh runs a safe copy of it."

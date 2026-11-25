@@ -1,7 +1,7 @@
 # JavaScript in this repository: the two drift checkers under .github/scripts/,
 # plain Node ES modules with node:test suites. Contract and schema:
 # https://github.com/melodic-software/claude-code-plugins/tree/main/docs/contracts/ecosystem-commands
-# The test calls CI makes (.github/workflows/pr-require-checks.yml:340 and :362,
+# The test calls CI makes (.github/workflows/pr-require-checks.yml:319 and :341,
 # "Test the drift checker"). No package.json, tsconfig or linter config is
 # tracked and CI lints no JavaScript, so there is no build or check command.
 # Commands run from the repository root.

@@ -115,31 +115,10 @@ jobs:
         uses: melodic-software/ci-workflows/.github/actions/typos@main
         with:
           config: _typos.toml
-      - name: Spell-check hidden tracked paths
-        # typos skips hidden files and directories unless they are named
-        # (files.ignore-hidden defaults to true). _typos.toml is synced from
-        # standards, so this repository cannot set ignore-hidden = false.
-        # The composite above checks "."; every other tracked path is hidden,
-        # and a regression there has to fail this lane.
-        shell: bash
-        run: |
-          set -euo pipefail
-          hidden=()
-          while IFS= read -r -d '' path; do
-            case "$path" in
-              .*)
-                # Same filter as .cursor/check.sh: ignore an index entry that
-                # is not a file in this checkout.
-                if [[ -f "$path" ]]; then
-                  hidden+=("$path")
-                fi
-                ;;
-              *) ;;
-            esac
-          done < <(git ls-files -z)
-          if ((${#hidden[@]} > 0)); then
-            typos --config _typos.toml "${hidden[@]}"
-          fi
+          # typos skips hidden files and directories by default, and almost
+          # every tracked path here is hidden; a regression there has to fail
+          # this lane.
+          hidden: 'true'
 
   editorconfig-checker:
     name: EditorConfig Checker

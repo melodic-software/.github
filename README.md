@@ -46,17 +46,14 @@ from the online link lane for the same reason.
     pin-comment convention also permits a short-sha-and-date fallback, but
     Dependabot reads the current version out of that comment, so the fallback
     form leaves an action silently un-updated.
-- **Quality configs**: the root dotfiles the CI lanes run against.
-  `.editorconfig`, `.gitattributes`, `.markdownlint-cli2.jsonc`, `_typos.toml`,
-  `.gitleaks.toml`, and `.editorconfig-checker.json` are synced
+- **Quality configs**: `.editorconfig` and `.gitattributes` are synced
   from [`standards`](https://github.com/melodic-software/standards);
   `.gitignore` is owned by this repository. Change a lint or hygiene rule in
-  `standards` and let the sync land it here. An edit made directly to one of
-  these files survives only until the next sync commit overwrites it.
-  `.shellcheckrc` is the exception: a byte-identical copy of the canonical file,
-  but this repository is not on the `shellcheck` component's managed list, so
-  nothing syncs or overwrites it. It drifts silently until the component is
-  adopted upstream.
+  `standards`. An edit made directly to a synced file survives only until the
+  next sync commit overwrites it. The markdownlint, typos, gitleaks and
+  editorconfig-checker lanes read `standards`' own configs at run time, so this
+  repository holds no copy of them. `.shellcheckrc` is a byte-identical copy of
+  the canonical file that nothing syncs or overwrites, so it drifts silently.
 - **Agent config**: `.claude/settings.json` declares the `melodic-software`
   plugin marketplace and the SessionStart hook that runs `.claude/cloud-bootstrap.sh`, itself synced from
   [`standards`](https://github.com/melodic-software/standards)

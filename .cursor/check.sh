@@ -10,6 +10,10 @@ case ":$PATH:" in
   *) PATH="$HOME/.local/bin:$PATH" ;;
 esac
 
+# Standards' lint configs, the ones CI's composites read: STANDARDS_DIR names a
+# standards checkout, else the ghq root (ghq.root, default ~/ghq).
+std="${STANDARDS_DIR:-$(git config --path --get ghq.root || printf '%s' "$HOME/ghq")/github.com/melodic-software/standards}"
+
 PASSED=()
 FAILED=()
 
@@ -28,8 +32,8 @@ run_lane() {
   fi
 }
 
-# typos skips hidden paths unless they are named. The synced _typos.toml
-# cannot set ignore-hidden = false; CI's typos job has the same follow-up.
+# typos skips hidden paths unless they are named. Standards' _typos.toml does
+# not set ignore-hidden = false; CI's typos job has the same follow-up.
 # Skip index entries that are gone from the worktree: an unstaged deletion is
 # still listed, and typos exits 64 when an explicit path is missing.
 lane_typos() {
@@ -37,7 +41,7 @@ lane_typos() {
   while IFS= read -r -d '' path; do
     [[ "$path" == .* && -f "$path" ]] && hidden+=("$path")
   done < <(git ls-files -z)
-  typos --config _typos.toml . "${hidden[@]}"
+  typos --config "$std/_typos.toml" . "${hidden[@]}"
 }
 
 lane_jsonschema() {
@@ -107,13 +111,12 @@ lane_eol() {
 # Tracked files only, as on CI's clean checkout; a "**/*.md" glob also lints
 # gitignored scratch files.
 lane_markdown() {
-  git ls-files -z -- '*.md' | xargs -0 markdownlint-cli2 --config .markdownlint-cli2.jsonc
+  git ls-files -z -- '*.md' | xargs -0 markdownlint-cli2 --config "$std/.markdownlint-cli2.jsonc"
 }
 
-# lychee-offline with the standards lychee.toml CI falls back to: STANDARDS_DIR
-# names a standards checkout, else the ghq root (ghq.root, default ~/ghq).
+# lychee-offline with the standards lychee.toml CI falls back to.
 lane_links() {
-  git ls-files -z -- '*.md' | xargs -0 lychee --offline --no-progress --config "${STANDARDS_DIR:-$(git config --path --get ghq.root || printf '%s' "$HOME/ghq")/github.com/melodic-software/standards}/lychee.toml"
+  git ls-files -z -- '*.md' | xargs -0 lychee --offline --no-progress --config "$std/lychee.toml"
 }
 
 lane_pr_section_drift() {
@@ -132,8 +135,8 @@ lane_issue_form_drift() {
 
 run_lane markdownlint lane_markdown
 run_lane typos lane_typos
-run_lane editorconfig-checker ec -config .editorconfig-checker.json
-run_lane gitleaks gitleaks dir --config .gitleaks.toml --no-banner .
+run_lane editorconfig-checker ec -config "$std/.editorconfig-checker.json"
+run_lane gitleaks gitleaks dir --config "$std/.gitleaks.toml" --no-banner .
 run_lane check-links lane_links
 run_lane actionlint actionlint -color
 run_lane jsonschema lane_jsonschema
