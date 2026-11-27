@@ -17,10 +17,8 @@ tooling we develop with.
   Actions runner image plus a native Windows scale-set controller. Each job gets
   a fresh, one-job Docker worker, with GitHub-hosted runners as fallback.
 - Reusable, repo-agnostic agent tooling, covering skills, agents, hooks, and MCP
-  servers, published as one marketplace per assistant:
-  [claude-code-plugins](https://github.com/melodic-software/claude-code-plugins),
-  [codex-plugins](https://github.com/melodic-software/codex-plugins), and
-  [cursor-plugins](https://github.com/melodic-software/cursor-plugins).
+  servers, published in
+  [claude-code-plugins](https://github.com/melodic-software/claude-code-plugins).
 
 ## How we work
 
