@@ -1,0 +1,28 @@
+# SYNC-MANAGED FILE: DO NOT EDIT IN THE CONSUMING REPOSITORY.
+# Source of truth: melodic-software/standards,
+# components/comment-policy/comment-policy.org.yaml (the `comment-policy`
+# component in distribution/sync-manifest.yml). Downstream edits are
+# overwritten by the next sync PR; put a repository's own entries in its
+# docs/conventions/comment-policy.yaml instead.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/melodic-software/claude-code-plugins/main/plugins/code-tidying/schemas/comment-policy.schema.json
+comment_posture: necessary
+comment_lint: block
+comment_lint_allow:
+  # reader: check-affected.sh and pr-unblock/test-scope.mjs select suites by these lines:
+  # https://github.com/melodic-software/claude-code-plugins/blob/main/.github/scripts/pr-unblock/test-scope.mjs
+  - '^(#|//)[[:space:]]*test-scope:'
+  # reader: the fixture git-isolation scan reads the declared scope:
+  # https://github.com/melodic-software/claude-code-plugins/blob/main/scripts/lib/fixture-git-isolation-scan.awk
+  - '^(#|//)[[:space:]]*fixture-isolation-scope:[[:space:]]*[^[:space:]]'
+  # generator: sync-hold-floor.py writes and finds these regions:
+  # https://github.com/melodic-software/claude-code-plugins/blob/main/scripts/sync-hold-floor.py
+  - '^(#|//)[[:space:]]*(BEGIN|END) hold-floor[[:space:]]'
+  # reader: the page-chrome tests compare the rules between these markers:
+  # https://github.com/melodic-software/claude-code-plugins/blob/main/plugins/planning/shared/tests/test_page_chrome.py
+  - '^/\*[[:space:]]*rv-chrome:(begin|end)[[:space:]]*\*/$'
+  # reader: the /testing:audit cant-fail scan reads the exemption:
+  # https://github.com/melodic-software/claude-code-plugins/blob/main/plugins/testing/skills/audit/scripts/cant-fail-scan.awk
+  - '^(#|//)[[:space:]]*cant-fail-ok:[[:space:]]*[^[:space:]]'
+  # generator: gen-hook-event-registry.sh rewrites the region between these markers:
+  # https://github.com/melodic-software/claude-code-plugins/blob/main/scripts/gen-hook-event-registry.sh
+  - '^(#|//)[[:space:]]*(BEGIN|END) GENERATED:'
