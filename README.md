@@ -73,9 +73,9 @@ from the online link lane for the same reason.
   are owned here: each replaces the toolchain plugin's bundled build, test and
   lint commands for its ecosystem with the ones
   `.github/workflows/pr-require-checks.yml` runs.
-  `docs/conventions/comment-policy.yaml` sets the `necessary` comment posture
-  and makes the `claude-code-plugins` comment lint block a commit; its excludes
-  carry their reasons inline.
+  `docs/conventions/comment-policy.yaml` lists the files the
+  `claude-code-plugins` comment lint skips here, each with its reason inline;
+  the posture and lint level come from the synced org file.
   `CLAUDE.md` is the agent-loaded entry point: it routes to this file rather
   than restating it, and carries only what no other file states.
   `AGENTS.md` holds the `## Code Review Rules` section the Codex pull-request

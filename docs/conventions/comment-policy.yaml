@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/melodic-software/claude-code-plugins/main/plugins/code-tidying/schemas/comment-policy.schema.json
-comment_posture: necessary
-comment_lint: block
 comment_lint_exclude:
   # generator: standards issue-forms.mjs writes these four forms from the issue-body contract: https://github.com/melodic-software/standards/blob/main/components/issue-body-contract/README.md
   - .github/ISSUE_TEMPLATE/agent-ready.yml
