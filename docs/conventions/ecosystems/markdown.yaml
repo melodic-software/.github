@@ -1,11 +1,3 @@
-# Markdown in this repository. Contract and schema:
-# https://github.com/melodic-software/claude-code-plugins/tree/main/docs/contracts/ecosystem-commands
-# markdownlint-cli2 with the standards config, as CI's markdownlint lane runs it
-# (.github/workflows/pr-require-checks.yml:89-102 calls the ci-workflows
-# markdownlint composite, which runs markdownlint-cli2 with standards'
-# .markdownlint-cli2.jsonc as --config). STANDARDS_DIR names a standards
-# checkout, else the ghq root (ghq.root, default ~/ghq). Run from PATH; no
-# command here installs anything. Commands run from the repository root.
 enabled: true
 globs: ["*.md"]
 project-discovery: []

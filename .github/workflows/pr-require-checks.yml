@@ -4,60 +4,15 @@ on:
   push:
     branches: [main]
   pull_request:
-    # `edited`, `labeled` and `unlabeled` can change the title, do-not-merge
-    # label and issue-linkage answers without a new commit, so the required
-    # check has to re-evaluate. Whether such an event is CONTRACT-ONLY (lanes
-    # gated off, ci-status carrying the recorded `ci-lanes` verdict forward) is
-    # decided by one predicate, repeated verbatim in `concurrency.group` and in
-    # every job's `if:` except `ci-status`:
-    #
-    #   github.event.pull_request.head.repo.full_name == github.repository &&
-    #   (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) ||
-    #    (github.event.action == 'edited' && !github.event.changes.base))
-    #
-    # An `edited` event carrying `changes.base` is a BASE-BRANCH change: the
-    # merge commit the lanes test changes with it, so that runs in full. A fork
-    # pull request is never contract-only (its token is read-only on
-    # `pull_request` whatever `permissions:` requests, so it cannot record lane
-    # state) and runs the full workflow on every event.
+    # A fork pull request is never contract-only: its token is read-only on `pull_request`, so it cannot record lane state:
+    # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflows-in-forked-repositories
     types: [opened, synchronize, reopened, edited, labeled, unlabeled]
 
 permissions:
   contents: read
 
-# The concurrency GROUP branches on the contract-only predicate (ci-perf Phase
-# 6b); `cancel-in-progress` is a plain `true` because it takes one value per
-# workflow and cannot branch.
-#
-# Contract-only branch: `ci-contract-<pr>-<run_id>`, unique per run. No
-# contract-only run can be cancelled, evict anything, or be evicted. That is
-# deliberate. Eviction of a *pending* run is unconditional in GitHub's queuing
-# ("any existing pending job or workflow in the same concurrency group will be
-# canceled") and is NOT governed by `cancel-in-progress`, so the old shared
-# group let one contract-only event evict another and leave a check suite on the
-# current head with no `CI Status` check run at all, a required check that stops
-# reporting until someone re-runs that specific run (dotfiles#647, 2h14m
-# silent). Uniqueness costs a burst of one-job runs when labels flip repeatedly,
-# seconds each, writing nothing.
-#
-# Full branch: `<workflow>-<pr number || run_id>` with cancel-in-progress true,
-# so a `synchronize` still cancels the run it supersedes. Keying PRs on the
-# number (not head_ref) keeps fork PRs that share a branch name from cancelling
-# each other's required runs. The push fallback is `github.run_id`: every push
-# lands in its own group, so a push run is alone there and has nothing to cancel.
-#
-# The cost of the branch: a contract-only run does not queue behind the full
-# run whose `ci-lanes` status it carries forward, so the two race. The
-# `report-ci-status` composite closes that: a contract-only run fails at once
-# while a full run is in flight, whose newer ci-status then decides the gate;
-# see the job below.
-#
-# One hazard the branch does not remove, because no concurrency setting both
-# removes it and keeps supersession: the full branch is keyed on the pull
-# request number, which does not vary with the head SHA, so re-running a STALE
-# run on a superseded head SHA lands in the CURRENT head's group and cancels the
-# run that is actually reporting. Re-run the run on the current head instead.
-# Contract-only runs are immune, being unique per `github.run_id`.
+# The contract-only group is unique per run because GitHub cancels a pending run in the same group whatever `cancel-in-progress` says:
+# https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
 concurrency:
   group: >-
     ${{ (github.event.pull_request.head.repo.full_name == github.repository &&
@@ -115,9 +70,8 @@ jobs:
         uses: melodic-software/ci-workflows/.github/actions/typos@main
         with:
           config: _typos.toml
-          # typos skips hidden files and directories by default, and almost
-          # every tracked path here is hidden; a regression there has to fail
-          # this lane.
+          # typos skips hidden files and directories by default, and almost every tracked path here is hidden:
+          # https://github.com/crate-ci/typos/blob/master/docs/reference.md
           hidden: 'true'
 
   editorconfig-checker:
@@ -164,11 +118,8 @@ jobs:
         uses: melodic-software/ci-workflows/.github/actions/lychee-offline@main
         with:
           config: lychee.toml
-          # The action's default `**/*.md` skips hidden directories, so Markdown
-          # under `.claude/` and `.github/` went unchecked (verified against the
-          # pinned lychee 0.24.2). Dot-prefixed globs are listed explicitly
-          # rather than adding `--hidden` because this action exposes no
-          # arbitrary-args input; the default glob is repeated, not replaced.
+          # lychee skips hidden directories unless `--hidden` is set, so the default `**/*.md` misses `.claude/` and `.github/`:
+          # https://lychee.cli.rs/guides/cli/
           globs: >-
             **/*.md
             .claude/**/*.md
@@ -207,13 +158,6 @@ jobs:
         with:
           builtin-schema: vendor.github-workflows
           files: .github/workflows/*.yml
-      # Derived from the directory rather than restating it, for the same reason
-      # `ci-status` derives its lane list: a hand-listed roster let a newly
-      # added issue form go unvalidated with this lane still green, and nothing
-      # caught the omission. Unlike `ci-status` this cannot be an expression:
-      # Actions expressions have no filesystem access, so the roster is built in
-      # shell. Everything matching *.yml/*.yaml here is an issue form except
-      # `config.yml`, the chooser the next step validates against its own schema.
       - name: Derive the issue-form roster
         id: issue-forms
         shell: bash
@@ -252,24 +196,14 @@ jobs:
         with:
           builtin-schema: vendor.github-issue-config
           files: .github/ISSUE_TEMPLATE/config.yml
-      # No vendored builtin covers Claude Code settings, so this validates
-      # against the same schemastore URL the file itself declares in `$schema`.
-      # Unlike every other lane this reaches an unpinned remote schema, so a
-      # breaking schemastore change reddens the lane without this repo changing;
-      # swap to a builtin if one ever ships.
+      # No vendored builtin covers Claude Code settings, so this reaches the unpinned schemastore URL; swap to a builtin if one ships:
+      # https://check-jsonschema.readthedocs.io/en/stable/usage.html#builtin-schema
       - name: Validate Claude Code settings
         uses: melodic-software/ci-workflows/.github/actions/check-jsonschema@main
         with:
           schemafile: https://json.schemastore.org/claude-code-settings.json
           files: .claude/settings.json
 
-  # Discovery is tracked *.sh/*.bash files: the SessionStart bootstrap, which
-  # arrives by standards sync already written against the canonical .shellcheckrc
-  # (it carries `enable=` directives and cites check-set-e-suppressed/SC2310),
-  # and the `.cursor/` environment scripts.
-  # The `jsonschema` job's roster step is shell too, but an embedded `run:` block
-  # is not a file this discovery sees; the `actionlint` lane covers it instead,
-  # via its own bundled ShellCheck, which does not read .shellcheckrc.
   shellcheck:
     name: Shellcheck
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
@@ -298,14 +232,6 @@ jobs:
       - name: Check index-level EOL drift
         uses: melodic-software/ci-workflows/.github/actions/check-line-endings@main
 
-  # Compares `.github/PULL_REQUEST_TEMPLATE.md` headings and
-  # `docs/conventions/source-control.yaml`'s `pr_body_required_sections` to the
-  # `section_report` calls inside the `check-contract` composite's `run.sh` at
-  # the ref `report-ci-status` uses, which runs that `check-contract`.
-  # The comparison target is that ref's bytes, not a
-  # third hardcoded copy of the four names. Fetches over the network; a fetch
-  # failure is red, never a skip, same posture as standards'
-  # `pr-convention-lockstep` (ADR-0008). Advisory: not in `ci-status` `needs:`.
   check-pr-sections:
     name: Check PR Sections
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
@@ -323,11 +249,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: node .github/scripts/pr-section-drift.mjs
 
-  # Compares the issue forms in `.github/ISSUE_TEMPLATE/` to the issue-body
-  # contract the standards sync delivers at
-  # `.github/standards/issue-body-contract/contract.json`: names, native types,
-  # labels, and each field's id, kind, heading and required flag. Local files
-  # only, no network. Advisory, like check-pr-sections: not in `ci-status` `needs:`.
   check-issue-forms:
     name: Check Issue Forms
     if: ${{ !(github.event.pull_request.head.repo.full_name == github.repository && (contains(fromJSON('["labeled","unlabeled"]'), github.event.action) || (github.event.action == 'edited' && !github.event.changes.base))) }}
@@ -360,54 +281,21 @@ jobs:
     if: always()
     needs: [markdownlint, typos, editorconfig-checker, gitleaks, check-links, actionlint, jsonschema, shellcheck, check-line-endings, pr-audit-workflows]
     runs-on: ubuntu-latest
-    # No run waits for another: a contract-only run lists in-flight runs once
-    # and reads the status once, and a full run's ci-status runs after its
-    # lanes, so either finishes in seconds.
     timeout-minutes: 3
     permissions:
-      # The composite lists this workflow's runs on the head SHA (its fixed
-      # `yield-to-full-run`) and re-runs the red contract-only ones once the
-      # full run records `success` (`rerun-contract-only-siblings`). Under an
-      # explicit `permissions:` block every unlisted scope defaults to none;
-      # write covers the read.
       actions: write
       contents: read
-      # check-contract upserts the advisory linkage comment and moves the linkage
-      # label; ci-status records the `ci-lanes` commit status the carry-forward
-      # branch reads back on the next contract-only event.
       pull-requests: write
       statuses: write
     steps:
-      # The contract, the draft policy and the aggregation in one step. The
-      # step keeps the aggregation step's old name: a contract-only run finds
-      # the writer step of the full run it carries forward by this name.
-      # The composite fixes `yield-to-full-run: 'true'` and
-      # `carry-forward-wait-seconds: '0'`, the values this job set before
-      # (https://github.com/melodic-software/ci-workflows/blob/ebd0e3bed99ae1365fcb4ef47ce97cfa745fcf2f/.github/actions/pr-require-checks/report-ci-status/action.yml#L128-L129):
-      # a contract-only run never waits; while a full run on the SHA is in
-      # flight it fails with "superseded by full run <url>", and once that run
-      # records `success` it re-runs the red contract-only runs
-      # (`rerun-contract-only-siblings`, default `true`).
       - name: Aggregate lane results
         id: report
         uses: melodic-software/ci-workflows/.github/actions/pr-require-checks/report-ci-status@main
         with:
           step-name: Aggregate lane results
-          # This workflow is not draft-gated (no `ready_for_review` trigger), so a draft passes.
           draft: allow
-          # A skipped lane passes, as it did under aggregate-results' own
-          # default; the composite's default is `fail`.
           treat-skipped-as: pass
-          # Derived from `needs:` rather than restating it. Hand-listing the
-          # results let a lane be dropped from this input alone: still gated via
-          # `needs:`, but its verdict withheld from the aggregator, so the check
-          # went green on that lane's failure with no linter to catch it. `join`
-          # over the `needs.*` object filter yields the whitespace-separated form
-          # the action word-splits.
           results: ${{ join(needs.*.result, ' ') }}
-      # The composite's step concludes on the lanes alone; the contract and
-      # draft results fail the job here. Anything but `success` fails, so an
-      # empty or renamed output fails closed.
       - name: Fail on the contract or draft policy
         if: ${{ !cancelled() && (steps.report.outputs.contract != 'success' || steps.report.outputs.draft != 'success') }}
         run: |

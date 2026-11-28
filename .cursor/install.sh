@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# --- Pins (authority: melodic-software/ci-workflows v0.76.0 action defaults) --
 MARKDOWNLINT_VERSION="0.23.3"
 TYPOS_VERSION="1.50.3"
 TYPOS_SHA256="aca6b5d546307092b8d0a8e0a89dd80f9da51f2f7617c5e45c5607c1684ffbf2"
@@ -17,22 +16,15 @@ SHELLCHECK_VERSION="0.11.0"
 SHELLCHECK_SHA256="b7af85e41cc99489dcc21d66c6d5f3685138f06d34651e6d34b42ec6d54fe6f6"
 CHECK_JSONSCHEMA_VERSION="0.38.2"
 
-# External so the Cloud Agent install command can opt into the system prefix.
-# The default assignment keeps ShellCheck's check-unassigned-uppercase quiet.
 MELODIC_HYGIENE_SYSTEM="${MELODIC_HYGIENE_SYSTEM:-}"
 
 BIN_DIR=""
 VENV_DIR=""
-# Command prefix kept as an array so an empty (no-sudo) value expands to nothing
-# and a populated one word-splits safely (.shellcheckrc keeps SC2086 on).
 SUDO=()
 WORK=""
 
 log() { printf 'install: %s\n' "$*" >&2; }
 
-# prefix_is_writable <dir>: whether the system prefix can be written without
-# sudo. Tests redefine this after sourcing so they can force either branch
-# while BIN_DIR stays /usr/local/bin.
 prefix_is_writable() {
   [[ -w "$1" ]]
 }
@@ -60,9 +52,6 @@ resolve_install_prefix() {
   log "workstation mode; using $BIN_DIR (no files outside $HOME). Set MELODIC_HYGIENE_SYSTEM=1 to install into /usr/local/bin."
 }
 
-# Abort the whole install on mismatch: a hygiene toolchain that silently
-# installed an unverified binary is worse than a hard failure the operator can
-# see and re-run.
 verify_sha() {
   local file="$1" want="$2" got
   got="$(sha256sum "$file" | awk '{print $1}')"
@@ -135,9 +124,6 @@ install_shellcheck() {
     "shellcheck-v${SHELLCHECK_VERSION}/shellcheck" "shellcheck-v${SHELLCHECK_VERSION}/shellcheck"
 }
 
-# markdownlint-cli2 ships as an npm package; install it into the same prefix so
-# the `markdownlint-cli2` launcher lands on PATH. Node is provided by the base
-# image / cloud bootstrap.
 install_markdownlint() {
   if ! command -v npm >/dev/null 2>&1; then
     log "npm not found; cannot install markdownlint-cli2"
@@ -145,24 +131,18 @@ install_markdownlint() {
   fi
   local prefix
   prefix="$(dirname "$BIN_DIR")"
-  # sudo resets PATH via secure_path, dropping the nvm-provided node/npm; carry
-  # the current PATH through so both resolve during the privileged install.
+  # sudo's secure_path replaces PATH and drops the nvm node/npm, so carry PATH through:
+  # https://www.sudo.ws/docs/man/sudoers.man/#secure_path
   "${SUDO[@]}" env "PATH=$PATH" npm install -g --prefix "$prefix" \
     --no-audit --no-fund "markdownlint-cli2@${MARKDOWNLINT_VERSION}" >/dev/null 2>&1
   log "installed markdownlint-cli2 -> $BIN_DIR/markdownlint-cli2"
 }
 
-# check-jsonschema is a Python tool; install it into a dedicated venv and expose
-# only its launcher on PATH so it never perturbs the system interpreter.
 install_check_jsonschema() {
   if ! command -v python3 >/dev/null 2>&1; then
     log "python3 not found; cannot install check-jsonschema"
     exit 1
   fi
-  # The default image ships python3 without the venv/ensurepip module; add it
-  # once (idempotent) so the isolated tool environment can be created. Outside
-  # system mode, refuse rather than apt-get: a workstation run must not write
-  # outside the home directory or use sudo.
   if ! python3 -c 'import ensurepip' >/dev/null 2>&1; then
     if [[ "$MELODIC_HYGIENE_SYSTEM" == 1 ]]; then
       if [[ ${#SUDO[@]} -gt 0 ]] && command -v apt-get >/dev/null 2>&1; then

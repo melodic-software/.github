@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 
-// The forms are the generator's YAML subset (no anchors, flow maps or multi-document streams), so
-// a line reader covers them; a shape it cannot read is reported as drift, never skipped.
-
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -93,7 +90,6 @@ export function compareForm(fileName, actual, expected) {
 }
 
 export function collectDrift(contract, forms) {
-  // A type with `form: null` is a body shape only (no public form), so it has no file here.
   const byFile = new Map(
     Object.values(contract.types)
       .filter((type) => type.form !== null)
