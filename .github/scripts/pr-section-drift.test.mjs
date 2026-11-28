@@ -28,8 +28,6 @@ function callerYaml(sha) {
   ].join("\n");
 }
 
-// Shaped like the composite's awk END block: the function definition takes an
-// unquoted parameter and must not match, only the quoted call sites do.
 function runSh(...names) {
   return [
     "function section_report(name,   i, trimmed, start) {",

@@ -36,7 +36,6 @@ const contract = {
   },
 };
 
-// Shaped like the standards generator's output (yaml.stringify, lineWidth 0).
 const BUG = [
   "# Generated from melodic-software/standards components/issue-body-contract/contract.json.",
   "name: Bug Report",

@@ -1,29 +1,5 @@
 #!/usr/bin/env node
 
-// Local complement to standards' fleet lockstep (ADR-0008): this repository's
-// two PR-body declarations (`.github/PULL_REQUEST_TEMPLATE.md` headings and
-// `docs/conventions/source-control.yaml`'s `pr_body_required_sections`) are unchecked
-// mirrors of the section list the `check-contract` composite enforces. ADR-0008
-// fleet-checks the template and the pin from standards CI *after* merge; it
-// deliberately does not check this repository's source-control key. This lane
-// fails the PR that introduces either drift, comparing both mirrors to the
-// exact composite bytes this repository's gate already executes.
-//
-// Comparison target is derived: the `check-contract` or
-// `report-ci-status` ref (40-hex SHA or `main`, the same refs standards'
-// `lockstep-drift.mjs` accepts) in `.github/workflows/pr-require-checks.yml` (the
-// latter runs `check-contract` through `$/` at its own commit), then that
-// ref's `check-contract/run.sh`. The four section names
-// are not hardcoded here. Fetch failures are `fetch-error` (never a skip),
-// matching standards' `lockstep-drift.mjs` posture.
-//
-// Parsing of the composite's section list uses the same regex as
-// `melodic-software/standards` `components/pr-convention-policy/lockstep-drift.mjs`
-// `parseCompositeSections`, so a shape change breaks both parsers together.
-// The gate's awk block calls `section_report("<name>")` once per required
-// section, in contract order; the function definition takes an unquoted
-// parameter, so only the call sites match.
-
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";

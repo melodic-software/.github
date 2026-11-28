@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Not set -e: lanes are collected, not short-circuited. Exit status is non-zero
-# when any gating lane fails.
 set -uo pipefail
 
 top="$(git rev-parse --show-toplevel)" && cd -- "$top" || exit 1
@@ -10,8 +8,6 @@ case ":$PATH:" in
   *) PATH="$HOME/.local/bin:$PATH" ;;
 esac
 
-# Standards' lint configs, the ones CI's composites read: STANDARDS_DIR names a
-# standards checkout, else the ghq root (ghq.root, default ~/ghq).
 std="${STANDARDS_DIR:-$(git config --path --get ghq.root || printf '%s' "$HOME/ghq")/github.com/melodic-software/standards}"
 
 PASSED=()
@@ -32,10 +28,8 @@ run_lane() {
   fi
 }
 
-# typos skips hidden paths unless they are named. Standards' _typos.toml does
-# not set ignore-hidden = false; CI's typos job has the same follow-up.
-# Skip index entries that are gone from the worktree: an unstaged deletion is
-# still listed, and typos exits 64 when an explicit path is missing.
+# typos skips hidden files and directories by default, so hidden tracked files are named:
+# https://github.com/crate-ci/typos/blob/master/docs/reference.md
 lane_typos() {
   local hidden=() path
   while IFS= read -r -d '' path; do
@@ -52,8 +46,6 @@ lane_jsonschema() {
     [[ -e "$f" && "$(basename -- "$f")" != config.yml ]] && forms+=("$f")
   done
   if [[ ${#forms[@]} -eq 0 ]]; then
-    # Match pr-require-checks.yml's roster step: an empty set is a failed derivation, not a
-    # skipped validation.
     echo "No issue forms (*.yml/*.yaml other than config.yml) found under .github/ISSUE_TEMPLATE/." >&2
     return 1
   fi
@@ -77,13 +69,8 @@ lane_shellcheck() {
   shellcheck --rcfile .shellcheckrc "${files[@]}"
 }
 
-# Detect EOL drift the way CI does (re-stage through git's clean filter and see
-# if any blob changes). `git add --renormalize` reads the working tree
-# (https://git-scm.com/docs/git-add --renormalize, implies -u), so running it
-# against the caller's dirty tree would treat ordinary pending edits as drift.
-# Materialize the current index into a throwaway worktree and renormalize
-# there, leaving the caller's index and working tree untouched. CI itself
-# runs on a clean checkout, so this extra isolation is local-only.
+# `git add --renormalize` reads the working tree (implies -u), so this renormalizes in a throwaway worktree:
+# https://git-scm.com/docs/git-add#Documentation/git-add.txt---renormalize
 lane_eol() {
   local tmp gitdir before after drift rc=0
   tmp="$(mktemp -d)" || return 1
@@ -108,13 +95,10 @@ lane_eol() {
   echo "index EOL clean"
 }
 
-# Tracked files only, as on CI's clean checkout; a "**/*.md" glob also lints
-# gitignored scratch files.
 lane_markdown() {
   git ls-files -z -- '*.md' | xargs -0 markdownlint-cli2 --config "$std/.markdownlint-cli2.jsonc"
 }
 
-# lychee-offline with the standards lychee.toml CI falls back to.
 lane_links() {
   git ls-files -z -- '*.md' | xargs -0 lychee --offline --no-progress --config "$std/lychee.toml"
 }
@@ -143,7 +127,6 @@ run_lane jsonschema lane_jsonschema
 run_lane shellcheck lane_shellcheck
 run_lane check-line-endings lane_eol
 
-# Advisory, as in CI: reported, never counted toward the ci-status verdict.
 heading check-pr-sections
 lane_pr_section_drift || printf '\033[33m! check-pr-sections (advisory)\033[0m\n' >&2
 heading check-issue-forms
