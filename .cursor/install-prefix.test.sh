@@ -80,8 +80,6 @@ assert_system_writable() {
   fi
 }
 
-# The production writability check, against real directories. The system-prefix
-# cases above replace the function so they do not depend on this machine.
 assert_real_writability() {
   local writable locked saw
   writable="$(mktemp -d)"

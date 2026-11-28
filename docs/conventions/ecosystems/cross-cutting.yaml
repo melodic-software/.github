@@ -1,13 +1,3 @@
-# Repository-wide text checks in this repository. Contract and schema:
-# https://github.com/melodic-software/claude-code-plugins/tree/main/docs/contracts/ecosystem-commands
-# Lint-only: /toolchain:lint runs it, /toolchain:check does not. CI's typos,
-# editorconfig-checker, gitleaks and check-links lanes
-# (.github/workflows/pr-require-checks.yml:104-175), each with the standards
-# config the ci-workflows composites read when the repository has none. typos
-# checks "." and then the hidden tracked files by name, as the typos lane's
-# hidden input does (:117-121). lychee gets CI's three globs (:172-175). Every check runs and any failure
-# fails the command, as CI's ci-status gate fails on any lane. Commands run
-# from the repository root.
 enabled: true
 globs: ["**"]
 project-discovery: []
@@ -39,4 +29,4 @@ tool-pin:
   editorconfig-checker: "4.0.2"
   lychee: "0.24.2"
 gates: []
-notes: "Lint-only: owned by /toolchain:lint. Pins are the composite defaults at v0.74.0 (actions/typos/action.yml:46, actions/gitleaks/action.yml:52 with scan.sh:136 for the dir-mode flags, actions/editorconfig-checker/action.yml:35, actions/lychee-offline/action.yml:22). .cursor/install.sh pins older versions of typos, editorconfig-checker, check-jsonschema and markdownlint-cli2, and rhysd/actionlint where CI installs the kjanat/actionlint fork; these pins follow CI. CI's check-line-endings lane (pr-require-checks.yml:288-299) re-stages the whole index with git add --renormalize, so it has no read-only local command here; bash .cursor/check.sh runs a safe copy of it."
+notes: "Lint-only: owned by /toolchain:lint. Pins are the composite defaults at v0.74.0 (actions/typos/action.yml:46, actions/gitleaks/action.yml:52 with scan.sh:136 for the dir-mode flags, actions/editorconfig-checker/action.yml:35, actions/lychee-offline/action.yml:22). .cursor/install.sh pins older versions of typos, editorconfig-checker, check-jsonschema and markdownlint-cli2, and rhysd/actionlint where CI installs the kjanat/actionlint fork; these pins follow CI. CI's check-line-endings lane (pr-require-checks.yml:222-233) re-stages the whole index with git add --renormalize, so it has no read-only local command here; bash .cursor/check.sh runs a safe copy of it."

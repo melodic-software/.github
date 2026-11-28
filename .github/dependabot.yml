@@ -1,15 +1,5 @@
 version: 2
 updates:
-  # Keep the GitHub Actions in this repo's workflows current. First-party
-  # `melodic-software/*` refs track `@main`, vendor actions (`actions/*`,
-  # `github/*`, `anthropics/*`) use major tags, and other third-party actions
-  # stay hash-pinned and move by Dependabot. Merge lanes
-  # follow the standards dependabot-policy component, which the reusable reads
-  # from melodic-software/standards `main`: pr-automerge-dependabot-hosted.yml
-  # arms auto-merge on minor and patch bumps in the `vendor-actions` group and
-  # of `melodic-software/*`; every other bump takes the review tier. This repo
-  # carries no composite actions of its own, so the single "/" target (which
-  # scans .github/workflows) is sufficient.
   - package-ecosystem: github-actions
     directory: /
     labels: ["dependencies"]
@@ -18,13 +8,11 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: build
-    # Delay version bumps so a compromised or yanked release is caught before we
-    # adopt it; security updates bypass cooldown. Defense-in-depth for the
-    # SHA-rewrite supply-chain risk that motivates hash-pinning third-party actions.
     cooldown:
       default-days: 3
     groups:
-      # Listed before the catch-all group so it wins.
+      # Listed before the catch-all because a dependency joins the first group it matches:
+      # https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#groups--
       vendor-actions:
         patterns:
           - actions/*
